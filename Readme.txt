@@ -32,6 +32,7 @@ http://stephenhobley.com/blog
 
 This software uses the following libraries:
 - Parrot AR Drone SDK:		https://projects.ardrone.org/projects/show/ardrone-api
-- WiiMoteLib:				
+- WiiMoteLib:				http://wiimotelib.codeplex.com/
 - Aviation Instruments:		http://www.codeproject.com/KB/miscctrl/Avionic_Instruments.aspx
+- AviFile Library:			http://www.codeproject.com/KB/audio-video/avifilewrapper.aspx
 
