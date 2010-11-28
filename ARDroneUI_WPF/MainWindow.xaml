@@ -1,0 +1,175 @@
+﻿<!--
+    ARDrone Control .NET - An application for flying the Parrot AR drone in Windows.
+    Copyright (C) 2010 Thomas Endres, Stephen Hobley, Julien Vinel
+ 
+    This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation; either version 3 of the License, or (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License along with this program; if not, see <http://www.gnu.org/licenses/>.
+-->
+<Window x:Class="ARDrone.UI.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:av="clr-namespace:AviationInstruments;assembly=AviationInstruments"
+        WindowStyle="SingleBorderWindow" Title="MainWindow" Width="854" Height="606" MinWidth="709" MinHeight="606" BorderThickness="1" BorderBrush="#FF232300" Background="#FFF0F0F0" Closing="Window_Closing" Loaded="Window_Loaded">
+    <Grid>
+        <DockPanel LastChildFill="True">
+            <Grid DockPanel.Dock="Right" Width="370" Margin="5">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="192" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                
+                <StackPanel Grid.Column="0">
+                    <GroupBox Header="Input">
+                        <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+
+                            <Grid.Resources>
+                                <Style x:Key="styleContentDescription" TargetType="{x:Type Label}">
+                                    <Setter Property="Padding" Value="1" />
+                                    <Setter Property="Margin" Value="20,1,1,1" />
+                                </Style>
+                                <Style x:Key="styleInputCheckBox" TargetType="{x:Type CheckBox}">
+                                    <Setter Property="Padding" Value="2" />
+                                    <Setter Property="Margin" Value="7,4,3,3" />
+                                </Style>
+                            </Grid.Resources>
+                            
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+
+                            <Label Content="Roll" HorizontalAlignment="Left" Grid.Row="0" Grid.Column="0" Style="{StaticResource styleContentDescription}" Margin="20,5,0,0" />
+                            <Label Name="labelInputRoll" Content="+0.000" Grid.Row="0" Grid.Column="1" Style="{StaticResource styleContentDescription}" />
+                            <Label Content="Pitch" HorizontalAlignment="Left" Grid.Row="1" Grid.Column="0" Style="{StaticResource styleContentDescription}" Margin="20,0,0,0" />
+                            <Label Name="labelInputPitch" Content="+0.000" Grid.Row="1" Grid.Column="1" Style="{StaticResource styleContentDescription}" />
+                            <Label Content="Yaw" HorizontalAlignment="Left" Grid.Row="2" Grid.Column="0" Style="{StaticResource styleContentDescription}" Margin="20,0,0,0" />
+                            <Label Name="labelInputYaw" Content="+0.000" Grid.Row="2" Grid.Column="1" Style="{StaticResource styleContentDescription}" />
+                            <Label Content="Gaz" HorizontalAlignment="Left" Grid.Row="3" Grid.Column="0" Style="{StaticResource styleContentDescription}" Margin="20,0,0,0" />
+                            <Label Name="labelInputGaz" Content="+0.000" Grid.Row="3" Grid.Column="1" Style="{StaticResource styleContentDescription}" />
+                            <CheckBox Name="checkBoxInputTakeoff" Content="Take off" Grid.Row="4" Grid.Column="0" Style="{StaticResource styleInputCheckBox}" />
+                            <CheckBox Name="checkBoxInputLand" Content="Land" Height="16" Grid.Row="4" Grid.Column="1" Style="{StaticResource styleInputCheckBox}" />
+                            <CheckBox Name="checkBoxInputEmergency" Content="Emergency" Grid.Row="5" Grid.Column="0" Style="{StaticResource styleInputCheckBox}" />
+                            <CheckBox Name="checkBoxInputFlatTrim" Content="Flat trim" Grid.Row="5" Grid.Column="1" Style="{StaticResource styleInputCheckBox}" />
+                            <CheckBox Name="checkBoxInputHover" Content="Hover" Grid.Row="6" Grid.Column="0" Style="{StaticResource styleInputCheckBox}" Margin="7,4,3,10" />
+                            <CheckBox Name="checkBoxInputChangeCamera" Content="Camera" Grid.Row="6" Grid.Column="1" Style="{StaticResource styleInputCheckBox}" Margin="7,4,3,10" />
+                        </Grid>
+                    </GroupBox>
+                    <GroupBox Header="Status">
+                        <Grid>
+                            <Grid.Resources>
+                                <Style x:Key="styleContentLabel" TargetType="{x:Type Label}">
+                                    <Setter Property="Margin" Value="1" />
+                                    <Setter Property="Padding" Value="1" />
+                                </Style>                          
+                            </Grid.Resources>
+                            
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="*" />
+                                <RowDefinition Height="*" />
+                                <RowDefinition Height="*" />
+                                <RowDefinition Height="*" />
+                                <RowDefinition Height="*" />
+                                <RowDefinition Height="*" />
+                                <RowDefinition Height="*" />
+                                <RowDefinition Height="*" />
+                            </Grid.RowDefinitions>
+
+                            <Label Content="Battery status" Grid.Row="0" Grid.Column="0" Style="{StaticResource styleContentLabel}" Margin="0,10,0,0" />
+                            <Label Name="labelStatusBattery" Content="N/A" Grid.Row="0" Grid.Column="1" Style="{StaticResource styleContentLabel}" Margin="0,10,0,0" />
+                            <Label Content="Camera shown" Grid.Row="1" Grid.Column="0" Style="{StaticResource styleContentLabel}" />
+                            <Label Name="labelStatusCamera" Content="none" Grid.Row="1" Grid.Column="1" Style="{StaticResource styleContentLabel}" />
+                            <Label Content="Altitude" Grid.Row="2" Grid.Column="0" Style="{StaticResource styleContentLabel}" />
+                            <Label Name="labelStatusAltitude" Content="N/A" Grid.Row="2" Grid.Column="1" Style="{StaticResource styleContentLabel}" />
+                            <Label Content="Connected" Grid.Row="3" Grid.Column="0" Style="{StaticResource styleContentLabel}" Margin="0,10,0,0" />
+                            <Label Name="labelStatusConnected" Content="false" Grid.Row="3" Grid.Column="1" Style="{StaticResource styleContentLabel}" Margin="0,10,0,0" />
+                            <Label Content="Flying" Grid.Row="4" Grid.Column="0" Style="{StaticResource styleContentLabel}" />
+                            <Label Name="labelStatusFlying" Content="false" Grid.Row="4" Grid.Column="1" Style="{StaticResource styleContentLabel}" />
+                            <Label Content="Hovering" Grid.Row="5" Grid.Column="0" Style="{StaticResource styleContentLabel}" />
+                            <Label Name="labelStatusHovering" Content="false" Grid.Row="5" Grid.Column="1" Style="{StaticResource styleContentLabel}" />
+                            <Label Content="Emergency" Grid.Row="6" Grid.Column="0" Style="{StaticResource styleContentLabel}" />
+                            <Label Name="labelStatusEmergency" Content="false" Grid.Row="6" Grid.Column="1" Style="{StaticResource styleContentLabel}" />
+                            <Label Content="Frame Rate" Grid.Row="7" Grid.Column="0" Style="{StaticResource styleContentLabel}" Margin="0,10,0,10" />
+                            <Label Name="labelStatusFrameRate" Content="No video" Grid.Row="7" Grid.Column="1" Style="{StaticResource styleContentLabel}" Margin="0,10,0,10" />
+                        </Grid>
+                    </GroupBox>
+                    <GroupBox Header="Video &amp; Snapshots" >
+                        <StackPanel>
+                            <Button Name="buttonSnapshot" Content="Take a Snapshot" Grid.ColumnSpan="4" HorizontalAlignment="Stretch" VerticalAlignment="Top" Click="buttonSnapshot_Click" Margin="5" />
+                            <CheckBox Name="checkBoxVideoCompress" Content="Compress video" Margin="5,0,0,0" />
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+
+                                <Button Name="buttonVideoStart" Content="Start Video" Grid.Column="0" Margin="5,0,2,0" Click="buttonVideoStart_Click" />
+                                <Button Name="buttonVideoEnd" Content="End Video" Grid.Column="1" Margin="2,0,5,0" Click="buttonVideoEnd_Click" />
+                            </Grid>
+                            <Label Content="Idling..." Name="labelVideoStatus" />
+                        </StackPanel>
+                    </GroupBox>
+                    <Button Name="butonInputSettings" Content="Input settings" Margin="5" Click="buttonInputSettings_Click" />
+                </StackPanel>
+                
+                <StackPanel Grid.Column="1">
+                    <WindowsFormsHost Height="173" Margin="5,10,0,0">
+                        <av:AttitudeIndicatorInstrumentControl x:Name="attitudeControl" Width="150" Height="173" />
+                    </WindowsFormsHost>
+                    <WindowsFormsHost Height="173" Margin="5,10,0,0">
+                        <av:HeadingIndicatorInstrumentControl x:Name="headingControl" Width="150" Height="173" />
+                    </WindowsFormsHost>
+                    <WindowsFormsHost Height="173" Margin="5,10,0,0">
+                        <av:AltimeterInstrumentControl x:Name="altimeterControl" Width="150" Height="173" />
+                    </WindowsFormsHost>
+                </StackPanel>
+            </Grid>
+            <DockPanel DockPanel.Dock="Top" LastChildFill="True" Margin="5">
+                <Button Name="buttonConnect" Content="Startup"  Width="75" Height="23" Canvas.Left="113" Canvas.Top="28" DockPanel.Dock="Left" Click="buttonConnect_Click" />
+                <Button Name="buttonShutdown" Content="Shutdown" Width="75" Height="23" Canvas.Left="113" Canvas.Top="57" DockPanel.Dock="Right" Click="buttonShutdown_Click" />
+                <Label Name="labelCamera" Content="No picture" HorizontalAlignment="Center" Foreground="Goldenrod" FontFamily="Microsoft Sans Serif" FontSize="12" />
+            </DockPanel>
+            <Grid DockPanel.Dock="Bottom" Height="165">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="100" />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="3*" />
+                    <RowDefinition Height="3*" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="3*" />
+                    <RowDefinition Height="3*" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="3*" />
+                </Grid.RowDefinitions>
+
+                <ScrollViewer Name="scrollViewerOutput" VerticalScrollBarVisibility="Auto" Grid.Row ="0" Grid.Column="0" Grid.RowSpan="7" Margin="3">
+                    <TextBox Name="textBoxOutput" IsReadOnly="True" Canvas.Left="0" Canvas.Top="0"  AcceptsReturn="True" Foreground="Yellow" Background="Black" />
+                </ScrollViewer>
+                <Button Name="buttonCommandTakeoff" Content="Take off" Grid.Row="0" Grid.Column="1" Margin="3" Click="buttonCommandTakeoff_Click" />
+                <Button Name="buttonCommandHover" Content="Hover" Grid.Row="1" Grid.Column="1" Margin="3" Click="buttonCommandHover_Click" />
+                <Button Name="buttonCommandEmergency" Content="Emergency" Grid.Row="3" Grid.Column="1" Margin="3" Click="buttonCommandEmergency_Click" />
+                <Button Name="buttonCommandFlatTrim" Content="Flat trim" Grid.Row="4" Grid.Column="1" Margin="3"  Click="buttonCommandFlatTrim_Click" />
+                <Button Name="buttonCommandChangeCamera" Content="Change camera" Grid.Row="6" Grid.Column="1" Margin="3" Click="buttonCommandChangeCamera_Click" />
+            </Grid>
+            <Image Name="imageVideo" Stretch="Fill" Canvas.Left="49" Canvas.Top="33" />
+        </DockPanel>
+    </Grid>
+</Window>

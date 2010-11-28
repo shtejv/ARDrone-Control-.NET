@@ -1,0 +1,22 @@
+LIBRARY ARDRONEDLL
+EXPORTS
+   InitDrone   @1
+   UpdateDrone   @2
+   ShutdownDrone   @3
+   GetDroneState @4
+   GetBatteryLevel @5 
+   GetTheta @6
+   GetPhi @7
+   GetPsi @8
+   GetAltitude @9
+   GetVX @10
+   GetVY @11
+   GetVZ @12
+   ChangeToBottomCamera @13
+   ChangeToFrontCamera @14
+   SendFlatTrim @15
+   SendEmergency @16
+   SendTakeoff @17
+   SendLand @18
+   SetProgressCmd @19
+   GetCurrentImage @20
