@@ -138,13 +138,13 @@
     <None Include="Resources\VerticalSpeedNeedle.bmp" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="License.txt" />
+  </ItemGroup>
+  <ItemGroup>
     <ProjectReference Include="..\ARDroneControlLibrary\ARDroneControlLibrary.csproj">
       <Project>{92277DFC-0D55-4998-8ACF-B01F3A7FB508}</Project>
       <Name>ARDroneControlLibrary</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="License.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
