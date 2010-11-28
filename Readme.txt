@@ -15,18 +15,19 @@ Stephen Hobley, Thomas Endres and Julien Vinel November 2010
 -----------------------------------------------------------------
 You must have the DirectX and Windows SDK installed in order to compile this solution file.
 
-To compile this solution, you must update the three path variables contained in the 
-ArDroneProperties.props file.
-
+A few quick tips to get the app up and running:
+- This is a Visual Studio 2010 project using .NET framework 4.0
+- You need to download and install Windows SDK and a fresh copy of the DirectX SDK
+- You need to change the directories for Windows SDK and DirectX SDK in the file "ARDroneProperties.props" to your own directories
     <WinSDKDir></WinSDKDir>
     <DXSDKDir></DXSDKDir>
+  These should point to the respective folders on your harddrive. 
+- You need to disable the loader lock exception in Visual Studio (Debug -> Exceptions -> Managed Debugging assistents -> Disable the "Loader lock" checkbox)
 
-These should point to the respective folders on your harddrive. 
-
-Once you have set these the solution should compile.
+Once you have completed these steps, the solution should compile.
 
 For more information, visit our websites:
-
+https://github.com/shtejv/ARDrone-Control-.NET
 http://parrotsonjava.com
 http://stephenhobley.com/blog
 
