@@ -326,6 +326,8 @@ namespace ARDrone.UI
 
                 MarkStopSignsInVideoSignal((System.Drawing.Bitmap)newImage);
 
+                Console.WriteLine(arDroneControl.GetCurrentDroneData().Theta);
+
                 if (newImage != null)
                 {
                     frameCountSinceLastCapture++;
