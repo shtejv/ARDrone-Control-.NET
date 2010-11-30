@@ -3,6 +3,7 @@
   <PropertyGroup Label="UserMacros">
     <WinSDKDir>C:\Program Files\Microsoft SDKs\Windows\v7.1</WinSDKDir>
     <DXSDKDir>C:\Program Files (x86)\Microsoft DirectX SDK (June 2010)</DXSDKDir>
+    <SDLDir>C:\Programs\Programmieren\Libraries\SDL1</SDLDir>
   </PropertyGroup>
   <PropertyGroup>
     <_ProjectFileVersion>10.0.30319.1</_ProjectFileVersion>
@@ -13,6 +14,9 @@
     </BuildMacro>
     <BuildMacro Include="DXSDKDir">
       <Value>$(DXSDKDir)</Value>
+    </BuildMacro>
+    <BuildMacro Include="SDLDir">
+      <Value>$(SDLDir)</Value>
     </BuildMacro>
   </ItemGroup>
 </Project>
