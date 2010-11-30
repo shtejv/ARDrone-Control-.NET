@@ -17,10 +17,15 @@ You must have the DirectX and Windows SDK installed in order to compile this sol
 
 A few quick tips to get the app up and running:
 - This is a Visual Studio 2010 project using .NET framework 4.0
-- You need to download and install Windows SDK and a fresh copy of the DirectX SDK
+- You need to download and install Windows SDK, a fresh copy of the DirectX SDK as well as an SDL installation
+  - Get DirectX from http://msdn.microsoft.com/en-us/directx/aa937788.aspx
+  - Get Windows SDK from http://msdn.microsoft.com/de-de/windows/aa904949.aspx
+  - Get SDL from http://www.libsdl.org/download-1.2.php
 - You need to change the directories for Windows SDK and DirectX SDK in the file "ARDroneProperties.props" to your own directories
     <WinSDKDir></WinSDKDir>
     <DXSDKDir></DXSDKDir>
+	<SDLDir></SDLDir>
+    Link to the main directories where you installed the libraries (no subdirectories needed)
   These should point to the respective folders on your harddrive. 
 - You need to disable the loader lock exception in Visual Studio (Debug -> Exceptions -> Managed Debugging assistents -> Disable the "Loader lock" checkbox)
 
