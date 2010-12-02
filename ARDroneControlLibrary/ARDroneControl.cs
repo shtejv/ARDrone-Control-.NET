@@ -53,9 +53,9 @@ namespace ARDrone.Control
             {
                 DroneState = droneState;
                 BatteryLevel = batteryLevel;
-                Theta = theta;
-                Phi = phi;
-                Psi = psi;
+                Theta = theta / 1000.0;
+                Phi = phi / 1000.0;
+                Psi = psi / 1000.0;
                 Altitude = altitude;
                 vX = vx;
                 vY = vy;
@@ -428,6 +428,9 @@ namespace ARDrone.Control
 
         public Size FrontCameraPictureSize { get { return new Size(frontCameraPictureSize.Width, frontCameraPictureSize.Height); } }
         public Size BottomCameraPictureSize { get { return new Size(bottomCameraPictureSize.Width, bottomCameraPictureSize.Height); } }
+
+        public double FrontCameraFieldOfViewDegrees { get { return 93.0; } }
+        public double BottomCameraFieldOfViewDegrees { get { return 64.0; } }
 
         // Current drone state
 

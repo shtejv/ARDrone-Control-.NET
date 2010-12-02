@@ -183,7 +183,7 @@ namespace ARDrone.Detection
 
             int matchedFeatureCount = GetMatchedFeatureCount(contourImage);
 
-            if (matchedFeatureCount >= 10)
+            if (matchedFeatureCount >= 5)
             {
                 result = new SignResult(contourImage, contourBoundingRectangle);
             }

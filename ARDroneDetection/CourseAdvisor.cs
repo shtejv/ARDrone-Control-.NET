@@ -54,14 +54,9 @@ namespace ARDrone.Detection
 
         public Direction GetNavigationAdvice(List<SignDetector.SignResult> results, double psi, double theta)
         {
-            if (results.Count == 0)
+            if (results.Count == 0 || results.Count > 1)
             {
-                return null;
-            }
-            if (results.Count > 1)
-            {
-                // TODO implement multiple targets
-                throw new NotImplementedException("At the moment, only one target is supported");
+                return new CourseAdvisor.Direction(false);
             }
 
             return GetAdviceForSignAt(results[0].Rectangle, psi, theta);
@@ -69,10 +64,13 @@ namespace ARDrone.Detection
 
         private Direction GetAdviceForSignAt(Rectangle rectangle, double psi, double theta)
         {
+            Console.WriteLine(theta);
+
             Point middleOfSign = getMiddle(rectangle);
 
-            float xAdvice = GetAdviceForCoordinates(middleOfSign.X, pictureDimensions.Width, psi);
-            float yAdvice = GetAdviceForCoordinates(middleOfSign.Y, pictureDimensions.Height, theta);
+            float xAdvice = 0.0f;
+            float yAdvice = GetAdviceForCoordinates(middleOfSign.X, pictureDimensions.Width, theta);
+            //float yAdvice = GetAdviceForCoordinates(middleOfSign.Y, pictureDimensions.Height, psi);
 
             return new Direction(xAdvice, yAdvice);
         }

@@ -39,7 +39,9 @@ namespace ARDrone.UI
 
         private ARDrone.Input.InputManager inputManager = null;
         private ARDroneControl arDroneControl = null;
+
         private SignDetector signDetector = null;
+        private CourseAdvisor courseAdvisor = null;
 
         int frameCountSinceLastCapture = 0;
         DateTime lastFrameRateCaptureTime;
@@ -54,7 +56,9 @@ namespace ARDrone.UI
             InitializeInputManager();
 
             arDroneControl = new ARDroneControl();
+
             signDetector = new SignDetector();
+            courseAdvisor = new CourseAdvisor(arDroneControl.BottomCameraPictureSize, arDroneControl.BottomCameraFieldOfViewDegrees);
         }
 
         public void Dispose()
@@ -233,7 +237,8 @@ namespace ARDrone.UI
                 labelStatusBattery.Content = "N/A";
                 labelStatusAltitude.Content = "N/A";
 
-                labelStatusFrameRate.Content = "No video";
+                labelStatusPitch.Content = "+0.0000°";
+                labelStatusRoll.Content = "+0.0000°";
             }
             else
             {
@@ -255,7 +260,8 @@ namespace ARDrone.UI
                 labelStatusBattery.Content = data.BatteryLevel.ToString() + "%";
                 labelStatusAltitude.Content = data.Altitude.ToString();
 
-                labelStatusFrameRate.Content = frameRate.ToString();
+                labelStatusPitch.Content = String.Format("{0:+0.000;-0.000;+0.000}", data.Theta);
+                labelStatusRoll.Content = String.Format("{0:+0.000;-0.000;+0.000}", data.Phi);
             }
 
 
@@ -318,39 +324,101 @@ namespace ARDrone.UI
             Navigate(roll, pitch, yaw, gaz);
         }
 
-        private void SetNewVideoImage()
+        private void UpdateVideoImage()
         {
             if (arDroneControl.IsConnected)
             {
-                System.Drawing.Image newImage = arDroneControl.GetDisplayedImage();
+                System.Drawing.Bitmap newImage = (System.Drawing.Bitmap) arDroneControl.GetDisplayedImage();
 
-                MarkStopSignsInVideoSignal((System.Drawing.Bitmap)newImage);
-
-                Console.WriteLine(arDroneControl.GetCurrentDroneData().Theta);
-
-                if (newImage != null)
-                {
-                    frameCountSinceLastCapture++;
-
-                    BitmapImage newBitmapImage = Utility.CreateBitmapImageFromImage(newImage);
-                    imageVideo.Source = newBitmapImage;
-                }
+                PerformStopSignDetection(newImage);
+                UpdateVisualImage(newImage);
             }
         }
 
-        private void MarkStopSignsInVideoSignal(System.Drawing.Bitmap image)
+        private void PerformStopSignDetection(System.Drawing.Bitmap image)
+        {
+            List<SignDetector.SignResult> results = DetermineAndMarkStopSignsInVideoSignal(image);
+            DetermineAndMarkAdvisedCourse(results);
+        }
+
+        private void UpdateVisualImage(System.Drawing.Bitmap image)
+        {
+            if (image != null)
+            {
+                frameCountSinceLastCapture++;
+
+                BitmapImage newBitmapImage = Utility.CreateBitmapImageFromImage(image);
+                imageVideo.Source = newBitmapImage;
+            }
+        }
+
+        private List<SignDetector.SignResult> DetermineAndMarkStopSignsInVideoSignal(System.Drawing.Bitmap image)
         {
             Image<Bgr, Byte> imageToProcess = new Image<Bgr, Byte>(image);
             Image<Gray, Byte> maskedImage;
 
-            List <SignDetector.SignResult> results = signDetector.DetectStopSign(imageToProcess, out maskedImage);
+            List<SignDetector.SignResult> results = signDetector.DetectStopSign(imageToProcess, out maskedImage);
 
             for (int i = 0; i < results.Count; i++)
             {
-                image = (System.Drawing.Bitmap) DrawingUtilities.DrawRectangleToImage(image, results[i].Rectangle, System.Drawing.Color.White);
+                image = (System.Drawing.Bitmap)DrawingUtilities.DrawRectangleToImage(image, results[i].Rectangle, System.Drawing.Color.White);
             }
 
             imageMask.Source = DetectionUtils.ConvertImageToBitmapSource(maskedImage);
+
+            return results;
+        }
+
+        private void DetermineAndMarkAdvisedCourse(List<SignDetector.SignResult> results)
+        {
+            CourseAdvisor.Direction advisedDirection = DetermineAdvisedCourse(results);
+            MarkAdvisedCourse(advisedDirection);
+        }
+
+        private CourseAdvisor.Direction DetermineAdvisedCourse(List<SignDetector.SignResult> results)
+        {
+            ARDroneControl.DroneData droneData = arDroneControl.GetCurrentDroneData();
+            return courseAdvisor.GetNavigationAdvice(results, droneData.Phi, droneData.Theta);
+        }
+
+        private void MarkAdvisedCourse(CourseAdvisor.Direction direction)
+        {
+            if (!direction.AdviceGiven || (direction.DeltaX == 0 && direction.DeltaY == 0))
+            {
+                imageArrow.Source = Utility.CreateBitmapImageFromImage(Properties.Resources.ArrowNoDirection);
+            }
+            else if (direction.DeltaX == 0.0 && direction.DeltaY == 1.0)
+            {
+                imageArrow.Source = Utility.CreateBitmapImageFromImage(Properties.Resources.ArrowDown);
+            }
+            else if (direction.DeltaX == 1.0 && direction.DeltaY == 1.0)
+            {
+                imageArrow.Source = Utility.CreateBitmapImageFromImage(Properties.Resources.ArrowUpRight);
+            }
+            else if (direction.DeltaX == 1.0 && direction.DeltaY == 0.0)
+            {
+                imageArrow.Source = Utility.CreateBitmapImageFromImage(Properties.Resources.ArrowRight);
+            }
+            else if (direction.DeltaX == 1.0 && direction.DeltaY == -1.0)
+            {
+                imageArrow.Source = Utility.CreateBitmapImageFromImage(Properties.Resources.ArrowDownRight);
+            }
+            else if (direction.DeltaX == 0.0 && direction.DeltaY == -1.0)
+            {
+                imageArrow.Source = Utility.CreateBitmapImageFromImage(Properties.Resources.ArrowDown);
+            }
+            else if (direction.DeltaX == -1.0 && direction.DeltaY == -1.0)
+            {
+                imageArrow.Source = Utility.CreateBitmapImageFromImage(Properties.Resources.ArrowDownLeft);
+            }
+            else if (direction.DeltaX == -1.0 && direction.DeltaY == 0)
+            {
+                imageArrow.Source = Utility.CreateBitmapImageFromImage(Properties.Resources.ArrowLeft);
+            }
+            else if (direction.DeltaX == -1.0 && direction.DeltaY == 1.0)
+            {
+                imageArrow.Source = Utility.CreateBitmapImageFromImage(Properties.Resources.ArrowUpLeft);
+            }
         }
         
         private bool CanCaptureVideo
@@ -430,7 +498,7 @@ namespace ARDrone.UI
 
         private void timerVideoUpdate_Tick(object sender, EventArgs e)
         {
-            SetNewVideoImage();
+            UpdateVideoImage();
         }
 
         private void inputManager_NewInputState(object sender, NewInputStateEventArgs e)

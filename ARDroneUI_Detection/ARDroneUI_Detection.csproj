@@ -8,7 +8,7 @@
     <ProjectGuid>{F129EF10-E832-427D-A9FA-A8AB894A1CAA}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>ARDroneDetection</RootNamespace>
+    <RootNamespace>ARDrone.UI</RootNamespace>
     <AssemblyName>ARDroneUI_Detection</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <TargetFrameworkProfile>
@@ -117,6 +117,33 @@
       <Project>{104C0B70-4D35-4090-942A-9223222D0E6C}</Project>
       <Name>ARDroneInput</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\arrowDown.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\arrowDownLeft.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\arrowDownRight.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\arrowLeft.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\arrowRight.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\arrowUp.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\arrowUpLeft.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\arrowUpRight.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\arrowNoDirection.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
