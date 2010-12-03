@@ -1,4 +1,4 @@
-﻿/* ARDrone Control .NET - An application for flying the Parrot AR drone in Windows.
+/* ARDrone Control .NET - An application for flying the Parrot AR drone in Windows.
  * Copyright (C) 2010 Thomas Endres, Stephen Hobley, Julien Vinel
  * 
  * This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation; either version 3 of the License, or (at your option) any later version.
@@ -74,8 +74,28 @@ namespace ARDrone.Control
             BottomCamera
         }
 
+        public enum LedPattern
+        {
+            BLINK_GREEN_RED = 0, 
+            BLINK_GREEN = 1,     
+            BLINK_RED = 2,       
+            BLINK_ORANGE = 3,    
+            SNAKE_GREEN_RED= 4, 
+            FIRE= 5,            
+            STANDARD=6,        
+            RED=7,             
+            GREEN=8,           
+            RED_SNAKE=9,       
+            BLANK=10,           
+            RIGHT_MISSILE=11,   
+            LEFT_MISSILE=12,    
+            DOUBLE_MISSILE=13
+        }
         [DllImport(@"..\ARDroneDLL\ARDroneDLL.dll")]
         static extern int InitDrone();
+
+        [DllImport(@"..\ARDroneDLL\ARDroneDLL.dll")]
+        static extern int SetLedAnimation(LedPattern iPattern , float fFrequency , int iDuration);
 
         [DllImport(@"..\ARDroneDLL\ARDroneDLL.dll")]
         static extern bool UpdateDrone();
@@ -172,8 +192,17 @@ namespace ARDrone.Control
 
             if (droneEnabled)
             {
-                int resultValue = InitDrone();
 
+                int resultValue = 0;
+                resultValue = InitDrone();
+                /*
+                for (int j = 0; j < 300; j++)
+                {
+                    
+                    int i = SetLedAnimation(LedPattern.BLINK_RED, 3, 10);
+                    System.Threading.Thread.Sleep(40);
+                }
+                 * */
                 if (resultValue == 0)
                 {
                     StartThread();
