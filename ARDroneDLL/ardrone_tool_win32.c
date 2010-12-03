@@ -522,6 +522,68 @@ int sdk_demo_stop=0;
 	  return VP_SUCCEEDED(res) ? 0 : -1;
 	}
 	
+
+	
+	//added by miguelb:
+	int _stdcall SetLedAnimation ( int iAnimation , float32_t fFrequency , uint32_t iDuration )
+	{
+		
+		LED_ANIMATION_IDS iAnimationID;
+
+		//miguelb: There are more elegant ways to do this, but for now this should be enough
+		switch ( iAnimation )
+
+		{
+		case 1:
+			iAnimationID = BLINK_GREEN_RED ;
+			break;
+		case 2:
+            iAnimationID = BLINK_GREEN ;
+			break;    
+		case 3:
+			iAnimationID = BLINK_RED ;
+			break;       
+		case 4:
+			iAnimationID = BLINK_ORANGE;
+			break;    
+		case 5:
+			iAnimationID = SNAKE_GREEN_RED;
+			break;
+		case 6:
+			iAnimationID = FIRE;
+			break;   
+		case 7:
+			iAnimationID = STANDARD;
+			break;
+		case 8:
+			iAnimationID = RED;
+			break;     
+		case 9:
+			iAnimationID = GREEN;
+			break;   
+		case 10:
+			iAnimationID = RED_SNAKE;
+			break;       
+		case 11:
+			iAnimationID = BLANK;
+			break;  
+		case 12:
+			iAnimationID = RIGHT_MISSILE;
+			break;   
+		case 13:
+			iAnimationID = LEFT_MISSILE;
+			break;  
+		case 14:
+			iAnimationID = DOUBLE_MISSILE;
+			break;
+		default:
+			return 0;
+		}
+		ardrone_at_set_led_animation ( iAnimationID , fFrequency , iDuration);
+		return 1;
+	}
+
+
 	BOOL _stdcall UpdateDrone()
 	{
 	   /* Keeps sending AT commands to control the drone as long as 
@@ -541,6 +603,7 @@ int sdk_demo_stop=0;
 		return 0;
 	}
 
+
 	int _stdcall SendFlatTrim()
 	{
 		ardrone_at_set_flat_trim();
@@ -557,6 +620,7 @@ int sdk_demo_stop=0;
 		printf("Sent Emergency\n");
 		return 0;
 	}
+
 
 	int _stdcall SendTakeoff()
 	{
