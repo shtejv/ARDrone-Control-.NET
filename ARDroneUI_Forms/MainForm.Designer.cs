@@ -1,4 +1,4 @@
-﻿/* ARDrone Control .NET - An application for flying the Parrot AR drone in Windows.
+/* ARDrone Control .NET - An application for flying the Parrot AR drone in Windows.
  * Copyright (C) 2010 Thomas Endres, Stephen Hobley, Julien Vinel
  * 
  * This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation; either version 3 of the License, or (at your option) any later version.
@@ -83,7 +83,12 @@ namespace ARDrone.UI
             this.labelStatusBatteryInfo = new System.Windows.Forms.Label();
             this.buttonCommandHover = new System.Windows.Forms.Button();
             this.panelRight = new System.Windows.Forms.Panel();
+            this.cbLedAnimations = new System.Windows.Forms.ComboBox();
+            this.btPlayAnimation = new System.Windows.Forms.Button();
             this.groupBoxInstrument = new System.Windows.Forms.GroupBox();
+            this.altimeterControl = new AviationInstruments.AltimeterInstrumentControl();
+            this.headingControl = new AviationInstruments.HeadingIndicatorInstrumentControl();
+            this.attitudeControl = new AviationInstruments.AttitudeIndicatorInstrumentControl();
             this.groupBoxVideoAndSnapshots = new System.Windows.Forms.GroupBox();
             this.labelVideoStatus = new System.Windows.Forms.Label();
             this.checkBoxVideoCompress = new System.Windows.Forms.CheckBox();
@@ -97,9 +102,6 @@ namespace ARDrone.UI
             this.pictureBoxVideo = new System.Windows.Forms.PictureBox();
             this.timerVideoUpdate = new System.Windows.Forms.Timer(this.components);
             this.fileDialog = new System.Windows.Forms.SaveFileDialog();
-            this.altimeterControl = new AviationInstruments.AltimeterInstrumentControl();
-            this.headingControl = new AviationInstruments.HeadingIndicatorInstrumentControl();
-            this.attitudeControl = new AviationInstruments.AttitudeIndicatorInstrumentControl();
             this.groupBoxInput.SuspendLayout();
             this.groupBoxStatus.SuspendLayout();
             this.panelRight.SuspendLayout();
@@ -137,7 +139,7 @@ namespace ARDrone.UI
             // buttonShutdown
             // 
             this.buttonShutdown.Dock = System.Windows.Forms.DockStyle.Right;
-            this.buttonShutdown.Location = new System.Drawing.Point(415, 3);
+            this.buttonShutdown.Location = new System.Drawing.Point(426, 3);
             this.buttonShutdown.Name = "buttonShutdown";
             this.buttonShutdown.Size = new System.Drawing.Size(75, 24);
             this.buttonShutdown.TabIndex = 2;
@@ -197,7 +199,7 @@ namespace ARDrone.UI
             this.labelCamera.ForeColor = System.Drawing.Color.Goldenrod;
             this.labelCamera.Location = new System.Drawing.Point(78, 3);
             this.labelCamera.Name = "labelCamera";
-            this.labelCamera.Size = new System.Drawing.Size(337, 24);
+            this.labelCamera.Size = new System.Drawing.Size(348, 24);
             this.labelCamera.TabIndex = 19;
             this.labelCamera.Text = "No picture";
             this.labelCamera.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -548,16 +550,37 @@ namespace ARDrone.UI
             // 
             // panelRight
             // 
+            this.panelRight.Controls.Add(this.cbLedAnimations);
+            this.panelRight.Controls.Add(this.btPlayAnimation);
             this.panelRight.Controls.Add(this.groupBoxInstrument);
             this.panelRight.Controls.Add(this.groupBoxVideoAndSnapshots);
             this.panelRight.Controls.Add(this.buttonInputSettings);
             this.panelRight.Controls.Add(this.groupBoxInput);
             this.panelRight.Controls.Add(this.groupBoxStatus);
             this.panelRight.Dock = System.Windows.Forms.DockStyle.Right;
-            this.panelRight.Location = new System.Drawing.Point(493, 0);
+            this.panelRight.Location = new System.Drawing.Point(504, 0);
             this.panelRight.Name = "panelRight";
-            this.panelRight.Size = new System.Drawing.Size(350, 549);
+            this.panelRight.Size = new System.Drawing.Size(350, 581);
             this.panelRight.TabIndex = 35;
+            // 
+            // cbLedAnimations
+            // 
+            this.cbLedAnimations.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cbLedAnimations.FormattingEnabled = true;
+            this.cbLedAnimations.Location = new System.Drawing.Point(3, 554);
+            this.cbLedAnimations.Name = "cbLedAnimations";
+            this.cbLedAnimations.Size = new System.Drawing.Size(135, 21);
+            this.cbLedAnimations.TabIndex = 40;
+            // 
+            // btPlayAnimation
+            // 
+            this.btPlayAnimation.Location = new System.Drawing.Point(144, 552);
+            this.btPlayAnimation.Name = "btPlayAnimation";
+            this.btPlayAnimation.Size = new System.Drawing.Size(43, 23);
+            this.btPlayAnimation.TabIndex = 39;
+            this.btPlayAnimation.Text = "Play>";
+            this.btPlayAnimation.UseVisualStyleBackColor = true;
+            this.btPlayAnimation.Click += new System.EventHandler(this.btPlayAnimation_Click);
             // 
             // groupBoxInstrument
             // 
@@ -570,6 +593,30 @@ namespace ARDrone.UI
             this.groupBoxInstrument.TabIndex = 38;
             this.groupBoxInstrument.TabStop = false;
             this.groupBoxInstrument.Text = "Instrument";
+            // 
+            // altimeterControl
+            // 
+            this.altimeterControl.Location = new System.Drawing.Point(8, 324);
+            this.altimeterControl.Name = "altimeterControl";
+            this.altimeterControl.Size = new System.Drawing.Size(140, 142);
+            this.altimeterControl.TabIndex = 5;
+            this.altimeterControl.Text = "altimeterInstrumentControl1";
+            // 
+            // headingControl
+            // 
+            this.headingControl.Location = new System.Drawing.Point(8, 175);
+            this.headingControl.Name = "headingControl";
+            this.headingControl.Size = new System.Drawing.Size(140, 142);
+            this.headingControl.TabIndex = 4;
+            this.headingControl.Text = "headingIndicatorInstrumentControl1";
+            // 
+            // attitudeControl
+            // 
+            this.attitudeControl.Location = new System.Drawing.Point(8, 18);
+            this.attitudeControl.Name = "attitudeControl";
+            this.attitudeControl.Size = new System.Drawing.Size(140, 142);
+            this.attitudeControl.TabIndex = 1;
+            this.attitudeControl.Text = "attitudeControl";
             // 
             // groupBoxVideoAndSnapshots
             // 
@@ -653,9 +700,9 @@ namespace ARDrone.UI
             this.panelBottom.Controls.Add(this.buttonCommandFlatTrim);
             this.panelBottom.Controls.Add(this.buttonCommandChangeCamera);
             this.panelBottom.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.panelBottom.Location = new System.Drawing.Point(0, 385);
+            this.panelBottom.Location = new System.Drawing.Point(0, 417);
             this.panelBottom.Name = "panelBottom";
-            this.panelBottom.Size = new System.Drawing.Size(493, 164);
+            this.panelBottom.Size = new System.Drawing.Size(504, 164);
             this.panelBottom.TabIndex = 36;
             // 
             // panelTop
@@ -668,7 +715,7 @@ namespace ARDrone.UI
             this.panelTop.Margin = new System.Windows.Forms.Padding(5);
             this.panelTop.Name = "panelTop";
             this.panelTop.Padding = new System.Windows.Forms.Padding(3);
-            this.panelTop.Size = new System.Drawing.Size(493, 30);
+            this.panelTop.Size = new System.Drawing.Size(504, 30);
             this.panelTop.TabIndex = 37;
             // 
             // panelCenter
@@ -677,7 +724,7 @@ namespace ARDrone.UI
             this.panelCenter.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panelCenter.Location = new System.Drawing.Point(0, 30);
             this.panelCenter.Name = "panelCenter";
-            this.panelCenter.Size = new System.Drawing.Size(493, 355);
+            this.panelCenter.Size = new System.Drawing.Size(504, 387);
             this.panelCenter.TabIndex = 38;
             // 
             // pictureBoxVideo
@@ -685,46 +732,23 @@ namespace ARDrone.UI
             this.pictureBoxVideo.Dock = System.Windows.Forms.DockStyle.Fill;
             this.pictureBoxVideo.Location = new System.Drawing.Point(0, 0);
             this.pictureBoxVideo.Name = "pictureBoxVideo";
-            this.pictureBoxVideo.Size = new System.Drawing.Size(493, 355);
+            this.pictureBoxVideo.Size = new System.Drawing.Size(504, 387);
             this.pictureBoxVideo.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.pictureBoxVideo.TabIndex = 0;
             this.pictureBoxVideo.TabStop = false;
+            this.pictureBoxVideo.Click += new System.EventHandler(this.pictureBoxVideo_Click);
             // 
             // timerVideoUpdate
             // 
             this.timerVideoUpdate.Interval = 50;
             this.timerVideoUpdate.Tick += new System.EventHandler(this.timerVideoUpdate_Tick);
             // 
-            // altimeterControl
-            // 
-            this.altimeterControl.Location = new System.Drawing.Point(8, 324);
-            this.altimeterControl.Name = "altimeterControl";
-            this.altimeterControl.Size = new System.Drawing.Size(140, 142);
-            this.altimeterControl.TabIndex = 5;
-            this.altimeterControl.Text = "altimeterInstrumentControl1";
-            // 
-            // headingControl
-            // 
-            this.headingControl.Location = new System.Drawing.Point(8, 175);
-            this.headingControl.Name = "headingControl";
-            this.headingControl.Size = new System.Drawing.Size(140, 142);
-            this.headingControl.TabIndex = 4;
-            this.headingControl.Text = "headingIndicatorInstrumentControl1";
-            // 
-            // attitudeControl
-            // 
-            this.attitudeControl.Location = new System.Drawing.Point(8, 18);
-            this.attitudeControl.Name = "attitudeControl";
-            this.attitudeControl.Size = new System.Drawing.Size(140, 142);
-            this.attitudeControl.TabIndex = 1;
-            this.attitudeControl.Text = "attitudeControl";
-            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.Control;
-            this.ClientSize = new System.Drawing.Size(843, 549);
+            this.ClientSize = new System.Drawing.Size(854, 581);
             this.Controls.Add(this.panelCenter);
             this.Controls.Add(this.panelTop);
             this.Controls.Add(this.panelBottom);
@@ -814,6 +838,8 @@ namespace ARDrone.UI
         private AviationInstruments.AttitudeIndicatorInstrumentControl attitudeControl;
         private AviationInstruments.HeadingIndicatorInstrumentControl headingControl;
         private AviationInstruments.AltimeterInstrumentControl altimeterControl;
+        private System.Windows.Forms.ComboBox cbLedAnimations;
+        private System.Windows.Forms.Button btPlayAnimation;
     }
 }
 
