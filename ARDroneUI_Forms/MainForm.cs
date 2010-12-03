@@ -1,4 +1,4 @@
-﻿/* ARDrone Control .NET - An application for flying the Parrot AR drone in Windows.
+/* ARDrone Control .NET - An application for flying the Parrot AR drone in Windows.
  * Copyright (C) 2010 Thomas Endres, Stephen Hobley, Julien Vinel
  * 
  * This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation; either version 3 of the License, or (at your option) any later version.
@@ -90,6 +90,10 @@ namespace ARDrone.UI
 
         public void Init()
         {
+            #region added by miguelb
+            FillAnimationCombo();
+            #endregion added by miguelb
+
             timerStatusUpdate.Start();
 
             UpdateStatus();
@@ -581,10 +585,37 @@ namespace ARDrone.UI
             this.BeginInvoke(new ErrorEventHandler(videoRecoderSync_CompressionError), this, e);
         }
 
+
+
         private void videoRecoderSync_CompressionError(object sender, ErrorEventArgs e)
         {
             MessageBox.Show(this, e.GetException().Message, "Success", MessageBoxButtons.OK, MessageBoxIcon.Error);
             UpdateInteractiveElements();
+        }
+
+        #region added by miguelb
+
+        private void FillAnimationCombo()
+        {
+            cbLedAnimations.Items.Clear();
+            foreach (object oValue in Enum.GetValues(typeof(ARDrone.Control.ARDroneControl.LedPattern)))
+                cbLedAnimations.Items.Add(oValue);
+            if (cbLedAnimations.Items.Count > 0)
+                cbLedAnimations.SelectedIndex = 0;
+
+        }
+
+        private void btPlayAnimation_Click(object sender, EventArgs e)
+        {
+            //miguelb: this is just for testing
+            if (cbLedAnimations.SelectedIndex >= 0)
+                arDroneControl.PlayAnimation((ARDrone.Control.ARDroneControl.LedPattern)cbLedAnimations.SelectedItem, 1, 5);
+        }
+        #endregion added by miguelb
+
+        private void pictureBoxVideo_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }
