@@ -91,11 +91,12 @@ namespace ARDrone.Control
             LEFT_MISSILE=12,    
             DOUBLE_MISSILE=13
         }
+
         [DllImport(@"..\ARDroneDLL\ARDroneDLL.dll")]
         static extern int InitDrone();
 
         [DllImport(@"..\ARDroneDLL\ARDroneDLL.dll")]
-        static extern int SetLedAnimation(LedPattern iPattern , float fFrequency , int iDuration);
+        static extern int SetLedAnimation(LedPattern Pattern , float Frequency , int Duration);
 
         [DllImport(@"..\ARDroneDLL\ARDroneDLL.dll")]
         static extern bool UpdateDrone();
@@ -143,7 +144,7 @@ namespace ARDrone.Control
         static extern int SendLand();
 
         [DllImport(@"..\ARDroneDLL\ARDroneDLL.dll")]
-        static extern int SetProgressCmd(bool bhovering, float roll, float pitch, float gaz, float yaw);
+        static extern int SetProgressCmd(bool hovering, float roll, float pitch, float gaz, float yaw);
 
         [DllImport(@"..\ARDroneDLL\ARDroneDLL.dll")]
         static extern int ChangeToFrontCamera();
@@ -195,14 +196,6 @@ namespace ARDrone.Control
 
                 int resultValue = 0;
                 resultValue = InitDrone();
-                /*
-                for (int j = 0; j < 300; j++)
-                {
-                    
-                    int i = SetLedAnimation(LedPattern.BLINK_RED, 3, 10);
-                    System.Threading.Thread.Sleep(40);
-                }
-                 * */
                 if (resultValue == 0)
                 {
                     StartThread();
@@ -436,6 +429,11 @@ namespace ARDrone.Control
             }
 
             return droneEnabled ? SendCommand(false, roll, pitch, yaw, gaz) == 0 : true;
+        }
+
+        public void PlayLedAnimation(LedPattern pattern, float frequency, int duration)
+        {
+            SetLedAnimation(pattern, frequency, duration);
         }
 
         private int SendCommand(bool hovering, float roll, float pitch, float yaw, float gaz)
