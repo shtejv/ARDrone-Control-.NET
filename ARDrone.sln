@@ -46,6 +46,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ARDroneUI_Detection", "ARDr
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestUI_Detection", "TestUI_Detection\TestUI_Detection.csproj", "{6BC2B5F3-3569-4125-9A83-463E8D53F966}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ARDroneDLL_JNI", "ARDroneDLL_JNI\ARDroneDLL_JNI.vcxproj", "{276BAC19-A87A-415C-B46F-4C9AAF057533}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -296,6 +298,27 @@ Global
 		{6BC2B5F3-3569-4125-9A83-463E8D53F966}.Release|x64.ActiveCfg = Release|x86
 		{6BC2B5F3-3569-4125-9A83-463E8D53F966}.Release|x86.ActiveCfg = Release|x86
 		{6BC2B5F3-3569-4125-9A83-463E8D53F966}.Release|x86.Build.0 = Release|x86
+		{276BAC19-A87A-415C-B46F-4C9AAF057533}.Debug|Any CPU.ActiveCfg = Debug|Win32
+		{276BAC19-A87A-415C-B46F-4C9AAF057533}.Debug|Mixed Platforms.ActiveCfg = Debug|Win32
+		{276BAC19-A87A-415C-B46F-4C9AAF057533}.Debug|Mixed Platforms.Build.0 = Debug|Win32
+		{276BAC19-A87A-415C-B46F-4C9AAF057533}.Debug|Win32.ActiveCfg = Debug|Win32
+		{276BAC19-A87A-415C-B46F-4C9AAF057533}.Debug|Win32.Build.0 = Debug|Win32
+		{276BAC19-A87A-415C-B46F-4C9AAF057533}.Debug|x64.ActiveCfg = Debug|Win32
+		{276BAC19-A87A-415C-B46F-4C9AAF057533}.Debug|x86.ActiveCfg = Debug|Win32
+		{276BAC19-A87A-415C-B46F-4C9AAF057533}.Profile|Any CPU.ActiveCfg = Release|Win32
+		{276BAC19-A87A-415C-B46F-4C9AAF057533}.Profile|Mixed Platforms.ActiveCfg = Release|Win32
+		{276BAC19-A87A-415C-B46F-4C9AAF057533}.Profile|Mixed Platforms.Build.0 = Release|Win32
+		{276BAC19-A87A-415C-B46F-4C9AAF057533}.Profile|Win32.ActiveCfg = Release|Win32
+		{276BAC19-A87A-415C-B46F-4C9AAF057533}.Profile|Win32.Build.0 = Release|Win32
+		{276BAC19-A87A-415C-B46F-4C9AAF057533}.Profile|x64.ActiveCfg = Release|Win32
+		{276BAC19-A87A-415C-B46F-4C9AAF057533}.Profile|x86.ActiveCfg = Release|Win32
+		{276BAC19-A87A-415C-B46F-4C9AAF057533}.Release|Any CPU.ActiveCfg = Release|Win32
+		{276BAC19-A87A-415C-B46F-4C9AAF057533}.Release|Mixed Platforms.ActiveCfg = Release|Win32
+		{276BAC19-A87A-415C-B46F-4C9AAF057533}.Release|Mixed Platforms.Build.0 = Release|Win32
+		{276BAC19-A87A-415C-B46F-4C9AAF057533}.Release|Win32.ActiveCfg = Release|Win32
+		{276BAC19-A87A-415C-B46F-4C9AAF057533}.Release|Win32.Build.0 = Release|Win32
+		{276BAC19-A87A-415C-B46F-4C9AAF057533}.Release|x64.ActiveCfg = Release|Win32
+		{276BAC19-A87A-415C-B46F-4C9AAF057533}.Release|x86.ActiveCfg = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
