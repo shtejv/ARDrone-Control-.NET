@@ -20,3 +20,4 @@ EXPORTS
    SendLand @18
    SetProgressCmd @19
    GetCurrentImage @20
+   TestLibrary @21
