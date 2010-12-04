@@ -20,4 +20,5 @@ EXPORTS
    SendLand @18
    SetProgressCmd @19
    GetCurrentImage @20
+   SetLedAnimation @22
    TestLibrary @21
