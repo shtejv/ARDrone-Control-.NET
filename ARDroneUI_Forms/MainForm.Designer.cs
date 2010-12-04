@@ -83,8 +83,8 @@ namespace ARDrone.UI
             this.labelStatusBatteryInfo = new System.Windows.Forms.Label();
             this.buttonCommandHover = new System.Windows.Forms.Button();
             this.panelRight = new System.Windows.Forms.Panel();
-            this.cbLedAnimations = new System.Windows.Forms.ComboBox();
-            this.btPlayAnimation = new System.Windows.Forms.Button();
+            this.comboBoxLedAnimations = new System.Windows.Forms.ComboBox();
+            this.buttonPlayLedAnimation = new System.Windows.Forms.Button();
             this.groupBoxInstrument = new System.Windows.Forms.GroupBox();
             this.altimeterControl = new AviationInstruments.AltimeterInstrumentControl();
             this.headingControl = new AviationInstruments.HeadingIndicatorInstrumentControl();
@@ -550,8 +550,8 @@ namespace ARDrone.UI
             // 
             // panelRight
             // 
-            this.panelRight.Controls.Add(this.cbLedAnimations);
-            this.panelRight.Controls.Add(this.btPlayAnimation);
+            this.panelRight.Controls.Add(this.comboBoxLedAnimations);
+            this.panelRight.Controls.Add(this.buttonPlayLedAnimation);
             this.panelRight.Controls.Add(this.groupBoxInstrument);
             this.panelRight.Controls.Add(this.groupBoxVideoAndSnapshots);
             this.panelRight.Controls.Add(this.buttonInputSettings);
@@ -563,24 +563,24 @@ namespace ARDrone.UI
             this.panelRight.Size = new System.Drawing.Size(350, 581);
             this.panelRight.TabIndex = 35;
             // 
-            // cbLedAnimations
+            // comboBoxLedAnimations
             // 
-            this.cbLedAnimations.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cbLedAnimations.FormattingEnabled = true;
-            this.cbLedAnimations.Location = new System.Drawing.Point(3, 554);
-            this.cbLedAnimations.Name = "cbLedAnimations";
-            this.cbLedAnimations.Size = new System.Drawing.Size(135, 21);
-            this.cbLedAnimations.TabIndex = 40;
+            this.comboBoxLedAnimations.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboBoxLedAnimations.FormattingEnabled = true;
+            this.comboBoxLedAnimations.Location = new System.Drawing.Point(3, 554);
+            this.comboBoxLedAnimations.Name = "comboBoxLedAnimations";
+            this.comboBoxLedAnimations.Size = new System.Drawing.Size(135, 21);
+            this.comboBoxLedAnimations.TabIndex = 40;
             // 
-            // btPlayAnimation
+            // buttonPlayLedAnimation
             // 
-            this.btPlayAnimation.Location = new System.Drawing.Point(144, 552);
-            this.btPlayAnimation.Name = "btPlayAnimation";
-            this.btPlayAnimation.Size = new System.Drawing.Size(43, 23);
-            this.btPlayAnimation.TabIndex = 39;
-            this.btPlayAnimation.Text = "Play>";
-            this.btPlayAnimation.UseVisualStyleBackColor = true;
-            this.btPlayAnimation.Click += new System.EventHandler(this.btPlayAnimation_Click);
+            this.buttonPlayLedAnimation.Location = new System.Drawing.Point(144, 552);
+            this.buttonPlayLedAnimation.Name = "buttonPlayLedAnimation";
+            this.buttonPlayLedAnimation.Size = new System.Drawing.Size(43, 23);
+            this.buttonPlayLedAnimation.TabIndex = 39;
+            this.buttonPlayLedAnimation.Text = "Play>";
+            this.buttonPlayLedAnimation.UseVisualStyleBackColor = true;
+            this.buttonPlayLedAnimation.Click += new System.EventHandler(this.buttonPlayLedAnimation_Click);
             // 
             // groupBoxInstrument
             // 
@@ -838,8 +838,8 @@ namespace ARDrone.UI
         private AviationInstruments.AttitudeIndicatorInstrumentControl attitudeControl;
         private AviationInstruments.HeadingIndicatorInstrumentControl headingControl;
         private AviationInstruments.AltimeterInstrumentControl altimeterControl;
-        private System.Windows.Forms.ComboBox cbLedAnimations;
-        private System.Windows.Forms.Button btPlayAnimation;
+        private System.Windows.Forms.ComboBox comboBoxLedAnimations;
+        private System.Windows.Forms.Button buttonPlayLedAnimation;
     }
 }
 

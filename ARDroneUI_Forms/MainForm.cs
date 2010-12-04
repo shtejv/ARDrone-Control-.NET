@@ -90,14 +90,26 @@ namespace ARDrone.UI
 
         public void Init()
         {
-            #region added by miguelb
-            FillAnimationCombo();
-            #endregion added by miguelb
+            FillAnimationComboBox();
 
             timerStatusUpdate.Start();
 
             UpdateStatus();
             UpdateInteractiveElements();
+        }
+
+        private void FillAnimationComboBox()
+        {
+            comboBoxLedAnimations.Items.Clear();
+
+            foreach (object oValue in Enum.GetValues(typeof(ARDrone.Control.ARDroneControl.LedPattern)))
+            {
+                comboBoxLedAnimations.Items.Add(oValue);
+            }
+            if (comboBoxLedAnimations.Items.Count > 0)
+            {
+                comboBoxLedAnimations.SelectedIndex = 0;
+            }
         }
 
         private void Connect()
@@ -593,25 +605,13 @@ namespace ARDrone.UI
             UpdateInteractiveElements();
         }
 
-        #region added by miguelb
-
-        private void FillAnimationCombo()
+        private void buttonPlayLedAnimation_Click(object sender, EventArgs e)
         {
-            cbLedAnimations.Items.Clear();
-            foreach (object oValue in Enum.GetValues(typeof(ARDrone.Control.ARDroneControl.LedPattern)))
-                cbLedAnimations.Items.Add(oValue);
-            if (cbLedAnimations.Items.Count > 0)
-                cbLedAnimations.SelectedIndex = 0;
-
+            if (comboBoxLedAnimations.SelectedIndex >= 0)
+            {
+                arDroneControl.PlayLedAnimation((ARDrone.Control.ARDroneControl.LedPattern)comboBoxLedAnimations.SelectedItem, 1, 5);
+            }
         }
-
-        private void btPlayAnimation_Click(object sender, EventArgs e)
-        {
-            //miguelb: this is just for testing
-            if (cbLedAnimations.SelectedIndex >= 0)
-                arDroneControl.PlayAnimation((ARDrone.Control.ARDroneControl.LedPattern)cbLedAnimations.SelectedItem, 1, 5);
-        }
-        #endregion added by miguelb
 
         private void pictureBoxVideo_Click(object sender, EventArgs e)
         {
