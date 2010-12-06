@@ -201,7 +201,7 @@ namespace ARDrone.Input
         {
             for (int i = 0; i < inputDevices.Count; i++)
             {
-                if (wiimote.ID.ToString() == inputDevices[i].DeviceInstanceId)
+                if (wiimote.HIDDevicePath.ToString() == inputDevices[i].DeviceInstanceId)
                 {
                     return true;
                 }

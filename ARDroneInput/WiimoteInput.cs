@@ -163,7 +163,7 @@ namespace ARDrone.Input
             get
             {
                 if (wiimote == null) { return string.Empty; }
-                else { return wiimote.HIDDevicePath; }
+                else { return "WiiMote"; }
             }
         }
 
@@ -181,7 +181,7 @@ namespace ARDrone.Input
             get
             {
                 if (wiimote == null) { return string.Empty; }
-                else { return wiimote.ID.ToString(); }
+                else { return wiimote.HIDDevicePath; }
             }
         }
     }
