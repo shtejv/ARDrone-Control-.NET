@@ -43,10 +43,10 @@ namespace ARDrone.Input
 
         public WiimoteInput(Wiimote wiimote) : base()
         {
+            wiimote.Connect();
+
             wiimote.WiimoteChanged += wiimote_WiimoteChanged;
             wiimote.WiimoteExtensionChanged += wiimote_WiimoteExtensionChanged;
-
-            wiimote.Connect();
 
             if (wiimote.WiimoteState.ExtensionType != ExtensionType.BalanceBoard)
             {
@@ -146,6 +146,9 @@ namespace ARDrone.Input
 
         void wiimote_WiimoteExtensionChanged(object sender, WiimoteExtensionChangedEventArgs e)
         {
+            wiimote.WiimoteExtensionChanged += wiimote_WiimoteExtensionChanged;
+
+            //wiimote.Connect();
             // Nothing to do (for now)
         }
 
