@@ -26,7 +26,11 @@ A few quick tips to get the app up and running:
     <DXSDKDir></DXSDKDir>
 	<SDLDir></SDLDir>
     Link to the main directories where you installed the libraries (no subdirectories needed)
-  These should point to the respective folders on your harddrive. 
+  These should point to the respective folders on your harddrive.
+- For the ARDrone JNI bridge project, you will also need to set properties in the properties.props file:
+    <JDKDir></JDKDir>
+  For this to work, you will need to download and install a JDK: http://www.oracle.com/technetwork/java/javase/downloads/index.html
+  Afterwards, point the JDKDir to the location where you installed the JDK to.
 - You need to disable the loader lock exception in Visual Studio (Debug -> Exceptions -> Managed Debugging assistents -> Disable the "Loader lock" checkbox)
 
 Once you have completed these steps, the solution should compile.
