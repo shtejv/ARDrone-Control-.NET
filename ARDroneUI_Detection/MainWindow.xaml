@@ -104,7 +104,11 @@
                 
                 <Image Name="imageVideo" Stretch="Fill" Grid.Column="0" />
                 <Image Name="imageMask" Stretch="Fill" Grid.Column="1" />
-                <Image Name="imageArrow" Stretch="Fill" Grid.Column="2" Height="200" VerticalAlignment="Center" />
+                <Image Name="imageArrow" Stretch="Fill" Grid.Column="2" Height="200" VerticalAlignment="Top" />
+                <CheckBox Content="Invert" Grid.Column="2" Height="16" HorizontalAlignment="Left" Margin="7,235,0,0" Name="checkBoxInvert" VerticalAlignment="Top" Checked="checkBoxInvert_Checked" IsChecked="True" />
+                <Slider Grid.Column="2" Height="23" HorizontalAlignment="Left" Margin="6,206,0,0" Name="sliderMin" VerticalAlignment="Top" Width="80" ValueChanged="sliderMin_ValueChanged" Value="20" Maximum="180" />
+                <Slider Height="23" HorizontalAlignment="Right" Margin="0,206,19,0" Name="sliderMax" VerticalAlignment="Top" Width="80" Grid.Column="2" ValueChanged="sliderMax_ValueChanged" Value="160" Maximum="180" />
+                <Label Content="20..160" Grid.Column="2" Height="28" HorizontalAlignment="Left" Margin="135,235,0,0" Name="labelInfoSlider" VerticalAlignment="Top" />
             </Grid>
         </DockPanel>
     </Grid>

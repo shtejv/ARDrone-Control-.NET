@@ -117,6 +117,10 @@
       <Project>{104C0B70-4D35-4090-942A-9223222D0E6C}</Project>
       <Name>ARDroneInput</Name>
     </ProjectReference>
+    <ProjectReference Include="..\DirectionControl\DirectionControl.csproj">
+      <Project>{625B51D7-FAB2-48F9-86D9-11F82EF9FB96}</Project>
+      <Name>DirectionControl</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\arrowDown.png" />

@@ -540,5 +540,36 @@ namespace ARDrone.UI
         {
 
         }
+
+        private int minValue = 12;
+        private int maxValue = 160;
+
+        private void checkBoxInvert_Checked(object sender, RoutedEventArgs e)
+        {
+            if (checkBoxInvert != null && signDetector != null)
+            {
+                signDetector.invertChannel = checkBoxInvert.IsChecked == true ? true : false;
+            }
+        }
+
+        private void sliderMin_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            if (sliderMin != null && labelInfoSlider != null && signDetector != null)
+            {
+                minValue = (int)sliderMin.Value;
+                signDetector.channelSliderMin = minValue;
+                labelInfoSlider.Content = minValue.ToString() + ".." + maxValue.ToString();
+            }
+        }
+
+        private void sliderMax_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            if (sliderMax != null && labelInfoSlider != null && signDetector != null)
+            {
+                maxValue = (int)sliderMax.Value;
+                signDetector.channelSliderMax = maxValue;
+                labelInfoSlider.Content = minValue.ToString() + ".." + maxValue.ToString();
+            }
+        }
     }
 }

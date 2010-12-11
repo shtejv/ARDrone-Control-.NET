@@ -51,6 +51,9 @@ namespace ARDrone.Detection
         private MemStorage octagonStorage;
         private Contour<Point> octagonContour;
 
+        public int channelSliderMin = 20; public int channelSliderMax = 160; public bool invertChannel = true;
+
+
         public SignDetector()
         {
             CreateSurfaceTracker();
@@ -73,7 +76,7 @@ namespace ARDrone.Detection
             }
         }
 
-        private static Image<Gray, Byte> GetRedPixelMask(Image<Bgr, byte> image)
+        private Image<Gray, Byte> GetRedPixelMask(Image<Bgr, byte> image)
         {
             using (Image<Hsv, Byte> hsv = image.Convert<Hsv, Byte>())
             {
@@ -87,17 +90,20 @@ namespace ARDrone.Detection
             }
         }
 
-        private static void ApplyMasks(Image<Gray, Byte>[] channels)
+        private void ApplyMasks(Image<Gray, Byte>[] channels)
         {
             //channels[0] is the mask for hue less than 20 or larger than 160
-            CvInvoke.cvInRangeS(channels[0], new MCvScalar(20), new MCvScalar(160), channels[0]);
-            channels[0]._Not();
+            CvInvoke.cvInRangeS(channels[0], new MCvScalar(channelSliderMin), new MCvScalar(channelSliderMax), channels[0]);
+            if (invertChannel)
+            {
+                channels[0]._Not();
+            }
 
             //channels[1] is the mask for satuation of at least 10, this is mainly used to filter out white pixels
             channels[1]._ThresholdBinary(new Gray(10), new Gray(255.0));
         }
 
-        private static Image<Gray, Byte> CombineChannelMasks(Image<Gray, Byte>[] channels)
+        private Image<Gray, Byte> CombineChannelMasks(Image<Gray, Byte>[] channels)
         {
             Image<Gray, Byte> finalChannel = channels[0].Clone();
             CvInvoke.cvAnd(channels[0], channels[1], finalChannel, IntPtr.Zero);
@@ -105,7 +111,7 @@ namespace ARDrone.Detection
             return finalChannel;
         }
 
-        private static void DisposeChannels(Image<Gray, Byte>[] channels)
+        private void DisposeChannels(Image<Gray, Byte>[] channels)
         {
             channels[0].Dispose();
             channels[1].Dispose();
@@ -183,7 +189,7 @@ namespace ARDrone.Detection
 
             int matchedFeatureCount = GetMatchedFeatureCount(contourImage);
 
-            if (matchedFeatureCount >= 5)
+            if (matchedFeatureCount >= 3)
             {
                 result = new SignResult(contourImage, contourBoundingRectangle);
             }
