@@ -46,3 +46,14 @@ This software uses the following libraries:
 - Aviation Instruments:		http://www.codeproject.com/KB/miscctrl/Avionic_Instruments.aspx
 - AviFile Library:			http://www.codeproject.com/KB/audio-video/avifilewrapper.aspx
 
+!!! IMPORTANT INFO for Windows XP users !!!
+
+Please uncomment the line
+
+"#define USE_WINDOWS_CONDITION_VARIABLES"
+
+in vp_os_signal_dep.h.
+Otherwise, you will get a DLLNotFoundException when pressing the startup button.
+
+
+
