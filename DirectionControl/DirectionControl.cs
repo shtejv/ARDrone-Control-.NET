@@ -11,9 +11,9 @@ namespace DirectionControl
 {
     public partial class DirectionControl : UserControl
     {
-        public enum Direction { Up, UpRight, Right, DownRight, Down, DownLeft, Left, UpLeft };
+        public enum Direction { None, Up, UpRight, Right, DownRight, Down, DownLeft, Left, UpLeft };
 
-        public Direction currentDirection = Direction.Up;
+        public Direction currentDirection = Direction.None;
 
         public DirectionControl()
         {
@@ -38,6 +38,9 @@ namespace DirectionControl
         {
             switch (currentDirection)
             {
+                case Direction.None:
+                    pictureBoxArrow.Image = Properties.Resources.ArrowNoDirection;
+                    break;
                 case Direction.Up:
                     pictureBoxArrow.Image = Properties.Resources.ArrowUp;
                     break;
