@@ -643,9 +643,8 @@ int sdk_demo_stop=0;
 		return 3;
 	}
 
-	int _stdcall SetProgressCmd(BOOL bhovering, float roll, float pitch, float gaz, float yaw)
-	{
-		ardrone_at_set_progress_cmd((hovering)? 0:1, roll, pitch, gaz, yaw);
+	int _stdcall SetProgressCmd(BOOL bhovering, float roll, float pitch, float gaz, float yaw) {
+		ardrone_at_set_progress_cmd((bhovering)? 0:1, roll, pitch, gaz, yaw);
 		printf("Sent Progress Cmd\n");
 		return 0;
 	}
