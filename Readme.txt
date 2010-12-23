@@ -48,9 +48,9 @@ This software uses the following libraries:
 
 !!! IMPORTANT INFO for Windows XP users !!!
 
-Please uncomment the line
+Please comment the line
 
-"#define USE_WINDOWS_CONDITION_VARIABLES"
+"define USE_WINDOWS_CONDITION_VARIABLES"
 
 in vp_os_signal_dep.h.
 Otherwise, you will get a DLLNotFoundException when pressing the startup button.
