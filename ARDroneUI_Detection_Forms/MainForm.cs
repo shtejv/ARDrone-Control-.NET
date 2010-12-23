@@ -28,9 +28,6 @@ namespace ARDroneUI_Detection_Forms
     {
         private delegate void OutputEventHandler(String output);
 
-        //private DispatcherTimer timerStatusUpdate;
-        //private DispatcherTimer timerVideoUpdate;
-
         private InputManager inputManager = null;
         private ARDroneControl arDroneControl = null;
 
@@ -412,12 +409,12 @@ namespace ARDroneUI_Detection_Forms
 
         // Event handlers
 
-        private void Form_Load(object sender, EventArgs e)
+        private void MainForm_Load(object sender, EventArgs e)
         {
             Init();
         }
 
-        private void Form_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
         {
             DisposeControl();
             Disconnect();

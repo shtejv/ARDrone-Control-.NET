@@ -492,6 +492,8 @@
             this.Controls.Add(this.directionControl);
             this.Name = "MainForm";
             this.Text = "UI Detection";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainForm_FormClosing);
+            this.Load += new System.EventHandler(this.MainForm_Load);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxVideo)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxMask)).EndInit();
             this.groupBoxStatus.ResumeLayout(false);
