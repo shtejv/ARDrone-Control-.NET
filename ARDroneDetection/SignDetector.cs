@@ -7,12 +7,13 @@
  * 
  * You should have received a copy of the GNU General Public License along with this program; if not, see <http://www.gnu.org/licenses/>.
  */
-
 using System;
 using System.Collections.Generic;
+using System.Runtime.ExceptionServices;
 using System.Text;
 using System.Drawing;
 using Emgu.CV;
+using Emgu.CV.Features2D;
 using Emgu.CV.Structure;
 using Emgu.Util;
 using System.Diagnostics;
@@ -47,7 +48,7 @@ namespace ARDrone.Detection
         #endregion
 
         private SURFTracker surfaceTracker;
-        private MCvSURFParams surfaceParameters;
+        private SURFDetector surfaceParameters;
         private MemStorage octagonStorage;
         private Contour<Point> octagonContour;
 
@@ -68,7 +69,7 @@ namespace ARDrone.Detection
 
         private void CreateSurfaceTracker()
         {
-            surfaceParameters = new MCvSURFParams(500, false);
+            surfaceParameters = new SURFDetector(500, false);
             using (Image<Bgr, Byte> stopSignModel = new Image<Bgr, Byte>(Properties.Resources.SignModel))
             using (Image<Gray, Byte> redMask = GetRedPixelMask(stopSignModel))
             {
@@ -173,6 +174,8 @@ namespace ARDrone.Detection
                         if (result != null) { results.Add(result); }
                     }
                 }
+
+                Console.WriteLine(results.Count);
             }
 
             return results;
@@ -225,6 +228,7 @@ namespace ARDrone.Detection
             return contourImage;
         }
 
+        [HandleProcessCorruptedStateExceptions]
         private int GetMatchedFeatureCount(Image<Gray, Byte> contourImage)
         {
             SURFTracker.MatchedSURFFeature[] matchedFeatures;
@@ -232,6 +236,11 @@ namespace ARDrone.Detection
             {
                 SURFFeature[] features = contourImage.ExtractSURF(ref surfaceParameters);
                 matchedFeatures = surfaceTracker.MatchFeature(features, 2, 20);
+            }
+            catch (AccessViolationException)
+            {
+                Console.WriteLine("AvE");
+                return 0;
             }
             catch (Exception)
             {

@@ -82,6 +82,7 @@
             this.pictureBoxVideo.Location = new System.Drawing.Point(11, 37);
             this.pictureBoxVideo.Name = "pictureBoxVideo";
             this.pictureBoxVideo.Size = new System.Drawing.Size(320, 240);
+            this.pictureBoxVideo.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.pictureBoxVideo.TabIndex = 0;
             this.pictureBoxVideo.TabStop = false;
             // 
@@ -90,6 +91,7 @@
             this.pictureBoxMask.Location = new System.Drawing.Point(337, 37);
             this.pictureBoxMask.Name = "pictureBoxMask";
             this.pictureBoxMask.Size = new System.Drawing.Size(320, 240);
+            this.pictureBoxMask.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.pictureBoxMask.TabIndex = 1;
             this.pictureBoxMask.TabStop = false;
             // 
@@ -98,7 +100,7 @@
             this.textBoxOutput.BackColor = System.Drawing.SystemColors.MenuText;
             this.textBoxOutput.Font = new System.Drawing.Font("Courier New", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.textBoxOutput.ForeColor = System.Drawing.Color.Yellow;
-            this.textBoxOutput.Location = new System.Drawing.Point(6, 392);
+            this.textBoxOutput.Location = new System.Drawing.Point(11, 328);
             this.textBoxOutput.Multiline = true;
             this.textBoxOutput.Name = "textBoxOutput";
             this.textBoxOutput.ReadOnly = true;
@@ -107,7 +109,7 @@
             // 
             // buttonCommandEmergency
             // 
-            this.buttonCommandEmergency.Location = new System.Drawing.Point(370, 461);
+            this.buttonCommandEmergency.Location = new System.Drawing.Point(375, 397);
             this.buttonCommandEmergency.Name = "buttonCommandEmergency";
             this.buttonCommandEmergency.Size = new System.Drawing.Size(107, 23);
             this.buttonCommandEmergency.TabIndex = 36;
@@ -117,7 +119,7 @@
             // 
             // buttonCommandHover
             // 
-            this.buttonCommandHover.Location = new System.Drawing.Point(370, 421);
+            this.buttonCommandHover.Location = new System.Drawing.Point(375, 357);
             this.buttonCommandHover.Name = "buttonCommandHover";
             this.buttonCommandHover.Size = new System.Drawing.Size(107, 23);
             this.buttonCommandHover.TabIndex = 40;
@@ -127,7 +129,7 @@
             // 
             // buttonCommandTakeoff
             // 
-            this.buttonCommandTakeoff.Location = new System.Drawing.Point(370, 396);
+            this.buttonCommandTakeoff.Location = new System.Drawing.Point(375, 332);
             this.buttonCommandTakeoff.Name = "buttonCommandTakeoff";
             this.buttonCommandTakeoff.Size = new System.Drawing.Size(107, 23);
             this.buttonCommandTakeoff.TabIndex = 38;
@@ -137,7 +139,7 @@
             // 
             // buttonCommandFlatTrim
             // 
-            this.buttonCommandFlatTrim.Location = new System.Drawing.Point(370, 490);
+            this.buttonCommandFlatTrim.Location = new System.Drawing.Point(375, 426);
             this.buttonCommandFlatTrim.Name = "buttonCommandFlatTrim";
             this.buttonCommandFlatTrim.Size = new System.Drawing.Size(107, 23);
             this.buttonCommandFlatTrim.TabIndex = 39;
@@ -147,7 +149,7 @@
             // 
             // buttonCommandChangeCamera
             // 
-            this.buttonCommandChangeCamera.Location = new System.Drawing.Point(370, 534);
+            this.buttonCommandChangeCamera.Location = new System.Drawing.Point(375, 470);
             this.buttonCommandChangeCamera.Name = "buttonCommandChangeCamera";
             this.buttonCommandChangeCamera.Size = new System.Drawing.Size(107, 23);
             this.buttonCommandChangeCamera.TabIndex = 37;
@@ -177,7 +179,7 @@
             this.groupBoxStatus.Controls.Add(this.labelStatusAltitudeInfo);
             this.groupBoxStatus.Controls.Add(this.labelStatusCameraInfo);
             this.groupBoxStatus.Controls.Add(this.labelStatusBatteryInfo);
-            this.groupBoxStatus.Location = new System.Drawing.Point(775, 12);
+            this.groupBoxStatus.Location = new System.Drawing.Point(663, 10);
             this.groupBoxStatus.Name = "groupBoxStatus";
             this.groupBoxStatus.Size = new System.Drawing.Size(184, 302);
             this.groupBoxStatus.TabIndex = 41;
@@ -394,9 +396,9 @@
             this.groupBoxOtherStuff.Controls.Add(this.labelThreshold);
             this.groupBoxOtherStuff.Controls.Add(this.sliderThresholdMax);
             this.groupBoxOtherStuff.Controls.Add(this.sliderThresholdMin);
-            this.groupBoxOtherStuff.Location = new System.Drawing.Point(699, 369);
+            this.groupBoxOtherStuff.Location = new System.Drawing.Point(488, 318);
             this.groupBoxOtherStuff.Name = "groupBoxOtherStuff";
-            this.groupBoxOtherStuff.Size = new System.Drawing.Size(261, 210);
+            this.groupBoxOtherStuff.Size = new System.Drawing.Size(261, 199);
             this.groupBoxOtherStuff.TabIndex = 44;
             this.groupBoxOtherStuff.TabStop = false;
             this.groupBoxOtherStuff.Text = "Other Stuff";
@@ -404,6 +406,8 @@
             // checkBoxThresholdInvert
             // 
             this.checkBoxThresholdInvert.AutoSize = true;
+            this.checkBoxThresholdInvert.Checked = true;
+            this.checkBoxThresholdInvert.CheckState = System.Windows.Forms.CheckState.Checked;
             this.checkBoxThresholdInvert.Location = new System.Drawing.Point(21, 96);
             this.checkBoxThresholdInvert.Name = "checkBoxThresholdInvert";
             this.checkBoxThresholdInvert.Size = new System.Drawing.Size(53, 17);
@@ -466,16 +470,17 @@
             // directionControl
             // 
             this.directionControl.ArrowDirection = DirectionControl.DirectionControl.Direction.Up;
-            this.directionControl.Location = new System.Drawing.Point(543, 369);
+            this.directionControl.Location = new System.Drawing.Point(755, 318);
             this.directionControl.Name = "directionControl";
             this.directionControl.Size = new System.Drawing.Size(150, 150);
             this.directionControl.TabIndex = 47;
+            this.directionControl.Visible = false;
             // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(971, 593);
+            this.ClientSize = new System.Drawing.Size(913, 521);
             this.Controls.Add(this.labelCamera);
             this.Controls.Add(this.buttonConnect);
             this.Controls.Add(this.buttonShutdown);

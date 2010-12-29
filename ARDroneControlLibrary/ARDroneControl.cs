@@ -193,7 +193,6 @@ namespace ARDrone.Control
 
             if (droneEnabled)
             {
-
                 int resultValue = 0;
                 resultValue = InitDrone();
                 if (resultValue == 0)

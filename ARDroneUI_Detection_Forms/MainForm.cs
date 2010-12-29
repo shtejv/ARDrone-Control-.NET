@@ -49,6 +49,10 @@ namespace ARDroneUI_Detection_Forms
 
             signDetector = new SignDetector();
             courseAdvisor = new CourseAdvisor(arDroneControl.BottomCameraPictureSize, arDroneControl.BottomCameraFieldOfViewDegrees);
+
+            signDetector.channelSliderMin = sliderThresholdMin.Value;
+            signDetector.channelSliderMax = sliderThresholdMax.Value;
+            signDetector.invertChannel = checkBoxThresholdInvert.Checked;
         }
 
         public void DisposeControl()
@@ -341,8 +345,7 @@ namespace ARDroneUI_Detection_Forms
                 image = (System.Drawing.Bitmap)DrawingUtilities.DrawRectangleToImage(image, results[i].Rectangle, System.Drawing.Color.White);
             }
 
-            //TODO
-            //imageMask.Source = DetectionUtils.ConvertImageToBitmapSource(maskedImage);
+            pictureBoxMask.Image = maskedImage.Bitmap;
 
             return results;
         }

@@ -10,6 +10,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows;
@@ -34,6 +35,11 @@ namespace ARDrone.Detection
                 DeleteObject(pointer);
                 return bitmapSource;
             }
+        }
+
+        public static Bitmap ConvertImageToBitmap(IImage image)
+        {
+            return image.Bitmap;
         }
     }
 }
