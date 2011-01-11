@@ -427,7 +427,7 @@ namespace ARDrone.Control
                 return false;
             }
 
-            return droneEnabled ? SendCommand(false, roll, pitch, yaw, gaz) == 0 : true;
+            return droneEnabled ? SendCommand(false, roll / 4.0f, pitch / 4.0f, yaw, gaz) == 0 : true;
         }
 
         public void PlayLedAnimation(LedPattern pattern, float frequency, int duration)

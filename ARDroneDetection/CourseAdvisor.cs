@@ -52,25 +52,24 @@ namespace ARDrone.Detection
             this.fieldOfView = fieldOfView;
         }
 
-        public Direction GetNavigationAdvice(List<SignDetector.SignResult> results, double psi, double theta)
+        public Direction GetNavigationAdvice(List<SignDetector.SignResult> results, double pitch, double roll)
         {
             if (results.Count == 0 || results.Count > 1)
             {
                 return new CourseAdvisor.Direction(false);
             }
 
-            return GetAdviceForSignAt(results[0].Rectangle, psi, theta);
+            return GetAdviceForSignAt(results[0].Rectangle, pitch, roll);
         }
 
-        private Direction GetAdviceForSignAt(Rectangle rectangle, double psi, double theta)
+        private Direction GetAdviceForSignAt(Rectangle rectangle, double pitch, double roll)
         {
-            Console.WriteLine(theta);
+            Console.WriteLine(roll);
 
             Point middleOfSign = getMiddle(rectangle);
 
-            float xAdvice = 0.0f;
-            float yAdvice = GetAdviceForCoordinates(middleOfSign.X, pictureDimensions.Width, theta);
-            //float yAdvice = GetAdviceForCoordinates(middleOfSign.Y, pictureDimensions.Height, psi);
+            float xAdvice = GetAdviceForCoordinates(middleOfSign.X, pictureDimensions.Width, pitch);
+            float yAdvice = - GetAdviceForCoordinates(middleOfSign.Y, pictureDimensions.Height, roll);
 
             return new Direction(xAdvice, yAdvice);
         }
@@ -90,7 +89,7 @@ namespace ARDrone.Detection
 
             if (idealRatio - retrievedRatio > 0.1f)
             {
-                return 1.0f;
+                return -1.0f;
             }
             else if (idealRatio - retrievedRatio < -0.1f)
             {
@@ -106,7 +105,5 @@ namespace ARDrone.Detection
         {
             return (Math.PI / 180.0) * angularDegrees;
         }
-
-
     }
 }

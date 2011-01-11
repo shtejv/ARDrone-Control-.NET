@@ -214,10 +214,6 @@ namespace ARDroneUI_Detection_Forms
             if (!arDroneControl.IsConnected)
             {
                 labelCamera.Text = "No picture";
-                labelStatusCamera.Text = "None";
-
-                labelStatusBattery.Text = "N/A";
-                labelStatusAltitude.Text = "N/A";
 
                 labelStatusPitch.Text = "+0.0000°";
                 labelStatusRoll.Text = "+0.0000°";
@@ -231,16 +227,11 @@ namespace ARDroneUI_Detection_Forms
                 if (arDroneControl.CurrentCameraType == ARDroneControl.CameraType.FrontCamera)
                 {
                     labelCamera.Text = "Front camera";
-                    labelStatusCamera.Text = "Front";
                 }
                 else
                 {
                     labelCamera.Text = "Bottom camera";
-                    labelStatusCamera.Text = "Bottom";
                 }
-
-                labelStatusBattery.Text = data.BatteryLevel.ToString() + "%";
-                labelStatusAltitude.Text = data.Altitude.ToString();
 
                 labelStatusPitch.Text = String.Format("{0:+0.000;-0.000;+0.000}", data.Theta);
                 labelStatusRoll.Text = String.Format("{0:+0.000;-0.000;+0.000}", data.Phi);
@@ -359,6 +350,19 @@ namespace ARDroneUI_Detection_Forms
         private CourseAdvisor.Direction DetermineAdvisedCourse(List<SignDetector.SignResult> results)
         {
             ARDroneControl.DroneData droneData = arDroneControl.GetCurrentDroneData();
+
+            labelStatusAngleX.Text = String.Format("{0:+0.000;-0.000;+0.000}", droneData.Phi);
+            if (results.Count == 1)
+            {
+                labelStatusRectangleX.Text = ((results[0].Rectangle.Right + results[0].Rectangle.Left) / 2).ToString();
+                labelStatusMaxX.Text = arDroneControl.BottomCameraPictureSize.Width.ToString();
+            }
+            else
+            {
+                labelStatusRectangleX.Text = "-1";
+                labelStatusMaxX.Text = "-1";
+            }
+
             return courseAdvisor.GetNavigationAdvice(results, droneData.Phi, droneData.Theta);
         }
 

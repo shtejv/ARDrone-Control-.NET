@@ -50,14 +50,14 @@
             this.labelStatusConnectedInfo = new System.Windows.Forms.Label();
             this.labelStatusHovering = new System.Windows.Forms.Label();
             this.labelStatusFlying = new System.Windows.Forms.Label();
-            this.labelStatusAltitude = new System.Windows.Forms.Label();
-            this.labelStatusCamera = new System.Windows.Forms.Label();
-            this.labelStatusBattery = new System.Windows.Forms.Label();
+            this.labelStatusMaxX = new System.Windows.Forms.Label();
+            this.labelStatusRectangleX = new System.Windows.Forms.Label();
+            this.labelStatusAngleX = new System.Windows.Forms.Label();
             this.labelStatusHoveringInfo = new System.Windows.Forms.Label();
             this.labelStatusFlyingInfo = new System.Windows.Forms.Label();
-            this.labelStatusAltitudeInfo = new System.Windows.Forms.Label();
-            this.labelStatusCameraInfo = new System.Windows.Forms.Label();
-            this.labelStatusBatteryInfo = new System.Windows.Forms.Label();
+            this.labelStatusMaxXInfo = new System.Windows.Forms.Label();
+            this.labelStatusRectangleXInfo = new System.Windows.Forms.Label();
+            this.labelStatusAngleXInfo = new System.Windows.Forms.Label();
             this.sliderThresholdMin = new System.Windows.Forms.TrackBar();
             this.sliderThresholdMax = new System.Windows.Forms.TrackBar();
             this.groupBoxOtherStuff = new System.Windows.Forms.GroupBox();
@@ -171,14 +171,14 @@
             this.groupBoxStatus.Controls.Add(this.labelStatusConnectedInfo);
             this.groupBoxStatus.Controls.Add(this.labelStatusHovering);
             this.groupBoxStatus.Controls.Add(this.labelStatusFlying);
-            this.groupBoxStatus.Controls.Add(this.labelStatusAltitude);
-            this.groupBoxStatus.Controls.Add(this.labelStatusCamera);
-            this.groupBoxStatus.Controls.Add(this.labelStatusBattery);
+            this.groupBoxStatus.Controls.Add(this.labelStatusMaxX);
+            this.groupBoxStatus.Controls.Add(this.labelStatusRectangleX);
+            this.groupBoxStatus.Controls.Add(this.labelStatusAngleX);
             this.groupBoxStatus.Controls.Add(this.labelStatusHoveringInfo);
             this.groupBoxStatus.Controls.Add(this.labelStatusFlyingInfo);
-            this.groupBoxStatus.Controls.Add(this.labelStatusAltitudeInfo);
-            this.groupBoxStatus.Controls.Add(this.labelStatusCameraInfo);
-            this.groupBoxStatus.Controls.Add(this.labelStatusBatteryInfo);
+            this.groupBoxStatus.Controls.Add(this.labelStatusMaxXInfo);
+            this.groupBoxStatus.Controls.Add(this.labelStatusRectangleXInfo);
+            this.groupBoxStatus.Controls.Add(this.labelStatusAngleXInfo);
             this.groupBoxStatus.Location = new System.Drawing.Point(663, 10);
             this.groupBoxStatus.Name = "groupBoxStatus";
             this.groupBoxStatus.Size = new System.Drawing.Size(184, 302);
@@ -294,32 +294,32 @@
             this.labelStatusFlying.TabIndex = 37;
             this.labelStatusFlying.Text = "false";
             // 
-            // labelStatusAltitude
+            // labelStatusMaxX
             // 
-            this.labelStatusAltitude.AutoSize = true;
-            this.labelStatusAltitude.Location = new System.Drawing.Point(122, 59);
-            this.labelStatusAltitude.Name = "labelStatusAltitude";
-            this.labelStatusAltitude.Size = new System.Drawing.Size(27, 13);
-            this.labelStatusAltitude.TabIndex = 36;
-            this.labelStatusAltitude.Text = "N/A";
+            this.labelStatusMaxX.AutoSize = true;
+            this.labelStatusMaxX.Location = new System.Drawing.Point(122, 59);
+            this.labelStatusMaxX.Name = "labelStatusMaxX";
+            this.labelStatusMaxX.Size = new System.Drawing.Size(16, 13);
+            this.labelStatusMaxX.TabIndex = 36;
+            this.labelStatusMaxX.Text = "-1";
             // 
-            // labelStatusCamera
+            // labelStatusRectangleX
             // 
-            this.labelStatusCamera.AutoSize = true;
-            this.labelStatusCamera.Location = new System.Drawing.Point(122, 39);
-            this.labelStatusCamera.Name = "labelStatusCamera";
-            this.labelStatusCamera.Size = new System.Drawing.Size(33, 13);
-            this.labelStatusCamera.TabIndex = 35;
-            this.labelStatusCamera.Text = "None";
+            this.labelStatusRectangleX.AutoSize = true;
+            this.labelStatusRectangleX.Location = new System.Drawing.Point(122, 39);
+            this.labelStatusRectangleX.Name = "labelStatusRectangleX";
+            this.labelStatusRectangleX.Size = new System.Drawing.Size(16, 13);
+            this.labelStatusRectangleX.TabIndex = 35;
+            this.labelStatusRectangleX.Text = "-1";
             // 
-            // labelStatusBattery
+            // labelStatusAngleX
             // 
-            this.labelStatusBattery.AutoSize = true;
-            this.labelStatusBattery.Location = new System.Drawing.Point(122, 19);
-            this.labelStatusBattery.Name = "labelStatusBattery";
-            this.labelStatusBattery.Size = new System.Drawing.Size(27, 13);
-            this.labelStatusBattery.TabIndex = 34;
-            this.labelStatusBattery.Text = "N/A";
+            this.labelStatusAngleX.AutoSize = true;
+            this.labelStatusAngleX.Location = new System.Drawing.Point(122, 19);
+            this.labelStatusAngleX.Name = "labelStatusAngleX";
+            this.labelStatusAngleX.Size = new System.Drawing.Size(40, 13);
+            this.labelStatusAngleX.TabIndex = 34;
+            this.labelStatusAngleX.Text = "+0.000";
             // 
             // labelStatusHoveringInfo
             // 
@@ -339,32 +339,32 @@
             this.labelStatusFlyingInfo.TabIndex = 3;
             this.labelStatusFlyingInfo.Text = "Flying";
             // 
-            // labelStatusAltitudeInfo
+            // labelStatusMaxXInfo
             // 
-            this.labelStatusAltitudeInfo.AutoSize = true;
-            this.labelStatusAltitudeInfo.Location = new System.Drawing.Point(14, 59);
-            this.labelStatusAltitudeInfo.Name = "labelStatusAltitudeInfo";
-            this.labelStatusAltitudeInfo.Size = new System.Drawing.Size(42, 13);
-            this.labelStatusAltitudeInfo.TabIndex = 2;
-            this.labelStatusAltitudeInfo.Text = "Altitude";
+            this.labelStatusMaxXInfo.AutoSize = true;
+            this.labelStatusMaxXInfo.Location = new System.Drawing.Point(14, 59);
+            this.labelStatusMaxXInfo.Name = "labelStatusMaxXInfo";
+            this.labelStatusMaxXInfo.Size = new System.Drawing.Size(37, 13);
+            this.labelStatusMaxXInfo.TabIndex = 2;
+            this.labelStatusMaxXInfo.Text = "Max X";
             // 
-            // labelStatusCameraInfo
+            // labelStatusRectangleXInfo
             // 
-            this.labelStatusCameraInfo.AutoSize = true;
-            this.labelStatusCameraInfo.Location = new System.Drawing.Point(14, 39);
-            this.labelStatusCameraInfo.Name = "labelStatusCameraInfo";
-            this.labelStatusCameraInfo.Size = new System.Drawing.Size(77, 13);
-            this.labelStatusCameraInfo.TabIndex = 1;
-            this.labelStatusCameraInfo.Text = "Camera shown";
+            this.labelStatusRectangleXInfo.AutoSize = true;
+            this.labelStatusRectangleXInfo.Location = new System.Drawing.Point(14, 39);
+            this.labelStatusRectangleXInfo.Name = "labelStatusRectangleXInfo";
+            this.labelStatusRectangleXInfo.Size = new System.Drawing.Size(66, 13);
+            this.labelStatusRectangleXInfo.TabIndex = 1;
+            this.labelStatusRectangleXInfo.Text = "Rectangle X";
             // 
-            // labelStatusBatteryInfo
+            // labelStatusAngleXInfo
             // 
-            this.labelStatusBatteryInfo.AutoSize = true;
-            this.labelStatusBatteryInfo.Location = new System.Drawing.Point(14, 19);
-            this.labelStatusBatteryInfo.Name = "labelStatusBatteryInfo";
-            this.labelStatusBatteryInfo.Size = new System.Drawing.Size(71, 13);
-            this.labelStatusBatteryInfo.TabIndex = 0;
-            this.labelStatusBatteryInfo.Text = "Battery status";
+            this.labelStatusAngleXInfo.AutoSize = true;
+            this.labelStatusAngleXInfo.Location = new System.Drawing.Point(14, 19);
+            this.labelStatusAngleXInfo.Name = "labelStatusAngleXInfo";
+            this.labelStatusAngleXInfo.Size = new System.Drawing.Size(44, 13);
+            this.labelStatusAngleXInfo.TabIndex = 0;
+            this.labelStatusAngleXInfo.Text = "Angle X";
             // 
             // sliderThresholdMin
             // 
@@ -474,13 +474,12 @@
             this.directionControl.Name = "directionControl";
             this.directionControl.Size = new System.Drawing.Size(150, 150);
             this.directionControl.TabIndex = 47;
-            this.directionControl.Visible = false;
             // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(913, 521);
+            this.ClientSize = new System.Drawing.Size(912, 535);
             this.Controls.Add(this.labelCamera);
             this.Controls.Add(this.buttonConnect);
             this.Controls.Add(this.buttonShutdown);
@@ -531,14 +530,14 @@
         private System.Windows.Forms.Label labelStatusConnectedInfo;
         private System.Windows.Forms.Label labelStatusHovering;
         private System.Windows.Forms.Label labelStatusFlying;
-        private System.Windows.Forms.Label labelStatusAltitude;
-        private System.Windows.Forms.Label labelStatusCamera;
-        private System.Windows.Forms.Label labelStatusBattery;
+        private System.Windows.Forms.Label labelStatusMaxX;
+        private System.Windows.Forms.Label labelStatusRectangleX;
+        private System.Windows.Forms.Label labelStatusAngleX;
         private System.Windows.Forms.Label labelStatusHoveringInfo;
         private System.Windows.Forms.Label labelStatusFlyingInfo;
-        private System.Windows.Forms.Label labelStatusAltitudeInfo;
-        private System.Windows.Forms.Label labelStatusCameraInfo;
-        private System.Windows.Forms.Label labelStatusBatteryInfo;
+        private System.Windows.Forms.Label labelStatusMaxXInfo;
+        private System.Windows.Forms.Label labelStatusRectangleXInfo;
+        private System.Windows.Forms.Label labelStatusAngleXInfo;
         private System.Windows.Forms.Label labelStatusRoll;
         private System.Windows.Forms.Label labelStatusRollInfo;
         private System.Windows.Forms.Label labelStatusPitch;
