@@ -11,9 +11,16 @@ namespace DirectionControl
 {
     public partial class DirectionControl : UserControl
     {
-        public enum Direction { None, Up, UpRight, Right, DownRight, Down, DownLeft, Left, UpLeft };
+        private const int minLength = 40;
+        private const int vectorBreadth = 16;
+        private const int arrowBreadth = 50;
 
-        public Direction currentDirection = Direction.None;
+        Brush vectorBrush = new SolidBrush(Color.FromArgb(153, 204, 255));
+        Pen vectorPen = new Pen(new SolidBrush(Color.Black));
+        Pen correctionPen = new Pen(new SolidBrush(Color.FromArgb(153, 204, 255)));
+
+        private double vectorX = 0.0;
+        private double vectorY = 0.0;
 
         public DirectionControl()
         {
@@ -21,51 +28,158 @@ namespace DirectionControl
             UpdateCurrentDirection();
         }
 
-        public Direction ArrowDirection
+        public void SetArrowData(double vectorX, double vectorY)
         {
-            get
-            {
-                return currentDirection;
-            }
-            set
-            {
-                this.currentDirection = value;
-                UpdateCurrentDirection();
-            }
+            this.vectorX = normalizeVectorComponent(vectorX);
+            this.vectorY = normalizeVectorComponent(vectorY);
+
+            Console.WriteLine("x = " + String.Format("{0:+0.000;-0.000;+0.000}", vectorX) + ", y = " + String.Format("{0:+0.000;-0.000;+0.000}", vectorY));
+        }
+
+        private double normalizeVectorComponent(double component)
+        {
+            if (component < -1.0)
+                return -1.0;
+            else if (component > 1.0)
+                return 1.0;
+            else
+                return component;
         }
 
         private void UpdateCurrentDirection()
         {
-            switch (currentDirection)
+            Bitmap resultingBitmap = CreateEmptyBitmap();
+
+            if (IsVectorTooShort())
             {
-                case Direction.None:
-                    pictureBoxArrow.Image = Properties.Resources.ArrowNoDirection;
-                    break;
-                case Direction.Up:
-                    pictureBoxArrow.Image = Properties.Resources.ArrowUp;
-                    break;
-                case Direction.UpRight:
-                    pictureBoxArrow.Image = Properties.Resources.ArrowUpRight;
-                    break;
-                case Direction.Right:
-                    pictureBoxArrow.Image = Properties.Resources.ArrowRight;
-                    break;
-                case Direction.DownRight:
-                    pictureBoxArrow.Image = Properties.Resources.ArrowDownRight;
-                    break;
-                case Direction.Down:
-                    pictureBoxArrow.Image = Properties.Resources.ArrowDown;
-                    break;
-                case Direction.DownLeft:
-                    pictureBoxArrow.Image = Properties.Resources.ArrowDownLeft;
-                    break;
-                case Direction.Left:
-                    pictureBoxArrow.Image = Properties.Resources.ArrowLeft;
-                    break;
-                case Direction.UpLeft:
-                    pictureBoxArrow.Image = Properties.Resources.ArrowUpLeft;
-                    break;
+                DrawFilledCircleToBitmap(resultingBitmap);
             }
+            else
+            {
+                DrawFilledVectorToBitmap(resultingBitmap);
+            }
+
+            ChangeBitmap(resultingBitmap);            
+        }
+
+        private Bitmap CreateEmptyBitmap()
+        {
+            Bitmap bitmap = new Bitmap(Width, Height);
+            FillBitmap(bitmap);
+
+            return bitmap;
+        }
+
+        private void FillBitmap(Bitmap bitmap)
+        {
+            Graphics graphics = CreateGraphicsFor(bitmap);
+            graphics.FillRectangle(new SolidBrush(SystemColors.Control), new Rectangle(0, 0, bitmap.Width, bitmap.Height));
+            graphics.Dispose();
+        }
+
+        private Graphics CreateGraphicsFor(Bitmap bitmap)
+        {
+            Graphics graphics = Graphics.FromImage(bitmap);
+            graphics.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
+
+            return graphics;
+        }
+
+        private bool IsVectorTooShort()
+        {
+            if (VectorLength < minLength)
+                return true;
+            else
+                return false;
+        }
+
+        private void DrawFilledCircleToBitmap(Bitmap bitmap)
+        {
+            Graphics graphics = CreateGraphicsFor(bitmap);
+
+            Point pointMiddle = new Point(Width / 2, Height / 2);
+            Rectangle circleRectangle = new Rectangle(pointMiddle.X - arrowBreadth / 2, pointMiddle.Y - arrowBreadth / 2, arrowBreadth, arrowBreadth);
+
+            graphics.FillEllipse(vectorBrush, circleRectangle);
+            graphics.DrawEllipse(vectorPen, circleRectangle);
+        }
+
+        private void DrawFilledVectorToBitmap(Bitmap bitmap)
+        {
+            int vectorLength = VectorLength;
+            double vectorAngle = VectorAngle;
+
+            Bitmap intermediateBitmap = new Bitmap(bitmap);
+            Graphics intermediateGraphics = CreateGraphicsFor(intermediateBitmap);
+ 
+            DrawStraightVector(intermediateGraphics, vectorLength);
+            RotateVector(bitmap, intermediateBitmap, vectorAngle);  
+        }
+
+        private void DrawStraightVector(Graphics graphics, int vectorLength)
+        {
+            Point pointMiddle = new Point(Width / 2, Height / 2);
+
+            Rectangle baseRectangle = new Rectangle(pointMiddle.X - vectorBreadth / 2, pointMiddle.Y - vectorLength / 2 + 30, vectorBreadth, vectorLength - 31);
+            Point[] trianglePoints = {
+                new Point(pointMiddle.X, pointMiddle.Y - vectorLength / 2),
+                new Point(pointMiddle.X - arrowBreadth / 2, pointMiddle.Y - vectorLength / 2 + 30),
+                new Point(pointMiddle.X + arrowBreadth / 2, pointMiddle.Y - vectorLength / 2 + 30)
+            };
+
+            graphics.FillPolygon(vectorBrush, trianglePoints);
+            graphics.DrawPolygon(vectorPen, trianglePoints);
+            graphics.FillRectangle(vectorBrush, baseRectangle);
+            graphics.DrawRectangle(vectorPen, baseRectangle);
+
+            graphics.DrawLine(correctionPen, new Point(baseRectangle.Left + 1, baseRectangle.Top), new Point(baseRectangle.Right - 1, baseRectangle.Top));
+        }
+
+        private void RotateVector(Bitmap bitmap, Bitmap intermediateBitmap, double vectorAngle)
+        {
+            Graphics graphics = CreateGraphicsFor(bitmap);
+
+            Point pointMiddle = new Point(Width / 2, Height / 2);
+
+            graphics.TranslateTransform(pointMiddle.X, pointMiddle.Y);
+            graphics.RotateTransform((float)vectorAngle);
+            graphics.TranslateTransform(-pointMiddle.X, -pointMiddle.Y);
+
+            graphics.DrawImage(intermediateBitmap, new Point(0, 0));
+        }
+
+        private void ChangeBitmap(Bitmap bitmap)
+        {
+            Bitmap oldBitmap = (Bitmap)pictureBoxArrow.Image;
+            pictureBoxArrow.Image = bitmap;
+
+            if (oldBitmap != null)
+                oldBitmap.Dispose();
+        }
+
+        public int VectorLength
+        {
+            get
+            {
+                double stdLength = Math.Sqrt(vectorX * vectorX + vectorY * vectorY);
+                int length =  (int)((stdLength / Math.Sqrt(2.0)) * (double)Height);
+
+
+                return length;
+            }
+        }
+
+        public double VectorAngle
+        {
+            get
+            {
+                return  (vectorX > 0.0 ? 1.0 : -1.0) * (180.0 / Math.PI) * Math.Acos(vectorY / Math.Sqrt(vectorX * vectorX + vectorY * vectorY));
+            }
+        }
+
+        private void timerUpdate_Tick(object sender, EventArgs e)
+        {
+            UpdateCurrentDirection();
         }
     }
 }

@@ -369,7 +369,7 @@
             // sliderThresholdMin
             // 
             this.sliderThresholdMin.LargeChange = 20;
-            this.sliderThresholdMin.Location = new System.Drawing.Point(21, 52);
+            this.sliderThresholdMin.Location = new System.Drawing.Point(6, 29);
             this.sliderThresholdMin.Maximum = 180;
             this.sliderThresholdMin.Name = "sliderThresholdMin";
             this.sliderThresholdMin.Size = new System.Drawing.Size(104, 45);
@@ -381,7 +381,7 @@
             // sliderThresholdMax
             // 
             this.sliderThresholdMax.LargeChange = 20;
-            this.sliderThresholdMax.Location = new System.Drawing.Point(128, 52);
+            this.sliderThresholdMax.Location = new System.Drawing.Point(113, 29);
             this.sliderThresholdMax.Maximum = 180;
             this.sliderThresholdMax.Name = "sliderThresholdMax";
             this.sliderThresholdMax.Size = new System.Drawing.Size(104, 45);
@@ -398,7 +398,7 @@
             this.groupBoxOtherStuff.Controls.Add(this.sliderThresholdMin);
             this.groupBoxOtherStuff.Location = new System.Drawing.Point(488, 318);
             this.groupBoxOtherStuff.Name = "groupBoxOtherStuff";
-            this.groupBoxOtherStuff.Size = new System.Drawing.Size(261, 199);
+            this.groupBoxOtherStuff.Size = new System.Drawing.Size(220, 199);
             this.groupBoxOtherStuff.TabIndex = 44;
             this.groupBoxOtherStuff.TabStop = false;
             this.groupBoxOtherStuff.Text = "Other Stuff";
@@ -408,7 +408,7 @@
             this.checkBoxThresholdInvert.AutoSize = true;
             this.checkBoxThresholdInvert.Checked = true;
             this.checkBoxThresholdInvert.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.checkBoxThresholdInvert.Location = new System.Drawing.Point(21, 96);
+            this.checkBoxThresholdInvert.Location = new System.Drawing.Point(6, 73);
             this.checkBoxThresholdInvert.Name = "checkBoxThresholdInvert";
             this.checkBoxThresholdInvert.Size = new System.Drawing.Size(53, 17);
             this.checkBoxThresholdInvert.TabIndex = 45;
@@ -419,7 +419,7 @@
             // labelThreshold
             // 
             this.labelThreshold.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.labelThreshold.Location = new System.Drawing.Point(126, 92);
+            this.labelThreshold.Location = new System.Drawing.Point(110, 69);
             this.labelThreshold.Name = "labelThreshold";
             this.labelThreshold.Size = new System.Drawing.Size(100, 23);
             this.labelThreshold.TabIndex = 44;
@@ -467,19 +467,21 @@
             this.buttonShutdown.UseVisualStyleBackColor = true;
             this.buttonShutdown.Click += new System.EventHandler(this.buttonShutdown_Click);
             // 
-            // directionControl
+            // directionControl1
             // 
-            this.directionControl.ArrowDirection = DirectionControl.DirectionControl.Direction.Up;
-            this.directionControl.Location = new System.Drawing.Point(755, 318);
-            this.directionControl.Name = "directionControl";
-            this.directionControl.Size = new System.Drawing.Size(150, 150);
-            this.directionControl.TabIndex = 47;
+            this.directionControl.Location = new System.Drawing.Point(714, 323);
+            this.directionControl.MaximumSize = new System.Drawing.Size(200, 200);
+            this.directionControl.MinimumSize = new System.Drawing.Size(200, 200);
+            this.directionControl.Name = "directionControl1";
+            this.directionControl.Size = new System.Drawing.Size(200, 200);
+            this.directionControl.TabIndex = 48;
             // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(912, 535);
+            this.ClientSize = new System.Drawing.Size(924, 535);
+            this.Controls.Add(this.directionControl);
             this.Controls.Add(this.labelCamera);
             this.Controls.Add(this.buttonConnect);
             this.Controls.Add(this.buttonShutdown);
@@ -493,7 +495,6 @@
             this.Controls.Add(this.buttonCommandChangeCamera);
             this.Controls.Add(this.pictureBoxMask);
             this.Controls.Add(this.pictureBoxVideo);
-            this.Controls.Add(this.directionControl);
             this.Name = "MainForm";
             this.Text = "UI Detection";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainForm_FormClosing);

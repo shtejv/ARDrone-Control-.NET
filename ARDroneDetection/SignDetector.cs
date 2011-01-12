@@ -174,8 +174,6 @@ namespace ARDrone.Detection
                         if (result != null) { results.Add(result); }
                     }
                 }
-
-                Console.WriteLine(results.Count);
             }
 
             return results;
@@ -239,7 +237,7 @@ namespace ARDrone.Detection
             }
             catch (AccessViolationException)
             {
-                Console.WriteLine("AvE");
+                Console.WriteLine("Access Violation Exception encountered");
                 return 0;
             }
             catch (Exception)

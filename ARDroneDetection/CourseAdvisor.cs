@@ -10,8 +10,8 @@ namespace ARDrone.Detection
         #region Direction class
         public class Direction
         {
-            private float deltaX;
-            private float deltaY;
+            private double deltaX;
+            private double deltaY;
             private bool adviceGiven = false;
 
             public Direction(bool adviceGiven)
@@ -19,19 +19,19 @@ namespace ARDrone.Detection
                 this.adviceGiven = adviceGiven;
             }
 
-            public Direction(float deltaX, float deltaY)
+            public Direction(double deltaX, double deltaY)
             {
                 this.deltaX = deltaX;
                 this.deltaY = deltaY;
                 this.adviceGiven = true;
             }
 
-            public float DeltaX
+            public double DeltaX
             {
                 get { return deltaX; }
             }
 
-            public float DeltaY
+            public double DeltaY
             {
                 get { return deltaY; }
             }
@@ -45,6 +45,8 @@ namespace ARDrone.Detection
 
         Size pictureDimensions;
         double fieldOfView;
+
+        const double maxAngle = Math.PI / 8.0;
 
         public CourseAdvisor(Size pictureDimensions, double fieldOfView)
         {
@@ -68,8 +70,8 @@ namespace ARDrone.Detection
 
             Point middleOfSign = getMiddle(rectangle);
 
-            float xAdvice = GetAdviceForCoordinates(middleOfSign.X, pictureDimensions.Width, pitch);
-            float yAdvice = - GetAdviceForCoordinates(middleOfSign.Y, pictureDimensions.Height, roll);
+            double xAdvice = GetAdviceForCoordinates(middleOfSign.X, pictureDimensions.Width, pitch);
+            double yAdvice = -GetAdviceForCoordinates(middleOfSign.Y, pictureDimensions.Height, roll);
 
             return new Direction(xAdvice, yAdvice);
         }
@@ -79,26 +81,22 @@ namespace ARDrone.Detection
             return new Point((rectangle.Right + rectangle.Left) / 2, (rectangle.Bottom + rectangle.Top) / 2);
         }
 
-        private float GetAdviceForCoordinates(int coordinate, int maxCoordinate, double angle)
+        private double GetAdviceForCoordinates(int coordinate, int maxCoordinate, double angle)
         {
             int firstSection = coordinate;
             int secondSection = maxCoordinate - coordinate;
 
             double idealRatio = Math.Tan(GetRadianFromAngularDegrees(fieldOfView / 2.0 + angle)) / Math.Tan(GetRadianFromAngularDegrees(fieldOfView / 2.0 - angle));
-            double retrievedRatio = (double)firstSection / (double)secondSection;
+            double idealFirstSection = (double)maxCoordinate / (1.0 + idealRatio);
 
-            if (idealRatio - retrievedRatio > 0.1f)
-            {
-                return -1.0f;
-            }
-            else if (idealRatio - retrievedRatio < -0.1f)
-            {
-                return 1.0f;
-            }
+            double differenceAngle = Math.Atan(((firstSection - idealFirstSection) / idealFirstSection) * Math.Tan(GetRadianFromAngularDegrees(fieldOfView / 2.0 - angle)));
+
+            if (differenceAngle > maxAngle)
+                return 1.0;
+            else if (differenceAngle < -maxAngle)
+                return -1.0;
             else
-            {
-                return 0.0f;
-            }
+                return differenceAngle / maxAngle;            
         }
 
         private double GetRadianFromAngularDegrees(double angularDegrees)

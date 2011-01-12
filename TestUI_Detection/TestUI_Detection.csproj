@@ -88,6 +88,10 @@
       <Project>{23C3D4AC-F987-4A68-BB43-47027337D81B}</Project>
       <Name>ARDroneDetection</Name>
     </ProjectReference>
+    <ProjectReference Include="..\DirectionControl\DirectionControl.csproj">
+      <Project>{625B51D7-FAB2-48F9-86D9-11F82EF9FB96}</Project>
+      <Name>DirectionControl</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Content Include="sign-test.jpg">

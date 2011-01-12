@@ -65,34 +65,11 @@
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\arrowDown.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\arrowDownLeft.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\arrowDownRight.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\arrowLeft.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\arrowNoDirection.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\arrowRight.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\arrowUp.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\arrowUpLeft.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\arrowUpRight.png" />
+    <Folder Include="Resources\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

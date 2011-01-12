@@ -38,10 +38,12 @@ namespace TestUI_Detection
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.pictureBoxOriginal = new System.Windows.Forms.PictureBox();
             this.pictureBoxMasked = new System.Windows.Forms.PictureBox();
             this.labelOriginalInfo = new System.Windows.Forms.Label();
             this.labelMaskedInfo = new System.Windows.Forms.Label();
+            this.timer1 = new System.Windows.Forms.Timer(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxOriginal)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxMasked)).BeginInit();
             this.SuspendLayout();
@@ -82,11 +84,16 @@ namespace TestUI_Detection
             this.labelMaskedInfo.TabIndex = 3;
             this.labelMaskedInfo.Text = "Masked";
             // 
+            // timer1
+            // 
+            this.timer1.Enabled = true;
+            this.timer1.Interval = 200;
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(931, 419);
+            this.ClientSize = new System.Drawing.Size(931, 417);
             this.Controls.Add(this.labelMaskedInfo);
             this.Controls.Add(this.labelOriginalInfo);
             this.Controls.Add(this.pictureBoxMasked);
@@ -106,7 +113,7 @@ namespace TestUI_Detection
         private System.Windows.Forms.PictureBox pictureBoxMasked;
         private System.Windows.Forms.Label labelOriginalInfo;
         private System.Windows.Forms.Label labelMaskedInfo;
-
+        private System.Windows.Forms.Timer timer1;
     }
 }
 

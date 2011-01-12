@@ -368,42 +368,7 @@ namespace ARDroneUI_Detection_Forms
 
         private void MarkAdvisedCourse(CourseAdvisor.Direction direction)
         {
-            if (!direction.AdviceGiven || (direction.DeltaX == 0 && direction.DeltaY == 0))
-            {
-                directionControl.ArrowDirection = DirectionControl.DirectionControl.Direction.None;
-            }
-            else if (direction.DeltaX == 0.0 && direction.DeltaY == 1.0)
-            {
-                directionControl.ArrowDirection = DirectionControl.DirectionControl.Direction.Up;
-            }
-            else if (direction.DeltaX == 1.0 && direction.DeltaY == 1.0)
-            {
-                directionControl.ArrowDirection = DirectionControl.DirectionControl.Direction.UpRight;
-            }
-            else if (direction.DeltaX == 1.0 && direction.DeltaY == 0.0)
-            {
-                directionControl.ArrowDirection = DirectionControl.DirectionControl.Direction.Right;
-            }
-            else if (direction.DeltaX == 1.0 && direction.DeltaY == -1.0)
-            {
-                directionControl.ArrowDirection = DirectionControl.DirectionControl.Direction.DownRight;
-            }
-            else if (direction.DeltaX == 0.0 && direction.DeltaY == -1.0)
-            {
-                directionControl.ArrowDirection = DirectionControl.DirectionControl.Direction.Down;
-            }
-            else if (direction.DeltaX == -1.0 && direction.DeltaY == -1.0)
-            {
-                directionControl.ArrowDirection = DirectionControl.DirectionControl.Direction.DownLeft;
-            }
-            else if (direction.DeltaX == -1.0 && direction.DeltaY == 0)
-            {
-                directionControl.ArrowDirection = DirectionControl.DirectionControl.Direction.Left;
-            }
-            else if (direction.DeltaX == -1.0 && direction.DeltaY == 1.0)
-            {
-                directionControl.ArrowDirection = DirectionControl.DirectionControl.Direction.UpLeft;
-            }
+            directionControl.SetArrowData(direction.DeltaX, direction.DeltaY);
         }
 
         private bool CanCaptureVideo
