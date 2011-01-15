@@ -589,7 +589,6 @@ int sdk_demo_stop=0;
 	   /* Keeps sending AT commands to control the drone as long as 
 		everything is OK */
         C_RESULT res = ardrone_tool_update(); 
-		printf("Sent update\n");
 		return  (VP_SUCCEEDED(res) && ardrone_tool_exit() == FALSE); 
 	}
 

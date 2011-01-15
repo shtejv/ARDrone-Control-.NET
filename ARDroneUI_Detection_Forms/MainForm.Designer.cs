@@ -36,28 +36,24 @@
             this.buttonCommandHover = new System.Windows.Forms.Button();
             this.buttonCommandTakeoff = new System.Windows.Forms.Button();
             this.buttonCommandFlatTrim = new System.Windows.Forms.Button();
-            this.buttonCommandChangeCamera = new System.Windows.Forms.Button();
+            this.buttonCommandTakeScreenshot = new System.Windows.Forms.Button();
             this.groupBoxStatus = new System.Windows.Forms.GroupBox();
             this.labelStatusRoll = new System.Windows.Forms.Label();
             this.labelStatusRollInfo = new System.Windows.Forms.Label();
             this.labelStatusPitch = new System.Windows.Forms.Label();
             this.labelStatusPitchInfo = new System.Windows.Forms.Label();
-            this.labelStatusFrameRate = new System.Windows.Forms.Label();
-            this.labelStatusFrameRateInfo = new System.Windows.Forms.Label();
+            this.labelStatusSpecialAction = new System.Windows.Forms.Label();
+            this.labelStatusSpeicalActionInfo = new System.Windows.Forms.Label();
             this.labelStatusEmergency = new System.Windows.Forms.Label();
             this.labelStatusEmergencyInfo = new System.Windows.Forms.Label();
             this.labelStatusConnected = new System.Windows.Forms.Label();
             this.labelStatusConnectedInfo = new System.Windows.Forms.Label();
             this.labelStatusHovering = new System.Windows.Forms.Label();
             this.labelStatusFlying = new System.Windows.Forms.Label();
-            this.labelStatusMaxX = new System.Windows.Forms.Label();
-            this.labelStatusRectangleX = new System.Windows.Forms.Label();
-            this.labelStatusAngleX = new System.Windows.Forms.Label();
+            this.labelStatusBattery = new System.Windows.Forms.Label();
             this.labelStatusHoveringInfo = new System.Windows.Forms.Label();
             this.labelStatusFlyingInfo = new System.Windows.Forms.Label();
-            this.labelStatusMaxXInfo = new System.Windows.Forms.Label();
-            this.labelStatusRectangleXInfo = new System.Windows.Forms.Label();
-            this.labelStatusAngleXInfo = new System.Windows.Forms.Label();
+            this.labelStatusBatteryInfo = new System.Windows.Forms.Label();
             this.sliderThresholdMin = new System.Windows.Forms.TrackBar();
             this.sliderThresholdMax = new System.Windows.Forms.TrackBar();
             this.groupBoxOtherStuff = new System.Windows.Forms.GroupBox();
@@ -100,7 +96,7 @@
             this.textBoxOutput.BackColor = System.Drawing.SystemColors.MenuText;
             this.textBoxOutput.Font = new System.Drawing.Font("Courier New", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.textBoxOutput.ForeColor = System.Drawing.Color.Yellow;
-            this.textBoxOutput.Location = new System.Drawing.Point(11, 328);
+            this.textBoxOutput.Location = new System.Drawing.Point(11, 283);
             this.textBoxOutput.Multiline = true;
             this.textBoxOutput.Name = "textBoxOutput";
             this.textBoxOutput.ReadOnly = true;
@@ -109,7 +105,7 @@
             // 
             // buttonCommandEmergency
             // 
-            this.buttonCommandEmergency.Location = new System.Drawing.Point(375, 397);
+            this.buttonCommandEmergency.Location = new System.Drawing.Point(375, 352);
             this.buttonCommandEmergency.Name = "buttonCommandEmergency";
             this.buttonCommandEmergency.Size = new System.Drawing.Size(107, 23);
             this.buttonCommandEmergency.TabIndex = 36;
@@ -119,7 +115,7 @@
             // 
             // buttonCommandHover
             // 
-            this.buttonCommandHover.Location = new System.Drawing.Point(375, 357);
+            this.buttonCommandHover.Location = new System.Drawing.Point(375, 312);
             this.buttonCommandHover.Name = "buttonCommandHover";
             this.buttonCommandHover.Size = new System.Drawing.Size(107, 23);
             this.buttonCommandHover.TabIndex = 40;
@@ -129,7 +125,7 @@
             // 
             // buttonCommandTakeoff
             // 
-            this.buttonCommandTakeoff.Location = new System.Drawing.Point(375, 332);
+            this.buttonCommandTakeoff.Location = new System.Drawing.Point(375, 287);
             this.buttonCommandTakeoff.Name = "buttonCommandTakeoff";
             this.buttonCommandTakeoff.Size = new System.Drawing.Size(107, 23);
             this.buttonCommandTakeoff.TabIndex = 38;
@@ -139,7 +135,7 @@
             // 
             // buttonCommandFlatTrim
             // 
-            this.buttonCommandFlatTrim.Location = new System.Drawing.Point(375, 426);
+            this.buttonCommandFlatTrim.Location = new System.Drawing.Point(375, 381);
             this.buttonCommandFlatTrim.Name = "buttonCommandFlatTrim";
             this.buttonCommandFlatTrim.Size = new System.Drawing.Size(107, 23);
             this.buttonCommandFlatTrim.TabIndex = 39;
@@ -147,15 +143,15 @@
             this.buttonCommandFlatTrim.UseVisualStyleBackColor = true;
             this.buttonCommandFlatTrim.Click += new System.EventHandler(this.buttonCommandFlatTrim_Click);
             // 
-            // buttonCommandChangeCamera
+            // buttonCommandTakeScreenshot
             // 
-            this.buttonCommandChangeCamera.Location = new System.Drawing.Point(375, 470);
-            this.buttonCommandChangeCamera.Name = "buttonCommandChangeCamera";
-            this.buttonCommandChangeCamera.Size = new System.Drawing.Size(107, 23);
-            this.buttonCommandChangeCamera.TabIndex = 37;
-            this.buttonCommandChangeCamera.Text = "Change camera";
-            this.buttonCommandChangeCamera.UseVisualStyleBackColor = true;
-            this.buttonCommandChangeCamera.Click += new System.EventHandler(this.buttonCommandChangeCamera_Click);
+            this.buttonCommandTakeScreenshot.Location = new System.Drawing.Point(375, 425);
+            this.buttonCommandTakeScreenshot.Name = "buttonCommandTakeScreenshot";
+            this.buttonCommandTakeScreenshot.Size = new System.Drawing.Size(107, 23);
+            this.buttonCommandTakeScreenshot.TabIndex = 37;
+            this.buttonCommandTakeScreenshot.Text = "Take Screenshot";
+            this.buttonCommandTakeScreenshot.UseVisualStyleBackColor = true;
+            this.buttonCommandTakeScreenshot.Click += new System.EventHandler(this.buttonCommandTakeScreenshot_Click);
             // 
             // groupBoxStatus
             // 
@@ -163,25 +159,21 @@
             this.groupBoxStatus.Controls.Add(this.labelStatusRollInfo);
             this.groupBoxStatus.Controls.Add(this.labelStatusPitch);
             this.groupBoxStatus.Controls.Add(this.labelStatusPitchInfo);
-            this.groupBoxStatus.Controls.Add(this.labelStatusFrameRate);
-            this.groupBoxStatus.Controls.Add(this.labelStatusFrameRateInfo);
+            this.groupBoxStatus.Controls.Add(this.labelStatusSpecialAction);
+            this.groupBoxStatus.Controls.Add(this.labelStatusSpeicalActionInfo);
             this.groupBoxStatus.Controls.Add(this.labelStatusEmergency);
             this.groupBoxStatus.Controls.Add(this.labelStatusEmergencyInfo);
             this.groupBoxStatus.Controls.Add(this.labelStatusConnected);
             this.groupBoxStatus.Controls.Add(this.labelStatusConnectedInfo);
             this.groupBoxStatus.Controls.Add(this.labelStatusHovering);
             this.groupBoxStatus.Controls.Add(this.labelStatusFlying);
-            this.groupBoxStatus.Controls.Add(this.labelStatusMaxX);
-            this.groupBoxStatus.Controls.Add(this.labelStatusRectangleX);
-            this.groupBoxStatus.Controls.Add(this.labelStatusAngleX);
+            this.groupBoxStatus.Controls.Add(this.labelStatusBattery);
             this.groupBoxStatus.Controls.Add(this.labelStatusHoveringInfo);
             this.groupBoxStatus.Controls.Add(this.labelStatusFlyingInfo);
-            this.groupBoxStatus.Controls.Add(this.labelStatusMaxXInfo);
-            this.groupBoxStatus.Controls.Add(this.labelStatusRectangleXInfo);
-            this.groupBoxStatus.Controls.Add(this.labelStatusAngleXInfo);
+            this.groupBoxStatus.Controls.Add(this.labelStatusBatteryInfo);
             this.groupBoxStatus.Location = new System.Drawing.Point(663, 10);
             this.groupBoxStatus.Name = "groupBoxStatus";
-            this.groupBoxStatus.Size = new System.Drawing.Size(184, 302);
+            this.groupBoxStatus.Size = new System.Drawing.Size(184, 267);
             this.groupBoxStatus.TabIndex = 41;
             this.groupBoxStatus.TabStop = false;
             this.groupBoxStatus.Text = "Status";
@@ -189,7 +181,7 @@
             // labelStatusRoll
             // 
             this.labelStatusRoll.AutoSize = true;
-            this.labelStatusRoll.Location = new System.Drawing.Point(122, 221);
+            this.labelStatusRoll.Location = new System.Drawing.Point(122, 176);
             this.labelStatusRoll.Name = "labelStatusRoll";
             this.labelStatusRoll.Size = new System.Drawing.Size(40, 13);
             this.labelStatusRoll.TabIndex = 48;
@@ -198,7 +190,7 @@
             // labelStatusRollInfo
             // 
             this.labelStatusRollInfo.AutoSize = true;
-            this.labelStatusRollInfo.Location = new System.Drawing.Point(14, 221);
+            this.labelStatusRollInfo.Location = new System.Drawing.Point(14, 176);
             this.labelStatusRollInfo.Name = "labelStatusRollInfo";
             this.labelStatusRollInfo.Size = new System.Drawing.Size(25, 13);
             this.labelStatusRollInfo.TabIndex = 47;
@@ -207,7 +199,7 @@
             // labelStatusPitch
             // 
             this.labelStatusPitch.AutoSize = true;
-            this.labelStatusPitch.Location = new System.Drawing.Point(122, 201);
+            this.labelStatusPitch.Location = new System.Drawing.Point(122, 156);
             this.labelStatusPitch.Name = "labelStatusPitch";
             this.labelStatusPitch.Size = new System.Drawing.Size(40, 13);
             this.labelStatusPitch.TabIndex = 46;
@@ -216,43 +208,43 @@
             // labelStatusPitchInfo
             // 
             this.labelStatusPitchInfo.AutoSize = true;
-            this.labelStatusPitchInfo.Location = new System.Drawing.Point(14, 201);
+            this.labelStatusPitchInfo.Location = new System.Drawing.Point(14, 156);
             this.labelStatusPitchInfo.Name = "labelStatusPitchInfo";
             this.labelStatusPitchInfo.Size = new System.Drawing.Size(31, 13);
             this.labelStatusPitchInfo.TabIndex = 45;
             this.labelStatusPitchInfo.Text = "Pitch";
             // 
-            // labelStatusFrameRate
+            // labelStatusSpecialAction
             // 
-            this.labelStatusFrameRate.AutoSize = true;
-            this.labelStatusFrameRate.Location = new System.Drawing.Point(122, 174);
-            this.labelStatusFrameRate.Name = "labelStatusFrameRate";
-            this.labelStatusFrameRate.Size = new System.Drawing.Size(50, 13);
-            this.labelStatusFrameRate.TabIndex = 44;
-            this.labelStatusFrameRate.Text = "No video";
+            this.labelStatusSpecialAction.AutoSize = true;
+            this.labelStatusSpecialAction.Location = new System.Drawing.Point(122, 129);
+            this.labelStatusSpecialAction.Name = "labelStatusSpecialAction";
+            this.labelStatusSpecialAction.Size = new System.Drawing.Size(32, 13);
+            this.labelStatusSpecialAction.TabIndex = 44;
+            this.labelStatusSpecialAction.Text = "False";
             // 
-            // labelStatusFrameRateInfo
+            // labelStatusSpeicalActionInfo
             // 
-            this.labelStatusFrameRateInfo.AutoSize = true;
-            this.labelStatusFrameRateInfo.Location = new System.Drawing.Point(14, 174);
-            this.labelStatusFrameRateInfo.Name = "labelStatusFrameRateInfo";
-            this.labelStatusFrameRateInfo.Size = new System.Drawing.Size(62, 13);
-            this.labelStatusFrameRateInfo.TabIndex = 43;
-            this.labelStatusFrameRateInfo.Text = "Frame Rate";
+            this.labelStatusSpeicalActionInfo.AutoSize = true;
+            this.labelStatusSpeicalActionInfo.Location = new System.Drawing.Point(14, 129);
+            this.labelStatusSpeicalActionInfo.Name = "labelStatusSpeicalActionInfo";
+            this.labelStatusSpeicalActionInfo.Size = new System.Drawing.Size(75, 13);
+            this.labelStatusSpeicalActionInfo.TabIndex = 43;
+            this.labelStatusSpeicalActionInfo.Text = "Special Action";
             // 
             // labelStatusEmergency
             // 
             this.labelStatusEmergency.AutoSize = true;
-            this.labelStatusEmergency.Location = new System.Drawing.Point(122, 147);
+            this.labelStatusEmergency.Location = new System.Drawing.Point(122, 108);
             this.labelStatusEmergency.Name = "labelStatusEmergency";
-            this.labelStatusEmergency.Size = new System.Drawing.Size(29, 13);
+            this.labelStatusEmergency.Size = new System.Drawing.Size(32, 13);
             this.labelStatusEmergency.TabIndex = 42;
-            this.labelStatusEmergency.Text = "false";
+            this.labelStatusEmergency.Text = "False";
             // 
             // labelStatusEmergencyInfo
             // 
             this.labelStatusEmergencyInfo.AutoSize = true;
-            this.labelStatusEmergencyInfo.Location = new System.Drawing.Point(14, 147);
+            this.labelStatusEmergencyInfo.Location = new System.Drawing.Point(14, 108);
             this.labelStatusEmergencyInfo.Name = "labelStatusEmergencyInfo";
             this.labelStatusEmergencyInfo.Size = new System.Drawing.Size(60, 13);
             this.labelStatusEmergencyInfo.TabIndex = 41;
@@ -261,16 +253,16 @@
             // labelStatusConnected
             // 
             this.labelStatusConnected.AutoSize = true;
-            this.labelStatusConnected.Location = new System.Drawing.Point(122, 87);
+            this.labelStatusConnected.Location = new System.Drawing.Point(122, 48);
             this.labelStatusConnected.Name = "labelStatusConnected";
-            this.labelStatusConnected.Size = new System.Drawing.Size(29, 13);
+            this.labelStatusConnected.Size = new System.Drawing.Size(32, 13);
             this.labelStatusConnected.TabIndex = 40;
-            this.labelStatusConnected.Text = "false";
+            this.labelStatusConnected.Text = "False";
             // 
             // labelStatusConnectedInfo
             // 
             this.labelStatusConnectedInfo.AutoSize = true;
-            this.labelStatusConnectedInfo.Location = new System.Drawing.Point(14, 87);
+            this.labelStatusConnectedInfo.Location = new System.Drawing.Point(14, 48);
             this.labelStatusConnectedInfo.Name = "labelStatusConnectedInfo";
             this.labelStatusConnectedInfo.Size = new System.Drawing.Size(59, 13);
             this.labelStatusConnectedInfo.TabIndex = 39;
@@ -279,52 +271,34 @@
             // labelStatusHovering
             // 
             this.labelStatusHovering.AutoSize = true;
-            this.labelStatusHovering.Location = new System.Drawing.Point(122, 127);
+            this.labelStatusHovering.Location = new System.Drawing.Point(122, 88);
             this.labelStatusHovering.Name = "labelStatusHovering";
-            this.labelStatusHovering.Size = new System.Drawing.Size(29, 13);
+            this.labelStatusHovering.Size = new System.Drawing.Size(32, 13);
             this.labelStatusHovering.TabIndex = 38;
-            this.labelStatusHovering.Text = "false";
+            this.labelStatusHovering.Text = "False";
             // 
             // labelStatusFlying
             // 
             this.labelStatusFlying.AutoSize = true;
-            this.labelStatusFlying.Location = new System.Drawing.Point(122, 107);
+            this.labelStatusFlying.Location = new System.Drawing.Point(122, 68);
             this.labelStatusFlying.Name = "labelStatusFlying";
-            this.labelStatusFlying.Size = new System.Drawing.Size(29, 13);
+            this.labelStatusFlying.Size = new System.Drawing.Size(32, 13);
             this.labelStatusFlying.TabIndex = 37;
-            this.labelStatusFlying.Text = "false";
+            this.labelStatusFlying.Text = "False";
             // 
-            // labelStatusMaxX
+            // labelStatusBattery
             // 
-            this.labelStatusMaxX.AutoSize = true;
-            this.labelStatusMaxX.Location = new System.Drawing.Point(122, 59);
-            this.labelStatusMaxX.Name = "labelStatusMaxX";
-            this.labelStatusMaxX.Size = new System.Drawing.Size(16, 13);
-            this.labelStatusMaxX.TabIndex = 36;
-            this.labelStatusMaxX.Text = "-1";
-            // 
-            // labelStatusRectangleX
-            // 
-            this.labelStatusRectangleX.AutoSize = true;
-            this.labelStatusRectangleX.Location = new System.Drawing.Point(122, 39);
-            this.labelStatusRectangleX.Name = "labelStatusRectangleX";
-            this.labelStatusRectangleX.Size = new System.Drawing.Size(16, 13);
-            this.labelStatusRectangleX.TabIndex = 35;
-            this.labelStatusRectangleX.Text = "-1";
-            // 
-            // labelStatusAngleX
-            // 
-            this.labelStatusAngleX.AutoSize = true;
-            this.labelStatusAngleX.Location = new System.Drawing.Point(122, 19);
-            this.labelStatusAngleX.Name = "labelStatusAngleX";
-            this.labelStatusAngleX.Size = new System.Drawing.Size(40, 13);
-            this.labelStatusAngleX.TabIndex = 34;
-            this.labelStatusAngleX.Text = "+0.000";
+            this.labelStatusBattery.AutoSize = true;
+            this.labelStatusBattery.Location = new System.Drawing.Point(122, 19);
+            this.labelStatusBattery.Name = "labelStatusBattery";
+            this.labelStatusBattery.Size = new System.Drawing.Size(27, 13);
+            this.labelStatusBattery.TabIndex = 34;
+            this.labelStatusBattery.Text = "N/A";
             // 
             // labelStatusHoveringInfo
             // 
             this.labelStatusHoveringInfo.AutoSize = true;
-            this.labelStatusHoveringInfo.Location = new System.Drawing.Point(14, 127);
+            this.labelStatusHoveringInfo.Location = new System.Drawing.Point(14, 88);
             this.labelStatusHoveringInfo.Name = "labelStatusHoveringInfo";
             this.labelStatusHoveringInfo.Size = new System.Drawing.Size(50, 13);
             this.labelStatusHoveringInfo.TabIndex = 4;
@@ -333,38 +307,20 @@
             // labelStatusFlyingInfo
             // 
             this.labelStatusFlyingInfo.AutoSize = true;
-            this.labelStatusFlyingInfo.Location = new System.Drawing.Point(14, 107);
+            this.labelStatusFlyingInfo.Location = new System.Drawing.Point(14, 68);
             this.labelStatusFlyingInfo.Name = "labelStatusFlyingInfo";
             this.labelStatusFlyingInfo.Size = new System.Drawing.Size(34, 13);
             this.labelStatusFlyingInfo.TabIndex = 3;
             this.labelStatusFlyingInfo.Text = "Flying";
             // 
-            // labelStatusMaxXInfo
+            // labelStatusBatteryInfo
             // 
-            this.labelStatusMaxXInfo.AutoSize = true;
-            this.labelStatusMaxXInfo.Location = new System.Drawing.Point(14, 59);
-            this.labelStatusMaxXInfo.Name = "labelStatusMaxXInfo";
-            this.labelStatusMaxXInfo.Size = new System.Drawing.Size(37, 13);
-            this.labelStatusMaxXInfo.TabIndex = 2;
-            this.labelStatusMaxXInfo.Text = "Max X";
-            // 
-            // labelStatusRectangleXInfo
-            // 
-            this.labelStatusRectangleXInfo.AutoSize = true;
-            this.labelStatusRectangleXInfo.Location = new System.Drawing.Point(14, 39);
-            this.labelStatusRectangleXInfo.Name = "labelStatusRectangleXInfo";
-            this.labelStatusRectangleXInfo.Size = new System.Drawing.Size(66, 13);
-            this.labelStatusRectangleXInfo.TabIndex = 1;
-            this.labelStatusRectangleXInfo.Text = "Rectangle X";
-            // 
-            // labelStatusAngleXInfo
-            // 
-            this.labelStatusAngleXInfo.AutoSize = true;
-            this.labelStatusAngleXInfo.Location = new System.Drawing.Point(14, 19);
-            this.labelStatusAngleXInfo.Name = "labelStatusAngleXInfo";
-            this.labelStatusAngleXInfo.Size = new System.Drawing.Size(44, 13);
-            this.labelStatusAngleXInfo.TabIndex = 0;
-            this.labelStatusAngleXInfo.Text = "Angle X";
+            this.labelStatusBatteryInfo.AutoSize = true;
+            this.labelStatusBatteryInfo.Location = new System.Drawing.Point(14, 19);
+            this.labelStatusBatteryInfo.Name = "labelStatusBatteryInfo";
+            this.labelStatusBatteryInfo.Size = new System.Drawing.Size(40, 13);
+            this.labelStatusBatteryInfo.TabIndex = 0;
+            this.labelStatusBatteryInfo.Text = "Battery";
             // 
             // sliderThresholdMin
             // 
@@ -396,9 +352,9 @@
             this.groupBoxOtherStuff.Controls.Add(this.labelThreshold);
             this.groupBoxOtherStuff.Controls.Add(this.sliderThresholdMax);
             this.groupBoxOtherStuff.Controls.Add(this.sliderThresholdMin);
-            this.groupBoxOtherStuff.Location = new System.Drawing.Point(488, 318);
+            this.groupBoxOtherStuff.Location = new System.Drawing.Point(488, 283);
             this.groupBoxOtherStuff.Name = "groupBoxOtherStuff";
-            this.groupBoxOtherStuff.Size = new System.Drawing.Size(220, 199);
+            this.groupBoxOtherStuff.Size = new System.Drawing.Size(220, 187);
             this.groupBoxOtherStuff.TabIndex = 44;
             this.groupBoxOtherStuff.TabStop = false;
             this.groupBoxOtherStuff.Text = "Other Stuff";
@@ -467,12 +423,12 @@
             this.buttonShutdown.UseVisualStyleBackColor = true;
             this.buttonShutdown.Click += new System.EventHandler(this.buttonShutdown_Click);
             // 
-            // directionControl1
+            // directionControl
             // 
-            this.directionControl.Location = new System.Drawing.Point(714, 323);
+            this.directionControl.Location = new System.Drawing.Point(714, 287);
             this.directionControl.MaximumSize = new System.Drawing.Size(200, 200);
             this.directionControl.MinimumSize = new System.Drawing.Size(200, 200);
-            this.directionControl.Name = "directionControl1";
+            this.directionControl.Name = "directionControl";
             this.directionControl.Size = new System.Drawing.Size(200, 200);
             this.directionControl.TabIndex = 48;
             // 
@@ -480,7 +436,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(924, 535);
+            this.ClientSize = new System.Drawing.Size(924, 498);
             this.Controls.Add(this.directionControl);
             this.Controls.Add(this.labelCamera);
             this.Controls.Add(this.buttonConnect);
@@ -492,7 +448,7 @@
             this.Controls.Add(this.buttonCommandHover);
             this.Controls.Add(this.buttonCommandTakeoff);
             this.Controls.Add(this.buttonCommandFlatTrim);
-            this.Controls.Add(this.buttonCommandChangeCamera);
+            this.Controls.Add(this.buttonCommandTakeScreenshot);
             this.Controls.Add(this.pictureBoxMask);
             this.Controls.Add(this.pictureBoxVideo);
             this.Name = "MainForm";
@@ -521,24 +477,20 @@
         private System.Windows.Forms.Button buttonCommandHover;
         private System.Windows.Forms.Button buttonCommandTakeoff;
         private System.Windows.Forms.Button buttonCommandFlatTrim;
-        private System.Windows.Forms.Button buttonCommandChangeCamera;
+        private System.Windows.Forms.Button buttonCommandTakeScreenshot;
         private System.Windows.Forms.GroupBox groupBoxStatus;
-        private System.Windows.Forms.Label labelStatusFrameRate;
-        private System.Windows.Forms.Label labelStatusFrameRateInfo;
+        private System.Windows.Forms.Label labelStatusSpecialAction;
+        private System.Windows.Forms.Label labelStatusSpeicalActionInfo;
         private System.Windows.Forms.Label labelStatusEmergency;
         private System.Windows.Forms.Label labelStatusEmergencyInfo;
         private System.Windows.Forms.Label labelStatusConnected;
         private System.Windows.Forms.Label labelStatusConnectedInfo;
         private System.Windows.Forms.Label labelStatusHovering;
         private System.Windows.Forms.Label labelStatusFlying;
-        private System.Windows.Forms.Label labelStatusMaxX;
-        private System.Windows.Forms.Label labelStatusRectangleX;
-        private System.Windows.Forms.Label labelStatusAngleX;
+        private System.Windows.Forms.Label labelStatusBattery;
         private System.Windows.Forms.Label labelStatusHoveringInfo;
         private System.Windows.Forms.Label labelStatusFlyingInfo;
-        private System.Windows.Forms.Label labelStatusMaxXInfo;
-        private System.Windows.Forms.Label labelStatusRectangleXInfo;
-        private System.Windows.Forms.Label labelStatusAngleXInfo;
+        private System.Windows.Forms.Label labelStatusBatteryInfo;
         private System.Windows.Forms.Label labelStatusRoll;
         private System.Windows.Forms.Label labelStatusRollInfo;
         private System.Windows.Forms.Label labelStatusPitch;

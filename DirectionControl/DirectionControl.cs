@@ -33,7 +33,7 @@ namespace DirectionControl
             this.vectorX = normalizeVectorComponent(vectorX);
             this.vectorY = normalizeVectorComponent(vectorY);
 
-            Console.WriteLine("x = " + String.Format("{0:+0.000;-0.000;+0.000}", vectorX) + ", y = " + String.Format("{0:+0.000;-0.000;+0.000}", vectorY));
+            //Console.WriteLine("x = " + String.Format("{0:+0.000;-0.000;+0.000}", vectorX) + ", y = " + String.Format("{0:+0.000;-0.000;+0.000}", vectorY));
         }
 
         private double normalizeVectorComponent(double component)
