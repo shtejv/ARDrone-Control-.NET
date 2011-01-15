@@ -102,6 +102,7 @@ namespace ARDrone.UI
             this.pictureBoxVideo = new System.Windows.Forms.PictureBox();
             this.timerVideoUpdate = new System.Windows.Forms.Timer(this.components);
             this.fileDialog = new System.Windows.Forms.SaveFileDialog();
+            this.checkBoxSpecialAction = new System.Windows.Forms.CheckBox();
             this.groupBoxInput.SuspendLayout();
             this.groupBoxStatus.SuspendLayout();
             this.panelRight.SuspendLayout();
@@ -290,6 +291,7 @@ namespace ARDrone.UI
             // 
             // groupBoxInput
             // 
+            this.groupBoxInput.Controls.Add(this.checkBoxSpecialAction);
             this.groupBoxInput.Controls.Add(this.labelInputRoll);
             this.groupBoxInput.Controls.Add(this.labelInputGaz);
             this.groupBoxInput.Controls.Add(this.labelInputPitch);
@@ -306,7 +308,7 @@ namespace ARDrone.UI
             this.groupBoxInput.Controls.Add(this.labelInputYawInfo);
             this.groupBoxInput.Location = new System.Drawing.Point(3, 6);
             this.groupBoxInput.Name = "groupBoxInput";
-            this.groupBoxInput.Size = new System.Drawing.Size(184, 179);
+            this.groupBoxInput.Size = new System.Drawing.Size(184, 200);
             this.groupBoxInput.TabIndex = 32;
             this.groupBoxInput.TabStop = false;
             this.groupBoxInput.Text = "Input";
@@ -387,7 +389,7 @@ namespace ARDrone.UI
             this.groupBoxStatus.Controls.Add(this.labelStatusAltitudeInfo);
             this.groupBoxStatus.Controls.Add(this.labelStatusCameraInfo);
             this.groupBoxStatus.Controls.Add(this.labelStatusBatteryInfo);
-            this.groupBoxStatus.Location = new System.Drawing.Point(3, 191);
+            this.groupBoxStatus.Location = new System.Drawing.Point(3, 212);
             this.groupBoxStatus.Name = "groupBoxStatus";
             this.groupBoxStatus.Size = new System.Drawing.Size(184, 196);
             this.groupBoxStatus.TabIndex = 33;
@@ -560,21 +562,21 @@ namespace ARDrone.UI
             this.panelRight.Dock = System.Windows.Forms.DockStyle.Right;
             this.panelRight.Location = new System.Drawing.Point(504, 0);
             this.panelRight.Name = "panelRight";
-            this.panelRight.Size = new System.Drawing.Size(350, 581);
+            this.panelRight.Size = new System.Drawing.Size(350, 603);
             this.panelRight.TabIndex = 35;
             // 
             // comboBoxLedAnimations
             // 
             this.comboBoxLedAnimations.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboBoxLedAnimations.FormattingEnabled = true;
-            this.comboBoxLedAnimations.Location = new System.Drawing.Point(3, 554);
+            this.comboBoxLedAnimations.Location = new System.Drawing.Point(3, 578);
             this.comboBoxLedAnimations.Name = "comboBoxLedAnimations";
             this.comboBoxLedAnimations.Size = new System.Drawing.Size(135, 21);
             this.comboBoxLedAnimations.TabIndex = 40;
             // 
             // buttonPlayLedAnimation
             // 
-            this.buttonPlayLedAnimation.Location = new System.Drawing.Point(144, 552);
+            this.buttonPlayLedAnimation.Location = new System.Drawing.Point(144, 576);
             this.buttonPlayLedAnimation.Name = "buttonPlayLedAnimation";
             this.buttonPlayLedAnimation.Size = new System.Drawing.Size(43, 23);
             this.buttonPlayLedAnimation.TabIndex = 39;
@@ -589,7 +591,7 @@ namespace ARDrone.UI
             this.groupBoxInstrument.Controls.Add(this.attitudeControl);
             this.groupBoxInstrument.Location = new System.Drawing.Point(193, 6);
             this.groupBoxInstrument.Name = "groupBoxInstrument";
-            this.groupBoxInstrument.Size = new System.Drawing.Size(154, 511);
+            this.groupBoxInstrument.Size = new System.Drawing.Size(154, 477);
             this.groupBoxInstrument.TabIndex = 38;
             this.groupBoxInstrument.TabStop = false;
             this.groupBoxInstrument.Text = "Instrument";
@@ -625,7 +627,7 @@ namespace ARDrone.UI
             this.groupBoxVideoAndSnapshots.Controls.Add(this.buttonVideoEnd);
             this.groupBoxVideoAndSnapshots.Controls.Add(this.buttonVideoStart);
             this.groupBoxVideoAndSnapshots.Controls.Add(this.buttonSnapshot);
-            this.groupBoxVideoAndSnapshots.Location = new System.Drawing.Point(3, 393);
+            this.groupBoxVideoAndSnapshots.Location = new System.Drawing.Point(3, 414);
             this.groupBoxVideoAndSnapshots.Name = "groupBoxVideoAndSnapshots";
             this.groupBoxVideoAndSnapshots.Size = new System.Drawing.Size(184, 124);
             this.groupBoxVideoAndSnapshots.TabIndex = 36;
@@ -683,7 +685,7 @@ namespace ARDrone.UI
             // 
             // buttonInputSettings
             // 
-            this.buttonInputSettings.Location = new System.Drawing.Point(3, 522);
+            this.buttonInputSettings.Location = new System.Drawing.Point(3, 546);
             this.buttonInputSettings.Name = "buttonInputSettings";
             this.buttonInputSettings.Size = new System.Drawing.Size(184, 23);
             this.buttonInputSettings.TabIndex = 35;
@@ -700,7 +702,7 @@ namespace ARDrone.UI
             this.panelBottom.Controls.Add(this.buttonCommandFlatTrim);
             this.panelBottom.Controls.Add(this.buttonCommandChangeCamera);
             this.panelBottom.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.panelBottom.Location = new System.Drawing.Point(0, 417);
+            this.panelBottom.Location = new System.Drawing.Point(0, 439);
             this.panelBottom.Name = "panelBottom";
             this.panelBottom.Size = new System.Drawing.Size(504, 164);
             this.panelBottom.TabIndex = 36;
@@ -724,7 +726,7 @@ namespace ARDrone.UI
             this.panelCenter.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panelCenter.Location = new System.Drawing.Point(0, 30);
             this.panelCenter.Name = "panelCenter";
-            this.panelCenter.Size = new System.Drawing.Size(504, 387);
+            this.panelCenter.Size = new System.Drawing.Size(504, 409);
             this.panelCenter.TabIndex = 38;
             // 
             // pictureBoxVideo
@@ -732,7 +734,7 @@ namespace ARDrone.UI
             this.pictureBoxVideo.Dock = System.Windows.Forms.DockStyle.Fill;
             this.pictureBoxVideo.Location = new System.Drawing.Point(0, 0);
             this.pictureBoxVideo.Name = "pictureBoxVideo";
-            this.pictureBoxVideo.Size = new System.Drawing.Size(504, 387);
+            this.pictureBoxVideo.Size = new System.Drawing.Size(504, 409);
             this.pictureBoxVideo.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.pictureBoxVideo.TabIndex = 0;
             this.pictureBoxVideo.TabStop = false;
@@ -743,12 +745,23 @@ namespace ARDrone.UI
             this.timerVideoUpdate.Interval = 50;
             this.timerVideoUpdate.Tick += new System.EventHandler(this.timerVideoUpdate_Tick);
             // 
+            // checkBoxSpecialAction
+            // 
+            this.checkBoxSpecialAction.AutoSize = true;
+            this.checkBoxSpecialAction.Enabled = false;
+            this.checkBoxSpecialAction.Location = new System.Drawing.Point(13, 175);
+            this.checkBoxSpecialAction.Name = "checkBoxSpecialAction";
+            this.checkBoxSpecialAction.Size = new System.Drawing.Size(74, 17);
+            this.checkBoxSpecialAction.TabIndex = 38;
+            this.checkBoxSpecialAction.Text = "Sp. action";
+            this.checkBoxSpecialAction.UseVisualStyleBackColor = true;
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.Control;
-            this.ClientSize = new System.Drawing.Size(854, 581);
+            this.ClientSize = new System.Drawing.Size(854, 603);
             this.Controls.Add(this.panelCenter);
             this.Controls.Add(this.panelTop);
             this.Controls.Add(this.panelBottom);
@@ -840,6 +853,7 @@ namespace ARDrone.UI
         private AviationInstruments.AltimeterInstrumentControl altimeterControl;
         private System.Windows.Forms.ComboBox comboBoxLedAnimations;
         private System.Windows.Forms.Button buttonPlayLedAnimation;
+        private System.Windows.Forms.CheckBox checkBoxSpecialAction;
     }
 }
 

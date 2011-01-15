@@ -27,19 +27,21 @@ namespace ARDrone.Input
         public bool Hover      { get; set; }
         public bool Emergency  { get; set; }
         public bool FlatTrim   { get; set; }
+        public bool SpecialAction { get; set; }
 
         public InputState()
         {
             Roll = 0.0f; Pitch = 0.0f; Gaz = 0.0f;
-            TakeOff = false; Land = false; Emergency = false; FlatTrim = false;
+            TakeOff = false; Land = false; Emergency = false; FlatTrim = false; SpecialAction = false;
         }
 
-        public InputState(float roll, float pitch, float yaw, float gaz, bool cameraSwapButton, bool takeOffButton, bool landButton, bool hoverButton, bool emergencyButton, bool flatTrimButton)
+        public InputState(float roll, float pitch, float yaw, float gaz, bool cameraSwapButton, bool takeOffButton, bool landButton, bool hoverButton, bool emergencyButton, bool flatTrimButton, bool specialActionButton)
         {
             Roll = roll; Pitch = pitch; Yaw = yaw; Gaz = gaz;
             CameraSwap = cameraSwapButton;
             TakeOff = takeOffButton; Land = landButton; Hover = hoverButton;
             Emergency = emergencyButton; FlatTrim = flatTrimButton;
+            SpecialAction = specialActionButton;
         }
 
         public override String ToString()
@@ -51,6 +53,7 @@ namespace ARDrone.Input
             if (Hover) { value += ", Hover"; }
             if (Emergency) { value += ", Emergency"; }
             if (FlatTrim) { value += ", Flat Trim"; }
+            if (SpecialAction) { value += ", Special Action"; }
 
             return value;
         }
@@ -92,7 +95,7 @@ namespace ARDrone.Input
         public InputMapping Clone()
         {
             InputMapping clonedMapping = new InputMapping(validButtons, validAxes);
-            clonedMapping.SetButtonMappings(controls.CameraSwapButton, controls.TakeOffButton, controls.LandButton, controls.HoverButton, controls.EmergencyButton, controls.FlatTrimButton);
+            clonedMapping.SetButtonMappings(controls.CameraSwapButton, controls.TakeOffButton, controls.LandButton, controls.HoverButton, controls.EmergencyButton, controls.FlatTrimButton, controls.SpecialActionButton);
             clonedMapping.SetAxisMappings(controls.RollAxisMapping, controls.PitchAxisMapping, controls.YawAxisMapping, controls.GazAxisMapping);
             return clonedMapping;
         }
@@ -105,13 +108,13 @@ namespace ARDrone.Input
 
         public void CopyMappingsFrom(InputMapping mapping)
         {
-            SetButtonMappings(mapping.CameraSwapButton, mapping.TakeOffButton, mapping.LandButton, mapping.HoverButton, mapping.EmergencyButton, mapping.FlatTrimButton);
+            SetButtonMappings(mapping.CameraSwapButton, mapping.TakeOffButton, mapping.LandButton, mapping.HoverButton, mapping.EmergencyButton, mapping.FlatTrimButton, mapping.SpecialActionButton);
             SetAxisMappings(mapping.RollAxisMapping, mapping.PitchAxisMapping, mapping.YawAxisMapping, mapping.GazAxisMapping);
         }
 
         public void CopyMappingsFrom(InputControls controls)
         {
-            SetButtonMappings(controls.CameraSwapButton, controls.TakeOffButton, controls.LandButton, controls.HoverButton, controls.EmergencyButton, controls.FlatTrimButton);
+            SetButtonMappings(controls.CameraSwapButton, controls.TakeOffButton, controls.LandButton, controls.HoverButton, controls.EmergencyButton, controls.FlatTrimButton, controls.SpecialActionButton);
             SetAxisMappings(controls.RollAxisMapping, controls.PitchAxisMapping, controls.YawAxisMapping, controls.GazAxisMapping);
         }
 
@@ -123,7 +126,7 @@ namespace ARDrone.Input
             GazAxisMapping = gazAxisMapping.ToString();
         }
 
-        public void SetButtonMappings(Object cameraSwapButtonMapping, Object takeOffButtonMapping, Object landButtonMapping, Object hoverButtonMapping, Object emergencyButtonMapping, Object flatTrimButtonMapping)
+        public void SetButtonMappings(Object cameraSwapButtonMapping, Object takeOffButtonMapping, Object landButtonMapping, Object hoverButtonMapping, Object emergencyButtonMapping, Object flatTrimButtonMapping, Object specialActionButtonMapping)
         {
             CameraSwapButton = cameraSwapButtonMapping.ToString();
             TakeOffButton = takeOffButtonMapping.ToString();
@@ -131,6 +134,7 @@ namespace ARDrone.Input
             HoverButton = hoverButtonMapping.ToString();
             EmergencyButton = emergencyButtonMapping.ToString();
             FlatTrimButton = flatTrimButtonMapping.ToString();
+            SpecialActionButton = specialActionButtonMapping.ToString();
         }
 
         public bool isValidButton(String buttonValue)
@@ -260,6 +264,16 @@ namespace ARDrone.Input
                 controls.FlatTrimButton = value;
             }
         }
+
+        public String SpecialActionButton
+        {
+            get { return controls.SpecialActionButton; }
+            set
+            {
+                if (!isValidButton(value)) { throw new Exception("Special Action Value is not a valid button value"); }
+                controls.SpecialActionButton = value;
+            }
+        }
         
         public String DeviceName
         {
@@ -289,6 +303,8 @@ namespace ARDrone.Input
         public String EmergencyButton = "";
         public String FlatTrimButton = "";
 
+        public String SpecialActionButton = "";
+
         public InputControls Clone()
         {
             InputControls controls = new InputControls();
@@ -299,6 +315,7 @@ namespace ARDrone.Input
             controls.CameraSwapButton = CameraSwapButton; controls.TakeOffButton = TakeOffButton;
             controls.LandButton = LandButton; controls.HoverButton = HoverButton;
             controls.EmergencyButton = EmergencyButton; controls.FlatTrimButton = FlatTrimButton;
+            controls.SpecialActionButton = SpecialActionButton;
 
             return controls;
         }

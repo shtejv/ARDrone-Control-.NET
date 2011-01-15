@@ -200,10 +200,13 @@ namespace ARDrone.Input
             bool emergency = IsFlightButtonPressed(mapping.EmergencyButton, buttonsPressed);
             bool flatTrim = IsFlightButtonPressed(mapping.FlatTrimButton, buttonsPressed);
 
-            if (roll != lastInputState.Roll || pitch != lastInputState.Pitch || yaw != lastInputState.Yaw || gaz != lastInputState.Gaz ||
-                cameraSwap != lastInputState.CameraSwap || takeOff != lastInputState.TakeOff || land != lastInputState.Land || hover != lastInputState.Hover || emergency != lastInputState.Emergency || flatTrim != lastInputState.FlatTrim)
+            bool specialAction = IsPermanentButtonPressed(mapping.SpecialActionButton, buttonsPressed);
+
+            if (roll != lastInputState.Roll || pitch != lastInputState.Pitch || yaw != lastInputState.Yaw || gaz != lastInputState.Gaz || cameraSwap != lastInputState.CameraSwap || takeOff != lastInputState.TakeOff ||
+                land != lastInputState.Land || hover != lastInputState.Hover || emergency != lastInputState.Emergency || flatTrim != lastInputState.FlatTrim ||
+                PermanentButtonChange(specialAction, lastInputState.SpecialAction))
             {
-                InputState newInputState = new InputState(roll, pitch, yaw, gaz, cameraSwap, takeOff, land, hover, emergency, flatTrim);
+                InputState newInputState = new InputState(roll, pitch, yaw, gaz, cameraSwap, takeOff, land, hover, emergency, flatTrim, specialAction);
                 lastInputState = newInputState;
                 return newInputState;
             }
@@ -211,6 +214,11 @@ namespace ARDrone.Input
             {
                 return null;
             }
+        }
+
+        private bool PermanentButtonChange(bool value, bool lastValue)
+        {
+            return value || !value && lastValue;
         }
 
         private void SetButtonsPressedBefore(List<String> buttonsPressed)
@@ -265,6 +273,11 @@ namespace ARDrone.Input
         private bool IsFlightButtonPressed(String mappingValue, List<String> buttonsPressed)
         {
             return (buttonsPressed.Contains(mappingValue) && !buttonsPressedBefore.Contains(mappingValue));
+        }
+
+        private bool IsPermanentButtonPressed(String mappingValue, List<String> buttonsPressed)
+        {
+            return buttonsPressed.Contains(mappingValue);
         }
 
         private float TrimFloatValue(float inputValue)

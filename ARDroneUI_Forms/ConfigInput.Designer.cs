@@ -66,12 +66,14 @@ namespace ARDrone.UI
             this.labelAxisRollInfo = new System.Windows.Forms.Label();
             this.textBoxAxisRoll = new System.Windows.Forms.TextBox();
             this.buttonReset = new System.Windows.Forms.Button();
+            this.textBoxButtonSpecialAction = new System.Windows.Forms.TextBox();
+            this.labelButtonSpecialActionInfo = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // buttonSubmit
             // 
             this.buttonSubmit.DialogResult = System.Windows.Forms.DialogResult.OK;
-            this.buttonSubmit.Location = new System.Drawing.Point(477, 238);
+            this.buttonSubmit.Location = new System.Drawing.Point(476, 256);
             this.buttonSubmit.Name = "buttonSubmit";
             this.buttonSubmit.Size = new System.Drawing.Size(58, 23);
             this.buttonSubmit.TabIndex = 2;
@@ -81,7 +83,7 @@ namespace ARDrone.UI
             // 
             // buttonCancel
             // 
-            this.buttonCancel.Location = new System.Drawing.Point(412, 238);
+            this.buttonCancel.Location = new System.Drawing.Point(411, 256);
             this.buttonCancel.Name = "buttonCancel";
             this.buttonCancel.Size = new System.Drawing.Size(59, 23);
             this.buttonCancel.TabIndex = 4;
@@ -339,7 +341,7 @@ namespace ARDrone.UI
             // 
             // buttonReset
             // 
-            this.buttonReset.Location = new System.Drawing.Point(8, 238);
+            this.buttonReset.Location = new System.Drawing.Point(7, 256);
             this.buttonReset.Name = "buttonReset";
             this.buttonReset.Size = new System.Drawing.Size(54, 23);
             this.buttonReset.TabIndex = 47;
@@ -347,12 +349,34 @@ namespace ARDrone.UI
             this.buttonReset.UseVisualStyleBackColor = true;
             this.buttonReset.Click += new System.EventHandler(this.buttonReset_Click);
             // 
+            // textBoxButtonSpecialAction
+            // 
+            this.textBoxButtonSpecialAction.Enabled = false;
+            this.textBoxButtonSpecialAction.Location = new System.Drawing.Point(356, 225);
+            this.textBoxButtonSpecialAction.Name = "textBoxButtonSpecialAction";
+            this.textBoxButtonSpecialAction.ReadOnly = true;
+            this.textBoxButtonSpecialAction.Size = new System.Drawing.Size(162, 20);
+            this.textBoxButtonSpecialAction.TabIndex = 49;
+            this.textBoxButtonSpecialAction.Enter += new System.EventHandler(this.textBoxControl_Enter);
+            this.textBoxButtonSpecialAction.Leave += new System.EventHandler(this.textBoxControl_Leave);
+            // 
+            // labelButtonSpecialActionInfo
+            // 
+            this.labelButtonSpecialActionInfo.AutoSize = true;
+            this.labelButtonSpecialActionInfo.Location = new System.Drawing.Point(256, 228);
+            this.labelButtonSpecialActionInfo.Name = "labelButtonSpecialActionInfo";
+            this.labelButtonSpecialActionInfo.Size = new System.Drawing.Size(78, 13);
+            this.labelButtonSpecialActionInfo.TabIndex = 48;
+            this.labelButtonSpecialActionInfo.Text = "Special Action:";
+            // 
             // ConfigInput
             // 
             this.AcceptButton = this.buttonSubmit;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(539, 270);
+            this.ClientSize = new System.Drawing.Size(539, 286);
+            this.Controls.Add(this.textBoxButtonSpecialAction);
+            this.Controls.Add(this.labelButtonSpecialActionInfo);
             this.Controls.Add(this.buttonReset);
             this.Controls.Add(this.textBoxButtonChangeCamera);
             this.Controls.Add(this.labelButtonChangeCameraInfo);
@@ -423,5 +447,7 @@ namespace ARDrone.UI
         private System.Windows.Forms.Label labelAxisRollInfo;
         private System.Windows.Forms.TextBox textBoxAxisRoll;
         private System.Windows.Forms.Button buttonReset;
+        private System.Windows.Forms.TextBox textBoxButtonSpecialAction;
+        private System.Windows.Forms.Label labelButtonSpecialActionInfo;
     }
 }

@@ -41,7 +41,7 @@ namespace ARDrone.Input
         protected override void CreateStandardMapping()
         {
             mapping.SetAxisMappings("A-D", "W-S", "LeftArrow-Right", "DownArrow-Up");
-            mapping.SetButtonMappings("C", "Return", "Return", "NumPad0", "Space", "F");
+            mapping.SetButtonMappings("C", "Return", "Return", "NumPad0", "Space", "F", "X");
         }
 
         public override List<String> GetPressedButtons()

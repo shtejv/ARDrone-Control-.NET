@@ -22,7 +22,7 @@ namespace ARDrone.UI
 {
     public partial class ConfigInput : Form
     {
-        private enum Control { None, AxisRoll, AxisPitch, AxisYaw, AxisGaz, ButtonTakeoff, ButtonLand, ButtonHover, ButtonEmergency, ButtonFlatTrim, ButtonChangeCamera };
+        private enum Control { None, AxisRoll, AxisPitch, AxisYaw, AxisGaz, ButtonTakeoff, ButtonLand, ButtonHover, ButtonEmergency, ButtonFlatTrim, ButtonChangeCamera, ButtonSpecialAction };
         private enum ControlType { None, Axis, Button };
 
         private Dictionary<String, Control> nameControlMap = null;
@@ -79,6 +79,7 @@ namespace ARDrone.UI
             nameControlMap.Add(textBoxButtonTakeOff.Name, Control.ButtonTakeoff); nameControlMap.Add(textBoxButtonLand.Name, Control.ButtonLand);
             nameControlMap.Add(textBoxButtonHover.Name, Control.ButtonHover); nameControlMap.Add(textBoxButtonEmergency.Name, Control.ButtonEmergency);
             nameControlMap.Add(textBoxButtonFlatTrim.Name, Control.ButtonFlatTrim); nameControlMap.Add(textBoxButtonChangeCamera.Name, Control.ButtonChangeCamera);
+            nameControlMap.Add(textBoxButtonSpecialAction.Name, Control.ButtonSpecialAction);
 
             controlTypeMap = new Dictionary<Control, ControlType>();
 
@@ -88,6 +89,7 @@ namespace ARDrone.UI
             controlTypeMap.Add(Control.ButtonTakeoff, ControlType.Button); controlTypeMap.Add(Control.ButtonLand, ControlType.Button);
             controlTypeMap.Add(Control.ButtonHover, ControlType.Button); controlTypeMap.Add(Control.ButtonEmergency, ControlType.Button);
             controlTypeMap.Add(Control.ButtonFlatTrim, ControlType.Button); controlTypeMap.Add(Control.ButtonChangeCamera, ControlType.Button);
+            controlTypeMap.Add(Control.ButtonSpecialAction, ControlType.Button);
         }
 
         public void InitializeInputManager(ARDrone.Input.InputManager inputManager)
@@ -286,6 +288,7 @@ namespace ARDrone.UI
             textBoxButtonTakeOff.Enabled = enabled; textBoxButtonLand.Enabled = enabled;
             textBoxButtonHover.Enabled = enabled; textBoxButtonEmergency.Enabled = enabled;
             textBoxButtonFlatTrim.Enabled = enabled; textBoxButtonChangeCamera.Enabled = enabled;
+            textBoxButtonSpecialAction.Enabled = enabled;
 
             if (enabled)
             {
@@ -295,6 +298,7 @@ namespace ARDrone.UI
                 textBoxButtonTakeOff.BackColor = enabled ? Color.White : SystemColors.Control; textBoxButtonLand.BackColor = enabled ? Color.White : SystemColors.Control;
                 textBoxButtonHover.BackColor = enabled ? Color.White : SystemColors.Control; textBoxButtonEmergency.BackColor = enabled ? Color.White : SystemColors.Control;
                 textBoxButtonFlatTrim.BackColor = enabled ? Color.White : SystemColors.Control; textBoxButtonChangeCamera.BackColor = enabled ? Color.White : SystemColors.Control;
+                textBoxButtonSpecialAction.BackColor = enabled ? Color.White : SystemColors.Control;
             }
         }
 
@@ -343,11 +347,44 @@ namespace ARDrone.UI
             textBoxButtonEmergency.Text = mapping.EmergencyButton;
             textBoxButtonFlatTrim.Text = mapping.FlatTrimButton;
             textBoxButtonChangeCamera.Text = mapping.CameraSwapButton;
+            textBoxButtonSpecialAction.Text = mapping.SpecialActionButton;
 
             CheckForDoubleInput();
         }
 
         private void UpdateMapping(InputMapping mapping, Control control, String inputValue)
+        {
+            String currentValue = GetInputMappingValue(mapping, control);
+
+            if (currentValue != inputValue)
+            {
+                SetInputMappingValue(mapping, control, inputValue);
+            }
+            else
+            {
+                SetInputMappingValue(mapping, control, "");
+            }
+        }
+
+        private String GetInputMappingValue(InputMapping mapping, Control control)
+        {
+            if (control == Control.AxisRoll) { return mapping.RollAxisMapping; }
+            if (control == Control.AxisPitch) { return mapping.PitchAxisMapping; }
+            if (control == Control.AxisYaw) { return mapping.YawAxisMapping; }
+            if (control == Control.AxisGaz) { return mapping.GazAxisMapping; }
+
+            if (control == Control.ButtonTakeoff) { return mapping.TakeOffButton; }
+            if (control == Control.ButtonLand) { return mapping.LandButton; }
+            if (control == Control.ButtonHover) { return mapping.HoverButton; }
+            if (control == Control.ButtonEmergency) { return mapping.EmergencyButton; }
+            if (control == Control.ButtonFlatTrim) { return mapping.FlatTrimButton; }
+            if (control == Control.ButtonChangeCamera) { return mapping.CameraSwapButton; }
+            if (control == Control.ButtonSpecialAction) { return mapping.SpecialActionButton; }
+
+            return "";
+        }
+
+        private void SetInputMappingValue(InputMapping mapping, Control control, String inputValue)
         {
             if (control == Control.AxisRoll) { mapping.RollAxisMapping = inputValue; }
             if (control == Control.AxisPitch) { mapping.PitchAxisMapping = inputValue; }
@@ -360,6 +397,7 @@ namespace ARDrone.UI
             if (control == Control.ButtonEmergency) { mapping.EmergencyButton = inputValue; }
             if (control == Control.ButtonFlatTrim) { mapping.FlatTrimButton = inputValue; }
             if (control == Control.ButtonChangeCamera) { mapping.CameraSwapButton = inputValue; }
+            if (control == Control.ButtonSpecialAction) { mapping.SpecialActionButton = inputValue; }
         }
 
         private void CheckForDoubleInput()
@@ -370,11 +408,13 @@ namespace ARDrone.UI
             inputValues.AddRange(textBoxAxisYaw.Text.Split('-')); inputValues.AddRange(textBoxAxisGaz.Text.Split('-'));
             inputValues.Add(textBoxButtonTakeOff.Text); inputValues.Add(textBoxButtonLand.Text); inputValues.Add(textBoxButtonHover.Text);
             inputValues.Add(textBoxButtonEmergency.Text); inputValues.Add(textBoxButtonFlatTrim.Text); inputValues.Add(textBoxButtonChangeCamera.Text);
+            inputValues.Add(textBoxButtonSpecialAction.Text);
 
             CheckDoubleInputEntry(textBoxAxisRoll, inputValues); CheckDoubleInputEntry(textBoxAxisPitch, inputValues);
             CheckDoubleInputEntry(textBoxAxisYaw, inputValues); CheckDoubleInputEntry(textBoxAxisGaz, inputValues);
             CheckDoubleInputEntry(textBoxButtonTakeOff, inputValues); CheckDoubleInputEntry(textBoxButtonLand, inputValues); CheckDoubleInputEntry(textBoxButtonHover, inputValues);
             CheckDoubleInputEntry(textBoxButtonEmergency, inputValues); CheckDoubleInputEntry(textBoxButtonFlatTrim, inputValues); CheckDoubleInputEntry(textBoxButtonChangeCamera, inputValues);
+            CheckDoubleInputEntry(textBoxButtonSpecialAction, inputValues);
         }
 
         private void CheckDoubleInputEntry(TextBox textBox, List<String> inputValues)

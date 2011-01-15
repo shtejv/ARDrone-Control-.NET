@@ -317,6 +317,7 @@ namespace ARDrone.UI
             checkBoxInputEmergency.Checked = inputState.Emergency;
             checkBoxInputFlatTrim.Checked = inputState.FlatTrim;
             checkBoxInputChangeCamera.Checked = inputState.CameraSwap;
+            checkBoxSpecialAction.Checked = inputState.SpecialAction;
         }
 
         private void SendDroneCommands(InputState inputState)

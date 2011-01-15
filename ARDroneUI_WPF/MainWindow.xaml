@@ -12,7 +12,7 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:av="clr-namespace:AviationInstruments;assembly=AviationInstruments"
-        WindowStyle="SingleBorderWindow" Title="MainWindow" Width="854" Height="606" MinWidth="709" MinHeight="606" BorderThickness="1" BorderBrush="#FF232300" Background="#FFF0F0F0" Closing="Window_Closing" Loaded="Window_Loaded">
+        WindowStyle="SingleBorderWindow" Title="MainWindow" Width="854" Height="620" MinWidth="709" MinHeight="620" BorderThickness="1" BorderBrush="#FF232300" Background="#FFF0F0F0" Closing="Window_Closing" Loaded="Window_Loaded">
     <Grid>
         <DockPanel LastChildFill="True">
             <Grid DockPanel.Dock="Right" Width="370" Margin="5">
@@ -48,6 +48,7 @@
                                 <RowDefinition Height="Auto" />
                                 <RowDefinition Height="Auto" />
                                 <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
                             </Grid.RowDefinitions>
 
                             <Label Content="Roll" HorizontalAlignment="Left" Grid.Row="0" Grid.Column="0" Style="{StaticResource styleContentDescription}" Margin="20,5,0,0" />
@@ -62,8 +63,9 @@
                             <CheckBox Name="checkBoxInputLand" Content="Land" Height="16" Grid.Row="4" Grid.Column="1" Style="{StaticResource styleInputCheckBox}" />
                             <CheckBox Name="checkBoxInputEmergency" Content="Emergency" Grid.Row="5" Grid.Column="0" Style="{StaticResource styleInputCheckBox}" />
                             <CheckBox Name="checkBoxInputFlatTrim" Content="Flat trim" Grid.Row="5" Grid.Column="1" Style="{StaticResource styleInputCheckBox}" />
-                            <CheckBox Name="checkBoxInputHover" Content="Hover" Grid.Row="6" Grid.Column="0" Style="{StaticResource styleInputCheckBox}" Margin="7,4,3,10" />
-                            <CheckBox Name="checkBoxInputChangeCamera" Content="Camera" Grid.Row="6" Grid.Column="1" Style="{StaticResource styleInputCheckBox}" Margin="7,4,3,10" />
+                            <CheckBox Name="checkBoxInputHover" Content="Hover" Grid.Row="6" Grid.Column="0" Style="{StaticResource styleInputCheckBox}" />
+                            <CheckBox Name="checkBoxInputChangeCamera" Content="Camera" Grid.Row="6" Grid.Column="1" Style="{StaticResource styleInputCheckBox}" />
+                            <CheckBox Name="checkBoxInputSpecialAction" Content="Sp. action" Grid.Row="7" Grid.Column="0" Style="{StaticResource styleInputCheckBox}" Margin="7,4,3,10" />
                         </Grid>
                     </GroupBox>
                     <GroupBox Header="Status">
