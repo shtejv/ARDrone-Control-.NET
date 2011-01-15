@@ -59,12 +59,5 @@ namespace DirectionControl.Properties {
                 resourceCulture = value;
             }
         }
-        
-        internal static System.Drawing.Bitmap ArrowDown {
-            get {
-                object obj = ResourceManager.GetObject("ArrowDown", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
     }
 }

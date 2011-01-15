@@ -54,6 +54,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CourseAdvisor.cs" />
+    <Compile Include="CourseList.cs" />
     <Compile Include="DetectionUtils.cs" />
     <Compile Include="DrawingUtilities.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

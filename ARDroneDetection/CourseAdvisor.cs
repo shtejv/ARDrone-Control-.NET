@@ -66,12 +66,10 @@ namespace ARDrone.Detection
 
         private Direction GetAdviceForSignAt(Rectangle rectangle, double pitch, double roll)
         {
-            Console.WriteLine(roll);
-
             Point middleOfSign = getMiddle(rectangle);
 
-            double xAdvice = GetAdviceForCoordinates(middleOfSign.X, pictureDimensions.Width, pitch);
-            double yAdvice = -GetAdviceForCoordinates(middleOfSign.Y, pictureDimensions.Height, roll);
+            double xAdvice = GetAdviceForCoordinates(middleOfSign.X, pictureDimensions.Width, -pitch);
+            double yAdvice = -GetAdviceForCoordinates(middleOfSign.Y, pictureDimensions.Height, -roll);
 
             return new Direction(xAdvice, yAdvice);
         }

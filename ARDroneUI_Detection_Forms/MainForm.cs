@@ -43,21 +43,18 @@ namespace ARDroneUI_Detection_Forms
         private int minValue = 12;
         private int maxValue = 160;
 
+        private bool lastValueForSpecialAction = false;
+        private bool followingDrone = false;
+
+        private CourseList course = null;
+
         public MainForm()
         {
             InitializeComponent();
             InitializeInputManager();
 
             arDroneControl = new ARDroneControl();
-
-            signDetector = new SignDetector();
-            courseAdvisor = new CourseAdvisor(arDroneControl.BottomCameraPictureSize, arDroneControl.BottomCameraFieldOfViewDegrees);
-
-            InitSliders();
-
-            signDetector.channelSliderMin = sliderThresholdMin.Value;
-            signDetector.channelSliderMax = sliderThresholdMax.Value;
-            signDetector.invertChannel = checkBoxThresholdInvert.Checked;
+            InitDetection();
         }
 
         public void DisposeControl()
@@ -71,13 +68,24 @@ namespace ARDroneUI_Detection_Forms
             AddInputListeners();
         }
 
-        public void InitSliders()
+        public void InitDetection()
+        {
+            signDetector = new SignDetector();
+            courseAdvisor = new CourseAdvisor(arDroneControl.BottomCameraPictureSize, arDroneControl.BottomCameraFieldOfViewDegrees);
+            course = new CourseList();
+
+            InitDetectionSliders();
+        }
+
+        public void InitDetectionSliders()
         {
             sliderThresholdMin.Value = minValue;
             sliderThresholdMax.Value = maxValue;
+            signDetector.invertChannel = checkBoxThresholdInvert.Checked;
 
             signDetector.channelSliderMin = minValue;
             signDetector.channelSliderMax = maxValue;
+
             labelThreshold.Text = minValue.ToString() + "..." + maxValue.ToString();
         }
 
@@ -196,6 +204,12 @@ namespace ARDroneUI_Detection_Forms
             arDroneControl.SetFlightData(roll, pitch, gaz, yaw);
         }
 
+        private void TakeScreenshot()
+        {
+            ARDroneControl.DroneData data = arDroneControl.GetCurrentDroneData();
+            pictureBoxMask.Image.Save(@"D:\bla.png");
+        }
+
         private void UpdateUIAsync(String message)
         {
             this.BeginInvoke(new OutputEventHandler(UpdateUISync), message);
@@ -258,6 +272,11 @@ namespace ARDroneUI_Detection_Forms
             labelStatusHovering.Text = arDroneControl.IsHovering.ToString();
         }
 
+        private void UpdateInputState(InputState inputState)
+        {
+            labelStatusSpecialAction.Text = inputState.SpecialAction.ToString();
+        }
+
         private int GetCurrentFrameRate()
         {
             int timePassed = (int)(DateTime.Now - lastFrameRateCaptureTime).TotalMilliseconds;
@@ -273,43 +292,70 @@ namespace ARDroneUI_Detection_Forms
         private void SendDroneCommands(InputState inputState)
         {
             if (inputState.CameraSwap)
-            {
                 ChangeCamera();
-            }
 
             if (inputState.TakeOff && arDroneControl.CanTakeoff)
-            {
                 Takeoff();
-            }
             else if (inputState.Land && arDroneControl.CanLand)
-            {
                 Land();
-            }
 
             if (inputState.Hover && arDroneControl.CanEnterHoverMode)
-            {
                 EnterHoverMode();
-            }
             else if (inputState.Hover && arDroneControl.CanLeaveHoverMode)
-            {
                 LeaveHoverMode();
-            }
 
             if (inputState.Emergency)
-            {
                 Emergency();
-            }
             else if (inputState.FlatTrim)
-            {
                 FlatTrim();
-            }
+
+            if (SpecialActionChanged(inputState.SpecialAction))
+            {
+                if (inputState.SpecialAction)
+                    FollowDrone();
+                else
+                    EndFollowingDrone();
+            }            
 
             float roll = inputState.Roll / 1.0f;
             float pitch = inputState.Pitch / 1.0f;
             float yaw = inputState.Yaw / 2.0f;
             float gaz = inputState.Gaz / 2.0f;
 
-            Navigate(roll, pitch, yaw, gaz);
+            if (followingDrone && course.LatestValidDirection.AdviceGiven)
+                CorrectDroneCourse();
+            else
+                Navigate(roll, pitch, yaw, gaz);
+        }
+
+        private void FollowDrone()
+        {
+            followingDrone = true;
+        }
+
+        private void EndFollowingDrone()
+        {
+            followingDrone = false;
+        }
+
+        private void CorrectDroneCourse()
+        {
+            CourseAdvisor.Direction direction = course.LatestValidDirection;
+
+            Console.WriteLine("Correcting course: x = " + (-(float)direction.DeltaX / 2.0f) + ", y = " + (-(float)direction.DeltaY / 2.0));
+
+            if (direction.AdviceGiven)
+                Navigate((float)direction.DeltaX / 8.0f, -(float)direction.DeltaY / 8.0f, 0.0f, 0.0f);
+        }
+
+        private bool SpecialActionChanged(bool currentValueForSpecialAction)
+        {
+            return (lastValueForSpecialAction != currentValueForSpecialAction);
+        }
+
+        private void UpdateDroneState(InputState inputState)
+        {
+            lastValueForSpecialAction = inputState.SpecialAction;
         }
 
         private void UpdateVideoImage()
@@ -329,37 +375,33 @@ namespace ARDroneUI_Detection_Forms
             DetermineAndMarkAdvisedCourse(results);
         }
 
-        private void UpdateVisualImage(System.Drawing.Bitmap image)
-        {
-            if (image != null)
-            {
-                frameCountSinceLastCapture++;
-
-                pictureBoxVideo.Image = image;
-            }
-        }
-
         private List<SignDetector.SignResult> DetermineAndMarkStopSignsInVideoSignal(System.Drawing.Bitmap image)
         {
-            Image<Bgr, Byte> imageToProcess = new Image<Bgr, Byte>(image);
-            Image<Gray, Byte> maskedImage;
-
-            List<SignDetector.SignResult> results = signDetector.DetectStopSign(imageToProcess, out maskedImage);
-
-            for (int i = 0; i < results.Count; i++)
+            List<SignDetector.SignResult> results = new List<SignDetector.SignResult>();
+            if (image != null)
             {
-                image = (System.Drawing.Bitmap)DrawingUtilities.DrawRectangleToImage(image, results[i].Rectangle, System.Drawing.Color.White);
-            }
+                Image<Bgr, Byte> imageToProcess = new Image<Bgr, Byte>(image);
+                Image<Gray, Byte> maskedImage;
 
-            pictureBoxMask.Image = maskedImage.Bitmap;
+                results = signDetector.DetectStopSign(imageToProcess, out maskedImage);
+
+                for (int i = 0; i < results.Count; i++)
+                {
+                    image = (System.Drawing.Bitmap)DrawingUtilities.DrawRectangleToImage(image, results[i].Rectangle, System.Drawing.Color.White);
+                }
+
+                pictureBoxMask.Image = maskedImage.Bitmap;
+            }
 
             return results;
         }
 
         private void DetermineAndMarkAdvisedCourse(List<SignDetector.SignResult> results)
         {
-            CourseAdvisor.Direction advisedDirection = DetermineAdvisedCourse(results);
-            MarkAdvisedCourse(advisedDirection);
+            CourseAdvisor.Direction direction = DetermineAdvisedCourse(results);
+            course.addDirection(direction);
+
+            MarkAdvisedCourse(course.LatestValidDirection);
         }
 
         private CourseAdvisor.Direction DetermineAdvisedCourse(List<SignDetector.SignResult> results)
@@ -385,6 +427,16 @@ namespace ARDroneUI_Detection_Forms
         {
             directionControl.SetArrowData(direction.DeltaX, direction.DeltaY);
         }
+
+        private void UpdateVisualImage(System.Drawing.Bitmap image)
+        {
+            if (image != null)
+            {
+                frameCountSinceLastCapture++;
+                pictureBoxVideo.Image = image;
+            }
+        }
+
 
         private bool CanCaptureVideo
         {
@@ -417,9 +469,9 @@ namespace ARDroneUI_Detection_Forms
             Disconnect();
         }
 
-        private void buttonCommandChangeCamera_Click(object sender, EventArgs e)
+        private void buttonCommandTakeScreenshot_Click(object sender, EventArgs e)
         {
-            ChangeCamera();
+            TakeScreenshot();
         }
 
         private void buttonCommandTakeoff_Click(object sender, EventArgs e)
@@ -469,17 +521,15 @@ namespace ARDroneUI_Detection_Forms
         private void inputManager_NewInputState(object sender, NewInputStateEventArgs e)
         {
             SendDroneCommands(e.CurrentInputState);
-            this.BeginInvoke(new NewInputStateHandler(inputManagerSync_NewInputState), this, e);
+            UpdateDroneState(e.CurrentInputState);
 
-            Console.WriteLine(e.CurrentInputState.ToString());
+            this.BeginInvoke(new NewInputStateHandler(inputManagerSync_NewInputState), this, e);
         }
 
         private void inputManagerSync_NewInputState(object sender, NewInputStateEventArgs e)
         {
-
+            UpdateInputState(e.CurrentInputState);
         }
-
-
 
         private void checkBoxThresholdInvert_CheckedChanged(object sender, EventArgs e)
         {

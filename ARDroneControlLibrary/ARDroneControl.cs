@@ -444,7 +444,7 @@ namespace ARDrone.Control
                 currentPitch = pitch;
                 currentYaw = yaw;
                 currentGaz = gaz;
-                Console.WriteLine("Hovering: " + hovering.ToString() + ", Roll: " + roll.ToString() + ", Roll: " + roll.ToString() + ", Pitch: " + pitch.ToString() + ", Gaz: " + gaz.ToString() + ", Yaw: " + yaw.ToString());
+                //Console.WriteLine("Hovering: " + hovering.ToString() + ", Roll: " + roll.ToString() + ", Roll: " + roll.ToString() + ", Pitch: " + pitch.ToString() + ", Gaz: " + gaz.ToString() + ", Yaw: " + yaw.ToString());
 
                 return SetProgressCmd(false, roll, pitch, gaz, yaw);
             }
