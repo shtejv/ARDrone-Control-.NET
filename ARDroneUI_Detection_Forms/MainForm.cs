@@ -40,6 +40,9 @@ namespace ARDroneUI_Detection_Forms
 
         String snapshotFilePath = string.Empty;
 
+        private int minValue = 12;
+        private int maxValue = 160;
+
         public MainForm()
         {
             InitializeComponent();
@@ -49,6 +52,8 @@ namespace ARDroneUI_Detection_Forms
 
             signDetector = new SignDetector();
             courseAdvisor = new CourseAdvisor(arDroneControl.BottomCameraPictureSize, arDroneControl.BottomCameraFieldOfViewDegrees);
+
+            InitSliders();
 
             signDetector.channelSliderMin = sliderThresholdMin.Value;
             signDetector.channelSliderMax = sliderThresholdMax.Value;
@@ -64,6 +69,16 @@ namespace ARDroneUI_Detection_Forms
         {
             inputManager = new ARDrone.Input.InputManager(this.Handle);
             AddInputListeners();
+        }
+
+        public void InitSliders()
+        {
+            sliderThresholdMin.Value = minValue;
+            sliderThresholdMax.Value = maxValue;
+
+            signDetector.channelSliderMin = minValue;
+            signDetector.channelSliderMax = maxValue;
+            labelThreshold.Text = minValue.ToString() + "..." + maxValue.ToString();
         }
 
         private void AddInputListeners()
@@ -464,8 +479,7 @@ namespace ARDroneUI_Detection_Forms
 
         }
 
-        private int minValue = 12;
-        private int maxValue = 160;
+
 
         private void checkBoxThresholdInvert_CheckedChanged(object sender, EventArgs e)
         {
