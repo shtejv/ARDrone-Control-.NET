@@ -54,6 +54,7 @@ namespace ARDroneUI_Detection_Forms
             InitializeInputManager();
 
             arDroneControl = new ARDroneControl();
+
             InitDetection();
         }
 
