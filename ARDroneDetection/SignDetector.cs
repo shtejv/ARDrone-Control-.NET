@@ -160,11 +160,11 @@ namespace ARDrone.Detection
             {
                 contours.ApproxPoly(contours.Perimeter * 0.02, 0, contours.Storage);
 
-                if (contours.Area > 50)
+                if (contours.Area > 200)
                 {
                     double ratio = CvInvoke.cvMatchShapes(octagonContour, contours, Emgu.CV.CvEnum.CONTOURS_MATCH_TYPE.CV_CONTOURS_MATCH_I3, 0);
 
-                    if (ratio > 0.01) //not a good match of contour shape
+                    if (ratio > 0.1) //not a good match of contour shape
                     {
                         results.AddRange(FindSignInChildren(image, contours));
                     }
