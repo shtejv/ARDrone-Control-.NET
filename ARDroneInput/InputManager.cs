@@ -103,6 +103,7 @@ namespace ARDrone.Input
             AddKeyboardDevices(windowHandle);
             AddJoystickDevices(windowHandle);
             AddWiimoteDevices();
+            AddSpeechDevice();
         }
 
         private void AddKeyboardDevices(IntPtr windowHandle)
@@ -123,9 +124,7 @@ namespace ARDrone.Input
 
                     KeyboardInput input = new KeyboardInput(device);
                     AddInputDevice(input);
-                    input.InitCurrentlyInvokedInput();
-
-                    InvokeNewInputDeviceEvent(input.DeviceInstanceId, input);
+                    InitInputDevice(input);
                 }
             }
         }
@@ -149,9 +148,7 @@ namespace ARDrone.Input
 
                     JoystickInput input = new JoystickInput(device);
                     AddInputDevice(input);
-                    input.InitCurrentlyInvokedInput();
-
-                    InvokeNewInputDeviceEvent(input.DeviceInstanceId, input);
+                    InitInputDevice(input);
                 }
             }
         }
@@ -188,11 +185,9 @@ namespace ARDrone.Input
                 {
                     WiimoteInput input = new WiimoteInput(wiimote);
                     AddInputDevice(input);
-                    input.InitCurrentlyInvokedInput();
+                    InitInputDevice(input);
 
                     wiimote.SetLEDs(false, false, false, false);
-
-                    InvokeNewInputDeviceEvent(input.DeviceInstanceId, input);
                 }
             }
         }
@@ -208,6 +203,29 @@ namespace ARDrone.Input
             }
             return false;
         }
+
+        private void AddSpeechDevice()
+        {
+            if (!CheckIfSpeechInputDeviceExists())
+            {
+                SpeechInput input = new SpeechInput();
+                AddInputDevice(input);
+                InitInputDevice(input);
+            }
+        }
+
+        private bool CheckIfSpeechInputDeviceExists()
+        {
+            for (int i = 0; i < inputDevices.Count; i++)
+            {
+                if (inputDevices[i].DeviceInstanceId == "SP")
+                    return true;
+            }
+
+            return false;
+        }
+
+
 
         private void AddInputDevice(GenericInput input)
         {
@@ -242,6 +260,12 @@ namespace ARDrone.Input
             Console.WriteLine("Added " + input.DeviceName + " at last position");
 
             inputDevices.Add(input);
+        }
+
+        private void InitInputDevice(GenericInput input)
+        {
+            input.InitCurrentlyInvokedInput();
+            InvokeNewInputDeviceEvent(input.DeviceInstanceId, input);
         }
 
         private void CollectInputByThread()
@@ -293,11 +317,24 @@ namespace ARDrone.Input
                 if (currentInputState != null)
                 {
                     lastInputState = currentInputState;
+                    CancelInputStatesExceptFor(inputDevices[i].DeviceInstanceId);
+
                     return currentInputState;
                 }
             }
 
             return null;
+        }
+
+        private void CancelInputStatesExceptFor(String deviceId)
+        {
+            for (int i = 0; i < inputDevices.Count; i++)
+            {
+                if (inputDevices[i].Cancellable)
+                {
+                    inputDevices[i].CancelEvents();
+                }
+            }
         }
 
         private void UpdateRawInput()

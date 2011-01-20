@@ -15,7 +15,7 @@ using WiimoteLib;
 
 namespace ARDrone.Input
 {
-    public class WiimoteInput : GenericInput
+    public class WiimoteInput : ButtonBasedInput
     {
         enum Axis
         {

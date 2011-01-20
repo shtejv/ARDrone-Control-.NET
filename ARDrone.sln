@@ -52,6 +52,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ARDroneUI_Detection_Forms",
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DirectionControl", "DirectionControl\DirectionControl.csproj", "{625B51D7-FAB2-48F9-86D9-11F82EF9FB96}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ARDroneInput_Speech", "ARDroneInput_Speech\ARDroneInput_Speech.csproj", "{BE4A76AB-FA50-4E6D-BE06-D2D9A528DBB2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -365,6 +367,27 @@ Global
 		{625B51D7-FAB2-48F9-86D9-11F82EF9FB96}.Release|Win32.ActiveCfg = Release|Any CPU
 		{625B51D7-FAB2-48F9-86D9-11F82EF9FB96}.Release|x64.ActiveCfg = Release|Any CPU
 		{625B51D7-FAB2-48F9-86D9-11F82EF9FB96}.Release|x86.ActiveCfg = Release|Any CPU
+		{BE4A76AB-FA50-4E6D-BE06-D2D9A528DBB2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BE4A76AB-FA50-4E6D-BE06-D2D9A528DBB2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BE4A76AB-FA50-4E6D-BE06-D2D9A528DBB2}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{BE4A76AB-FA50-4E6D-BE06-D2D9A528DBB2}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{BE4A76AB-FA50-4E6D-BE06-D2D9A528DBB2}.Debug|Win32.ActiveCfg = Debug|Any CPU
+		{BE4A76AB-FA50-4E6D-BE06-D2D9A528DBB2}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{BE4A76AB-FA50-4E6D-BE06-D2D9A528DBB2}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{BE4A76AB-FA50-4E6D-BE06-D2D9A528DBB2}.Profile|Any CPU.ActiveCfg = Release|Any CPU
+		{BE4A76AB-FA50-4E6D-BE06-D2D9A528DBB2}.Profile|Any CPU.Build.0 = Release|Any CPU
+		{BE4A76AB-FA50-4E6D-BE06-D2D9A528DBB2}.Profile|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{BE4A76AB-FA50-4E6D-BE06-D2D9A528DBB2}.Profile|Mixed Platforms.Build.0 = Release|Any CPU
+		{BE4A76AB-FA50-4E6D-BE06-D2D9A528DBB2}.Profile|Win32.ActiveCfg = Release|Any CPU
+		{BE4A76AB-FA50-4E6D-BE06-D2D9A528DBB2}.Profile|x64.ActiveCfg = Release|Any CPU
+		{BE4A76AB-FA50-4E6D-BE06-D2D9A528DBB2}.Profile|x86.ActiveCfg = Release|Any CPU
+		{BE4A76AB-FA50-4E6D-BE06-D2D9A528DBB2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BE4A76AB-FA50-4E6D-BE06-D2D9A528DBB2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BE4A76AB-FA50-4E6D-BE06-D2D9A528DBB2}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{BE4A76AB-FA50-4E6D-BE06-D2D9A528DBB2}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{BE4A76AB-FA50-4E6D-BE06-D2D9A528DBB2}.Release|Win32.ActiveCfg = Release|Any CPU
+		{BE4A76AB-FA50-4E6D-BE06-D2D9A528DBB2}.Release|x64.ActiveCfg = Release|Any CPU
+		{BE4A76AB-FA50-4E6D-BE06-D2D9A528DBB2}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

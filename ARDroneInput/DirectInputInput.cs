@@ -15,7 +15,7 @@ using Microsoft.DirectX.DirectInput;
 
 namespace ARDrone.Input
 {
-    public abstract class DirectInputInput : GenericInput
+    public abstract class DirectInputInput : ButtonBasedInput
     {
         protected Device device = null;
 

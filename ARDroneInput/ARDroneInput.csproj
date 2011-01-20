@@ -57,6 +57,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ButtonBasedInput.cs" />
     <Compile Include="DirectInputInput.cs" />
     <Compile Include="Events.cs" />
     <Compile Include="GenericInput.cs" />
@@ -65,7 +66,14 @@
     <Compile Include="JoystickInput.cs" />
     <Compile Include="KeyboardInput.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SpeechInput.cs" />
     <Compile Include="WiimoteInput.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\ARDroneInput_Speech\ARDroneInput_Speech.csproj">
+      <Project>{BE4A76AB-FA50-4E6D-BE06-D2D9A528DBB2}</Project>
+      <Name>ARDroneInput_Speech</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

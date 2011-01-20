@@ -35,7 +35,7 @@ namespace ARDrone.UI
 
         private ARDrone.Input.InputManager inputManager = null;
 
-        private GenericInput selectedDevice = null;
+        private ButtonBasedInput selectedDevice = null;
         private bool isSelectedDevicePresent = false;
 
         private Control selectedControl = Control.None;
@@ -43,7 +43,7 @@ namespace ARDrone.UI
 
         private String tempAxisInput = "";
 
-        List<GenericInput> devices = null;
+        List<ButtonBasedInput> devices = null;
 
         public ConfigInput()
         {
@@ -116,15 +116,18 @@ namespace ARDrone.UI
 
         public void InitializeDeviceList()
         {
-            devices = new List<GenericInput>();
+            devices = new List<ButtonBasedInput>();
 
             foreach (GenericInput inputDevice in inputManager.InputDevices)
             {
-                AddDeviceToDeviceList(inputDevice);
+                if (inputDevice.GetType() == typeof(ButtonBasedInput))
+                {
+                    AddDeviceToDeviceList((ButtonBasedInput)inputDevice);
+                }
             }
         }
 
-        private void HandleNewDevice(String deviceId, GenericInput inputDevice)
+        private void HandleNewDevice(String deviceId, ButtonBasedInput inputDevice)
         {
             AddDeviceToDeviceList(inputDevice);
 
@@ -151,7 +154,7 @@ namespace ARDrone.UI
             }            
         }
 
-        private void AddDeviceToDeviceList(GenericInput inputDevice)
+        private void AddDeviceToDeviceList(ButtonBasedInput inputDevice)
         {
             bool foundReplacement = false;
             for (int i = 0; i < devices.Count; i++)
@@ -178,7 +181,7 @@ namespace ARDrone.UI
 
         private void RemoveDeviceFromDeviceList(String deviceId)
         {
-            GenericInput inputDevice = GetDeviceById(deviceId);
+            ButtonBasedInput inputDevice = GetDeviceById(deviceId);
 
             if (inputDevice != null)
             {
@@ -195,9 +198,9 @@ namespace ARDrone.UI
             }
         }
 
-        private GenericInput GetDeviceById(String deviceId)
+        private ButtonBasedInput GetDeviceById(String deviceId)
         {
-            GenericInput input = null;
+            ButtonBasedInput input = null;
             for (int i = 0; i < devices.Count; i++)
             {
                 if (devices[i].DeviceInstanceId == deviceId)
@@ -527,7 +530,7 @@ namespace ARDrone.UI
 
         private void inputManagerSync_NewInputDevice(object sender, NewInputDeviceEventArgs e)
         {
-            HandleNewDevice(e.DeviceId, e.Input);
+            HandleNewDevice(e.DeviceId, (ButtonBasedInput)e.Input);
         }
 
         private void inputManager_InputDeviceLost(object sender, InputDeviceLostEventArgs e)
