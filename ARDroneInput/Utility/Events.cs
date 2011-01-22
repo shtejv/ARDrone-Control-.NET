@@ -13,7 +13,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace ARDrone.Input
+namespace ARDrone.Input.Utility
 {
     public delegate void InputDeviceLostHandler(object sender, InputDeviceLostEventArgs e);
     public delegate void NewInputDeviceHandler(object sender, NewInputDeviceEventArgs e);

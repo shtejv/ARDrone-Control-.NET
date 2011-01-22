@@ -17,6 +17,8 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using ARDrone.Input;
+using ARDrone.Input.Utility;
+using ARDrone.Input.InputMappings;
 
 namespace ARDrone.UI
 {
@@ -118,7 +120,7 @@ namespace ARDrone.UI
 
             foreach (GenericInput inputDevice in inputManager.InputDevices)
             {
-                if (inputDevice.GetType() == typeof(ButtonBasedInput))
+                if (inputDevice is ButtonBasedInput)
                 {
                     AddDeviceToDeviceList((ButtonBasedInput)inputDevice);
                 }
@@ -234,7 +236,7 @@ namespace ARDrone.UI
 
                 if (selectedDevice != null)
                 {
-                    TakeOverMapping(selectedDevice.Mapping);
+                    TakeOverMapping((ButtonBasedInputMapping)selectedDevice.Mapping);
                     isSelectedDevicePresent = true;
                     UpdateCurrentDeviceDescription();
                 }
@@ -278,7 +280,7 @@ namespace ARDrone.UI
 
                 if (selectedDevice != null)
                 {
-                    TakeOverMapping(selectedDevice.Mapping);
+                    TakeOverMapping((ButtonBasedInputMapping)selectedDevice.Mapping);
                 }
             }
         }
@@ -333,11 +335,11 @@ namespace ARDrone.UI
             if (result == DialogResult.Yes)
             {
                 selectedDevice.SetDefaultMapping();
-                TakeOverMapping(selectedDevice.Mapping);
+                TakeOverMapping((ButtonBasedInputMapping)selectedDevice.Mapping);
             }
         }
 
-        private void TakeOverMapping(InputMapping mapping)
+        private void TakeOverMapping(ButtonBasedInputMapping mapping)
         {
             textBoxAxisRoll.Text = mapping.RollAxisMapping;
             textBoxAxisPitch.Text = mapping.PitchAxisMapping;
@@ -355,7 +357,7 @@ namespace ARDrone.UI
             CheckForDoubleInput();
         }
 
-        private void UpdateMapping(InputMapping mapping, Control control, String inputValue)
+        private void UpdateMapping(ButtonBasedInputMapping mapping, Control control, String inputValue)
         {
             String currentValue = GetInputMappingValue(mapping, control);
 
@@ -369,7 +371,7 @@ namespace ARDrone.UI
             }
         }
 
-        private String GetInputMappingValue(InputMapping mapping, Control control)
+        private String GetInputMappingValue(ButtonBasedInputMapping mapping, Control control)
         {
             if (control == Control.AxisRoll) { return mapping.RollAxisMapping; }
             if (control == Control.AxisPitch) { return mapping.PitchAxisMapping; }
@@ -387,7 +389,7 @@ namespace ARDrone.UI
             return "";
         }
 
-        private void SetInputMappingValue(InputMapping mapping, Control control, String inputValue)
+        private void SetInputMappingValue(ButtonBasedInputMapping mapping, Control control, String inputValue)
         {
             if (control == Control.AxisRoll) { mapping.RollAxisMapping = inputValue; }
             if (control == Control.AxisPitch) { mapping.PitchAxisMapping = inputValue; }
@@ -459,7 +461,7 @@ namespace ARDrone.UI
                 {
                     if (isAxis)
                     {
-                        UpdateMapping(selectedDevice.Mapping, selectedControl, inputValue);
+                        UpdateMapping((ButtonBasedInputMapping)selectedDevice.Mapping, selectedControl, inputValue);
                         mappingSet = true;
                     }
                     else
@@ -472,7 +474,7 @@ namespace ARDrone.UI
                         {
                             tempAxisInput = tempAxisInput + "-" + inputValue;
 
-                            UpdateMapping(selectedDevice.Mapping, selectedControl, tempAxisInput);
+                            UpdateMapping((ButtonBasedInputMapping)selectedDevice.Mapping, selectedControl, tempAxisInput);
                             tempAxisInput = "";
                             mappingSet = true;
                         }
@@ -480,7 +482,7 @@ namespace ARDrone.UI
                 }
                 else if (selectedControlType == ControlType.Button && !isAxis)
                 {
-                    UpdateMapping(selectedDevice.Mapping, selectedControl, inputValue);
+                    UpdateMapping((ButtonBasedInputMapping)selectedDevice.Mapping, selectedControl, inputValue);
                     mappingSet = true;
                 }
             }

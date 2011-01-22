@@ -58,11 +58,17 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ButtonBasedInput.cs" />
+    <Compile Include="ConfigurableInput.cs" />
     <Compile Include="DirectInputInput.cs" />
-    <Compile Include="Events.cs" />
+    <Compile Include="InputControls\ButtonBasedInputControl.cs" />
+    <Compile Include="InputMappings\ButtonBasedInputMapping.cs" />
+    <Compile Include="Utility\Events.cs" />
     <Compile Include="GenericInput.cs" />
     <Compile Include="InputManager.cs" />
-    <Compile Include="InputState.cs" />
+    <Compile Include="InputMappings\ValidatedInputMapping.cs" />
+    <Compile Include="InputControls\InputControl.cs" />
+    <Compile Include="InputMappings\InputMapping.cs" />
+    <Compile Include="Utility\InputState.cs" />
     <Compile Include="JoystickInput.cs" />
     <Compile Include="KeyboardInput.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

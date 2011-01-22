@@ -25,6 +25,7 @@ using System.Windows.Threading;
 using ARDrone.Control;
 using ARDrone.Capture;
 using ARDrone.Input;
+using ARDrone.Input.Utility;
 using AviationInstruments;
 
 namespace ARDrone.UI

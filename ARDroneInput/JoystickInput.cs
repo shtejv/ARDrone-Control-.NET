@@ -14,6 +14,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Text;
 using Microsoft.DirectX.DirectInput;
+using ARDrone.Input.InputMappings;
 
 namespace ARDrone.Input
 {
@@ -34,23 +35,13 @@ namespace ARDrone.Input
         {
             this.device = device;
 
-            List<String> validAxes = new List<String>();
-            foreach (Axis axis in Enum.GetValues(typeof(Axis)))
-            {
-                validAxes.Add(axis.ToString());
-            }
-
-            List<String> validButtons = new List<String>();
-            foreach (Button button in Enum.GetValues(typeof(Button)))
-            {
-                validButtons.Add(button.ToString());
-            }
-
-            CreateMapping(validButtons, validAxes);
+            CreateMapping(GetValidButtons(), GetValidAxes());
         }
 
-        protected override void CreateStandardMapping()
+        protected override InputMapping GetStandardMapping()
         {
+            ButtonBasedInputMapping mapping = new ButtonBasedInputMapping(GetValidButtons(), GetValidAxes());
+
             if (device.Properties.ProductName == "T.Flight Stick X")
             {
                 mapping.SetAxisMappings(Axis.Axis_X, Axis.Axis_Y, Axis.Axis_R, Axis.Axis_POV_1);
@@ -61,6 +52,30 @@ namespace ARDrone.Input
                 mapping.SetAxisMappings(Axis.Axis_X, Axis.Axis_Y, "Button_1-Button_3", "Button_2-Button_4");
                 mapping.SetButtonMappings(Button.Button_6, Button.Button_10, Button.Button_10, Button.Button_8, Button.Button_5, Button.Button_9, Button.Button_11);
             }
+
+            return mapping;
+        }
+
+        private List<String> GetValidButtons()
+        {
+            List<String> validButtons = new List<String>();
+            foreach (Button button in Enum.GetValues(typeof(Button)))
+            {
+                validButtons.Add(button.ToString());
+            }
+
+            return validButtons;
+        }
+
+        private List<String> GetValidAxes()
+        {
+            List<String> validAxes = new List<String>();
+            foreach (Axis axis in Enum.GetValues(typeof(Axis)))
+            {
+                validAxes.Add(axis.ToString());
+            }
+
+            return validAxes;
         }
 
         public override List<String> GetPressedButtons()

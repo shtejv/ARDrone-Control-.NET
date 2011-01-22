@@ -12,6 +12,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using WiimoteLib;
+using ARDrone.Input.InputMappings;
 
 namespace ARDrone.Input
 {
@@ -43,6 +44,12 @@ namespace ARDrone.Input
 
         public WiimoteInput(Wiimote wiimote) : base()
         {
+            InitWiimote(wiimote);
+            CreateMapping(GetValidButtons(), GetValidAxes());
+        }
+
+        private void InitWiimote(Wiimote wiimote)
+        {
             wiimote.Connect();
 
             wiimote.WiimoteChanged += wiimote_WiimoteChanged;
@@ -54,26 +61,38 @@ namespace ARDrone.Input
             }
 
             this.wiimote = wiimote;
+        }
 
-            List<String> validAxes = new List<String>();
-            foreach (Axis axis in Enum.GetValues(typeof(Axis)))
-            {
-                validAxes.Add(axis.ToString());
-            }
-
+        private List<String> GetValidButtons()
+        {
             List<String> validButtons = new List<String>();
             foreach (Button button in Enum.GetValues(typeof(Button)))
             {
                 validButtons.Add(button.ToString());
             }
 
-            CreateMapping(validButtons, validAxes);
+            return validButtons;
         }
 
-        protected override void CreateStandardMapping()
+        private List<String> GetValidAxes()
         {
+            List<String> validAxes = new List<String>();
+            foreach (Axis axis in Enum.GetValues(typeof(Axis)))
+            {
+                validAxes.Add(axis.ToString());
+            }
+
+            return validAxes;
+        }
+
+        protected override InputMapping GetStandardMapping()
+        {
+            ButtonBasedInputMapping mapping = new ButtonBasedInputMapping(GetValidButtons(), GetValidAxes());
+
             mapping.SetAxisMappings(Axis.Axis_Y, Axis.Axis_X, "Button_Left-Button_Right", "Button_B-Button_A");
             mapping.SetButtonMappings("", Button.Button_Plus, Button.Button_Plus, Button.Button_Minus, Button.Button_Home, "", "");
+
+            return mapping;
         }
 
         public override void Dispose()

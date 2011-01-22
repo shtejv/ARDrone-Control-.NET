@@ -14,6 +14,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Text;
 using Microsoft.DirectX.DirectInput;
+using ARDrone.Input.InputMappings;
 
 namespace ARDrone.Input
 {
@@ -24,8 +25,21 @@ namespace ARDrone.Input
         public KeyboardInput(Device device) : base()
         {
             this.device = device;
+            CreateMapping(GetValidButtons(), GetValidAxes());
+        }
 
-            List<String> validAxes = new List<String>();
+        protected override InputMapping GetStandardMapping()
+        {
+            ButtonBasedInputMapping mapping = new ButtonBasedInputMapping(GetValidButtons(), GetValidAxes());
+
+            mapping.SetAxisMappings("A-D", "W-S", "LeftArrow-Right", "DownArrow-Up");
+            mapping.SetButtonMappings("C", "Return", "Return", "NumPad0", "Space", "F", "X");
+
+            return mapping;
+        }
+
+        private List<String> GetValidButtons()
+        {
             List<String> validButtons = new List<String>();
             foreach (Key key in Enum.GetValues(typeof(Key)))
             {
@@ -35,13 +49,12 @@ namespace ARDrone.Input
                 }
             }
 
-            CreateMapping(validButtons, validAxes);
+            return validButtons;
         }
 
-        protected override void CreateStandardMapping()
+        private List<String> GetValidAxes()
         {
-            mapping.SetAxisMappings("A-D", "W-S", "LeftArrow-Right", "DownArrow-Up");
-            mapping.SetButtonMappings("C", "Return", "Return", "NumPad0", "Space", "F", "X");
+            return new List<String>();
         }
 
         public override List<String> GetPressedButtons()

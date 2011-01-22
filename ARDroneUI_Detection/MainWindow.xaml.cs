@@ -25,6 +25,7 @@ using System.Windows.Threading;
 using ARDrone.Control;
 using ARDrone.Detection;
 using ARDrone.Input;
+using ARDrone.Input.Utility;
 using Emgu.CV;
 using Emgu.CV.Structure;
 

@@ -13,14 +13,13 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Xml.Serialization;
+using ARDrone.Input.Utility;
+using ARDrone.Input.InputMappings;
 
 namespace ARDrone.Input
 {
-    public abstract class ButtonBasedInput : GenericInput
+    public abstract class ButtonBasedInput : ConfigurableInput
     {
-        protected InputMapping mapping = null;
-        protected InputMapping backupMapping = null;
-
         protected List<String> buttonsPressedBefore = new List<String>();
         protected Dictionary<String, float> lastAxisValues = new Dictionary<String, float>();
         protected InputState lastInputState = new InputState();
@@ -28,109 +27,12 @@ namespace ARDrone.Input
         public ButtonBasedInput()
             : base()
         {
-            mapping = new InputMapping(new List<String>(), new List<String>());
-            backupMapping = mapping.Clone();
+
         }
 
-        protected void CreateMapping(List<String> validButtons, List<String> validAxes)
+        protected override InputMapping GetMapping(List<String> validButtons, List<String> validAxes)
         {
-            mapping = new InputMapping(validButtons, validAxes);
-            if (!LoadMapping())
-            {
-                CreateStandardMapping();
-            }
-            backupMapping = mapping.Clone();
-        }
-
-        protected abstract void CreateStandardMapping();
-
-        public void SetDefaultMapping()
-        {
-            CreateStandardMapping();
-            backupMapping = mapping.Clone();
-        }
-
-        public bool LoadMapping()
-        {
-            try
-            {
-                if (mapping == null)
-                {
-                    return false;
-                }
-
-                String mappingFilePath = GetMappingFilePath();
-                if (!File.Exists(mappingFilePath))
-                {
-                    return false;
-                }
-
-                InputControls loadedMapping;
-                using (TextReader textReader = new StreamReader(mappingFilePath))
-                {
-                    XmlSerializer deserializer = new XmlSerializer(typeof(InputControls));
-                    loadedMapping = (InputControls)deserializer.Deserialize(textReader);
-                    textReader.Close();
-                }
-
-                mapping.CopyMappingsFrom(loadedMapping);
-                return true;
-            }
-            catch (Exception)
-            {
-                return false;
-            }
-        }
-
-        public void SaveMapping()
-        {
-            backupMapping = mapping.Clone();
-
-            try
-            {
-                if (mapping == null)
-                {
-                    return;
-                }
-
-                String mappingFilePath = GetMappingFilePath();
-
-                XmlSerializer serializer = new XmlSerializer(typeof(InputControls));
-                using (System.IO.TextWriter textWriter = new System.IO.StreamWriter(mappingFilePath))
-                {
-                    serializer.Serialize(textWriter, mapping.Controls);
-                    textWriter.Close();
-                }
-            }
-            catch (Exception e)
-            {
-                throw new Exception("There was an error while writing the input mapping for device \"" + DeviceName + "\": " + e.Message);
-            }
-        }
-
-        public void RevertMapping()
-        {
-            mapping = backupMapping.Clone();
-        }
-
-        public void CopyMappingFrom(ButtonBasedInput input)
-        {
-            mapping = input.mapping.Clone();
-            backupMapping = input.backupMapping.Clone();
-        }
-
-        private String GetMappingFilePath()
-        {
-            String appDataFolder = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
-            String appFolder = Path.Combine(appDataFolder, "ARDrone.NET", "mappings");
-
-            if (!Directory.Exists(appFolder))
-            {
-                Directory.CreateDirectory(appFolder);
-            }
-
-            String mappingPath = Path.Combine(appFolder, FilePrefix + ".xml");
-            return mappingPath;
+            return new ButtonBasedInputMapping(validButtons, validAxes);
         }
 
         public override void InitCurrentlyInvokedInput()
@@ -205,19 +107,19 @@ namespace ARDrone.Input
             if (buttonsPressed.Contains("")) { buttonsPressed.Remove(""); }
             if (axisValues.ContainsKey("")) { axisValues.Remove(""); }
 
-            float roll = GetAxisValue(mapping.RollAxisMapping, buttonsPressed, axisValues);
-            float pitch = GetAxisValue(mapping.PitchAxisMapping, buttonsPressed, axisValues);
-            float yaw = GetAxisValue(mapping.YawAxisMapping, buttonsPressed, axisValues);
-            float gaz = GetAxisValue(mapping.GazAxisMapping, buttonsPressed, axisValues);
+            float roll = GetAxisValue(ButtonMapping.RollAxisMapping, buttonsPressed, axisValues);
+            float pitch = GetAxisValue(ButtonMapping.PitchAxisMapping, buttonsPressed, axisValues);
+            float yaw = GetAxisValue(ButtonMapping.YawAxisMapping, buttonsPressed, axisValues);
+            float gaz = GetAxisValue(ButtonMapping.GazAxisMapping, buttonsPressed, axisValues);
 
-            bool cameraSwap = IsFlightButtonPressed(mapping.CameraSwapButton, buttonsPressed);
-            bool takeOff = IsFlightButtonPressed(mapping.TakeOffButton, buttonsPressed);
-            bool land = IsFlightButtonPressed(mapping.LandButton, buttonsPressed);
-            bool hover = IsFlightButtonPressed(mapping.HoverButton, buttonsPressed);
-            bool emergency = IsFlightButtonPressed(mapping.EmergencyButton, buttonsPressed);
-            bool flatTrim = IsFlightButtonPressed(mapping.FlatTrimButton, buttonsPressed);
+            bool cameraSwap = IsFlightButtonPressed(ButtonMapping.CameraSwapButton, buttonsPressed);
+            bool takeOff = IsFlightButtonPressed(ButtonMapping.TakeOffButton, buttonsPressed);
+            bool land = IsFlightButtonPressed(ButtonMapping.LandButton, buttonsPressed);
+            bool hover = IsFlightButtonPressed(ButtonMapping.HoverButton, buttonsPressed);
+            bool emergency = IsFlightButtonPressed(ButtonMapping.EmergencyButton, buttonsPressed);
+            bool flatTrim = IsFlightButtonPressed(ButtonMapping.FlatTrimButton, buttonsPressed);
 
-            bool specialAction = IsPermanentButtonPressed(mapping.SpecialActionButton, buttonsPressed);
+            bool specialAction = IsPermanentButtonPressed(ButtonMapping.SpecialActionButton, buttonsPressed);
 
             if (roll != lastInputState.Roll || pitch != lastInputState.Pitch || yaw != lastInputState.Yaw || gaz != lastInputState.Gaz || cameraSwap != lastInputState.CameraSwap || takeOff != lastInputState.TakeOff ||
                 land != lastInputState.Land || hover != lastInputState.Hover || emergency != lastInputState.Emergency || flatTrim != lastInputState.FlatTrim ||
@@ -289,17 +191,12 @@ namespace ARDrone.Input
             return inputValue;
         }
 
-        public InputMapping Mapping
+        private ButtonBasedInputMapping ButtonMapping
         {
             get
             {
-                return mapping;
+                return (ButtonBasedInputMapping)mapping;
             }
-        }
-
-        public virtual String FilePrefix
-        {
-            get { return string.Empty; }
         }
     }
 }

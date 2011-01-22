@@ -17,6 +17,7 @@ using Microsoft.DirectX.DirectInput;
 using System.IO;
 using System.Xml.Serialization;
 using WiimoteLib;
+using ARDrone.Input.Utility;
 
 namespace ARDrone.Input
 {

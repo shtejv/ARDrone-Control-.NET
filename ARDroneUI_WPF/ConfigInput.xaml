@@ -45,7 +45,7 @@
         
         <Label Name="labelDevicePresentInfo" Content="" Grid.Row="0" Grid.Column="1" HorizontalAlignment="Right" Margin="1" Foreground="Red" />
 
-        <Grid Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2">
+        <Grid Grid.Row="1" Grid.ColumnSpan="2">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"></RowDefinition>
                 <RowDefinition Height="Auto"></RowDefinition>
@@ -76,6 +76,8 @@
             <TextBox Name="textBoxAxisYaw" Text="" Grid.Row="3" Grid.Column="1" Style="{StaticResource styleContentTextBox}" IsReadOnly="True" GotFocus="textBoxControl_GotFocus" LostFocus="textBoxControl_LostFocus" IsEnabled="False" />
             <Label Content="Gaz:" Grid.Row="4" Grid.Column="0" Style="{StaticResource styleContentLabel}" />
             <TextBox Name="textBoxAxisGaz" Text="" Grid.Row="4" Grid.Column="1" Style="{StaticResource styleContentTextBox}" IsReadOnly="True" GotFocus="textBoxControl_GotFocus" LostFocus="textBoxControl_LostFocus" IsEnabled="False" />
+            <Label Content="Tick Keyword:" Grid.Row="5" Grid.Column="0" Style="{StaticResource styleContentLabel}" Visibility="Hidden" />
+            <TextBox Name="textBoxAxisTick" Text="" Grid.Row="5" Grid.Column="1" Style="{StaticResource styleContentTextBox}" IsReadOnly="True" GotFocus="textBoxControl_GotFocus" LostFocus="textBoxControl_LostFocus" IsEnabled="False" Visibility="Hidden" />
 
             <Label Content="Take Off:" Grid.Row="1" Grid.Column="2" Style="{StaticResource styleContentLabel}" />
             <TextBox Name="textBoxButtonTakeOff" Text="" Grid.Row="1" Grid.Column="3" Style="{StaticResource styleContentTextBox}" IsReadOnly="True" GotFocus="textBoxControl_GotFocus" LostFocus="textBoxControl_LostFocus" IsEnabled="False" />

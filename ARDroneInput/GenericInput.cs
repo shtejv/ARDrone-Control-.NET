@@ -8,10 +8,7 @@
  * You should have received a copy of the GNU General Public License along with this program; if not, see <http://www.gnu.org/licenses/>.
  */
 using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Text;
-using System.Xml.Serialization;
+using ARDrone.Input.Utility;
 
 namespace ARDrone.Input
 {
