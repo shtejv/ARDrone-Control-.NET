@@ -61,11 +61,6 @@ namespace ARDrone.UI
             Init(inputManager);
         }
 
-        public void Dispose()
-        {
-            RemoveInputListeners();
-        }
-
         public void Init(ARDrone.Input.InputManager inputManager)
         {
             InitializeControlMap();
@@ -99,21 +94,11 @@ namespace ARDrone.UI
         public void InitializeInputManager(ARDrone.Input.InputManager inputManager)
         {
             this.inputManager = inputManager;
-            AddInputListeners();
-        }
+            inputManager.SwitchInputMode(Input.InputManager.InputMode.NoInput);
 
-        private void AddInputListeners()
-        {
             inputManager.NewInputDevice += new NewInputDeviceHandler(inputManager_NewInputDevice);
             inputManager.InputDeviceLost += new InputDeviceLostHandler(inputManager_InputDeviceLost);
             inputManager.RawInputReceived += new RawInputReceivedHandler(inputManager_RawInputReceived);
-        }
-
-        private void RemoveInputListeners()
-        {
-            inputManager.NewInputDevice -= new NewInputDeviceHandler(inputManager_NewInputDevice);
-            inputManager.InputDeviceLost -= new InputDeviceLostHandler(inputManager_InputDeviceLost);
-            inputManager.RawInputReceived -= new RawInputReceivedHandler(inputManager_RawInputReceived);
         }
 
         public void InitializeDeviceList()
@@ -129,6 +114,20 @@ namespace ARDrone.UI
             }
         }
 
+        public void Dispose()
+        {
+            DisposeInputManager();
+        }
+
+        private void DisposeInputManager()
+        {
+            inputManager.SwitchInputMode(Input.InputManager.InputMode.NoInput);
+
+            inputManager.NewInputDevice -= new NewInputDeviceHandler(inputManager_NewInputDevice);
+            inputManager.InputDeviceLost -= new InputDeviceLostHandler(inputManager_InputDeviceLost);
+            inputManager.RawInputReceived -= new RawInputReceivedHandler(inputManager_RawInputReceived);
+        }
+
         private void HandleNewDevice(String deviceId, ButtonBasedInput inputDevice)
         {
             AddDeviceToDeviceList(inputDevice);
@@ -136,6 +135,7 @@ namespace ARDrone.UI
             if (selectedDevice != null && selectedDevice.DeviceInstanceId == inputDevice.DeviceInstanceId)
             {
                 inputDevice.CopyMappingFrom(selectedDevice);
+
                 selectedDevice = inputDevice;
 
                 isSelectedDevicePresent = true;
@@ -261,6 +261,8 @@ namespace ARDrone.UI
         {
             if (textBox != null && nameControlMap.ContainsKey(textBox.Name))
             {
+                inputManager.SwitchInputMode(Input.InputManager.InputMode.RawInput, selectedDevice.DeviceInstanceId);
+
                 selectedControl = nameControlMap[textBox.Name];
                 selectedControlType = controlTypeMap[selectedControl];
 
@@ -273,6 +275,8 @@ namespace ARDrone.UI
         {
             if (textBox != null && nameControlMap.ContainsKey(textBox.Name))
             {
+                inputManager.SwitchInputMode(Input.InputManager.InputMode.NoInput);
+
                 selectedControl = Control.None;
                 selectedControlType = ControlType.None;
 

@@ -42,6 +42,47 @@ namespace ARDrone.Input
 
         Wiimote wiimote = null;
 
+        public static List<GenericInput> GetNewInputDevices(IntPtr windowHandle, List<GenericInput> currentDevices)
+        {
+            List<GenericInput> newDevices = new List<GenericInput>();
+            WiimoteCollection wiiMoteCollection = new WiimoteCollection();
+
+            try
+            {
+                wiiMoteCollection.FindAllWiimotes();
+            }
+            catch (WiimoteNotFoundException) { }
+            catch (WiimoteException)
+            {
+                Console.WriteLine("Wiimote error");
+            }
+
+            foreach (Wiimote wiimote in wiiMoteCollection)
+            {
+                if (!CheckIfDeviceExists(wiimote, currentDevices))
+                {
+                    WiimoteInput input = new WiimoteInput(wiimote);
+                    wiimote.SetLEDs(false, false, false, false);
+
+                    newDevices.Add(input);
+                }
+            }
+
+            return newDevices;
+        }
+
+        protected static bool CheckIfDeviceExists(Wiimote wiimote, List<GenericInput> currentDevices)
+        {
+            for (int i = 0; i < currentDevices.Count; i++)
+            {
+                if (wiimote.HIDDevicePath.ToString() == currentDevices[i].DeviceInstanceId)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
         public WiimoteInput(Wiimote wiimote) : base()
         {
             InitWiimote(wiimote);

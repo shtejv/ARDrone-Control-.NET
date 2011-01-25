@@ -1,15 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
+
 using System.Text;
 
 namespace ARDrone.Input.InputControls
 {
     public class ButtonBasedInputControl : InputControl
     {
-        public const String RollAxisMappingField = "RollAxisMapping";
-        public const String PitchAxisMappingField = "PitchAxisMapping";
-        public const String YawAxisMappingField = "YawAxisMapping";
-        public const String GazAxisMappingField = "GazAxisMapping";
+        public const String RollAxisField = "RollAxis";
+        public const String PitchAxisField = "PitchAxis";
+        public const String YawAxisField = "YawAxis";
+        public const String GazAxisField = "GazAxis";
 
         public const String CameraSwapButtonField = "CameraSwapButton";
         public const String TakeOffButtonField = "TakeOffButton";
@@ -35,18 +36,18 @@ namespace ARDrone.Input.InputControls
         {
             controlTypeMap = new Dictionary<String, ControlType>()
             {
-                { RollAxisMappingField, ControlType.Axis},
-                { PitchAxisMappingField, ControlType.Axis},
-                { YawAxisMappingField, ControlType.Axis},
-                { GazAxisMappingField, ControlType.Axis},
+                { RollAxisField, ControlType.ContinuousValue},
+                { PitchAxisField, ControlType.ContinuousValue},
+                { YawAxisField, ControlType.ContinuousValue},
+                { GazAxisField, ControlType.ContinuousValue},
 
-                { CameraSwapButtonField, ControlType.Button},
-                { TakeOffButtonField, ControlType.Button},
-                { LandButtonField, ControlType.Button},
-                { HoverButtonField, ControlType.Button},
-                { EmergencyButtonField, ControlType.Button},
-                { FlatTrimButtonField, ControlType.Button},
-                { SpecialActionButtonField, ControlType.Button}
+                { CameraSwapButtonField, ControlType.BooleanValue},
+                { TakeOffButtonField, ControlType.BooleanValue},
+                { LandButtonField, ControlType.BooleanValue},
+                { HoverButtonField, ControlType.BooleanValue},
+                { EmergencyButtonField, ControlType.BooleanValue},
+                { FlatTrimButtonField, ControlType.BooleanValue},
+                { SpecialActionButtonField, ControlType.BooleanValue}
             };
         }
 

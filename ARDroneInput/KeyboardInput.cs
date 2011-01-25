@@ -22,6 +22,30 @@ namespace ARDrone.Input
     {
         protected ArrayList keysPressedBefore = new ArrayList();
 
+        public static List<GenericInput> GetNewInputDevices(IntPtr windowHandle, List<GenericInput> currentDevices)
+        {
+            List<GenericInput> newDevices = new List<GenericInput>();
+
+            DeviceList keyboardControllerList = Manager.GetDevices(DeviceClass.Keyboard, EnumDevicesFlags.AttachedOnly);
+            for (int i = 0; i < keyboardControllerList.Count; i++)
+            {
+                keyboardControllerList.MoveNext();
+                DeviceInstance deviceInstance = (DeviceInstance)keyboardControllerList.Current;
+
+                Device device = new Device(deviceInstance.InstanceGuid);
+
+                if (!CheckIfDirectInputDeviceExists(device, currentDevices))
+                {
+                    AcquireDirectInputDevice(windowHandle, device, DeviceDataFormat.Keyboard);
+                    KeyboardInput input = new KeyboardInput(device);
+
+                    newDevices.Add(input);
+                }
+            }
+
+            return newDevices;
+        }
+
         public KeyboardInput(Device device) : base()
         {
             this.device = device;

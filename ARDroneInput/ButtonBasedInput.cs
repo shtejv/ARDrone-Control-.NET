@@ -35,13 +35,13 @@ namespace ARDrone.Input
             return new ButtonBasedInputMapping(validButtons, validAxes);
         }
 
-        public override void InitCurrentlyInvokedInput()
+        public override void Init()
         {
             Dictionary<String, float> axisValues = GetAxisValues();
             SetLastAxisValues(axisValues);
         }
 
-        public override String GetCurrentlyInvokedInput(out bool isAxis)
+        public override String GetCurrentRawInput(out bool isAxis)
         {
             List<String> buttonsPressed = GetPressedButtons();
             Dictionary<String, float> axisValues = GetAxisValues();
@@ -99,7 +99,7 @@ namespace ARDrone.Input
             }
         }
 
-        public override InputState GetCurrentState()
+        public override InputState GetCurrentControlInput()
         {
             List<String> buttonsPressed = GetPressedButtons();
             Dictionary<String, float> axisValues = GetAxisValues();

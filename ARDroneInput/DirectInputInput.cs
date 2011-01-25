@@ -19,6 +19,23 @@ namespace ARDrone.Input
     {
         protected Device device = null;
 
+        protected static bool CheckIfDirectInputDeviceExists(Device device, List<GenericInput> currentDevices)
+        {
+            for (int i = 0; i < currentDevices.Count; i++)
+            {
+                if (device.DeviceInformation.InstanceGuid.ToString() == currentDevices[i].DeviceInstanceId)
+                    return true;
+            }
+            return false;
+        }
+
+        protected static void AcquireDirectInputDevice(IntPtr windowHandle, Device device, DeviceDataFormat format)
+        {
+            device.SetCooperativeLevel(windowHandle, CooperativeLevelFlags.Background | CooperativeLevelFlags.NonExclusive);
+            device.SetDataFormat(format);
+            device.Acquire();
+        }
+
         public override void Dispose()
         {
             device.Unacquire();

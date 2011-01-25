@@ -24,11 +24,38 @@ namespace ARDrone.Input
         {
             Axis_X, Axis_Y, Axis_Z, Axis_R, Axis_POV_1
         }
+
         enum Button
         {
             Button_1, Button_2, Button_3, Button_4, Button_5,
             Button_6, Button_7, Button_8, Button_9, Button_10,
             Button_11, Button_12, Button_13, Button_14, Button_15
+        }
+
+
+        public static List<GenericInput> GetNewInputDevices(IntPtr windowHandle, List<GenericInput> currentDevices)
+        {
+            List<GenericInput> newDevices = new List<GenericInput>();
+
+            DeviceList gameControllerList = Manager.GetDevices(DeviceClass.GameControl, EnumDevicesFlags.AttachedOnly);
+            for (int i = 0; i < gameControllerList.Count; i++)
+            {
+                gameControllerList.MoveNext();
+                DeviceInstance deviceInstance = (DeviceInstance)gameControllerList.Current;
+
+                Device device = new Device(deviceInstance.InstanceGuid);
+
+                if (device.DeviceInformation.ProductGuid != new Guid("0306057e-0000-0000-0000-504944564944") &&       // Wiimotes are excluded
+                    !CheckIfDirectInputDeviceExists(device, currentDevices))
+                {
+                    AcquireDirectInputDevice(windowHandle, device, DeviceDataFormat.Joystick);
+                    JoystickInput input = new JoystickInput(device);
+
+                    newDevices.Add(input);
+                }
+            }
+
+            return newDevices;
         }
 
         public JoystickInput(Device device) : base()

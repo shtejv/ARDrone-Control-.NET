@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -6,6 +7,7 @@ using System.Text;
 using System.Xml.Serialization;
 using ARDrone.Input.InputControls;
 using ARDrone.Input.InputMappings;
+using ARDrone.Input.Utility;
 
 namespace ARDrone.Input
 {
@@ -49,9 +51,7 @@ namespace ARDrone.Input
             try
             {
                 if (mapping == null)
-                {
                     return false;
-                }
 
                 String mappingFilePath = GetMappingFilePath();
                 if (!File.Exists(mappingFilePath))
@@ -59,15 +59,9 @@ namespace ARDrone.Input
                     return false;
                 }
 
-                Dictionary<String, String> mappings;
-                using (TextReader textReader = new StreamReader(mappingFilePath))
-                {
-                    XmlSerializer deserializer = new XmlSerializer(typeof(Dictionary<String, String>));
-                    mappings = (Dictionary<String, String>)deserializer.Deserialize(textReader);
-                    textReader.Close();
-                }
+                Dictionary<String, String> mappingDictionary = DictionarySerializer.Deserialize(mappingFilePath);
 
-                mapping.CopyMappingsFrom(mappings);
+                mapping.CopyMappingsFrom(mappingDictionary);
                 return true;
             }
             catch (Exception)
@@ -89,12 +83,14 @@ namespace ARDrone.Input
 
                 String mappingFilePath = GetMappingFilePath();
 
-                XmlSerializer serializer = new XmlSerializer(typeof(Dictionary<String, String>));
-                using (System.IO.TextWriter textWriter = new System.IO.StreamWriter(mappingFilePath))
-                {
-                    serializer.Serialize(textWriter, mapping.Controls.Mappings);
-                    textWriter.Close();
-                }
+                DictionarySerializer.Serialize(mapping.Controls.Mappings, mappingFilePath);
+
+                //XmlSerializer serializer = new XmlSerializer(typeof(Dictionary<String, String>));
+                //using (System.IO.TextWriter textWriter = new System.IO.StreamWriter(mappingFilePath))
+                //{
+                //    serializer.Serialize(textWriter, mapping.Controls.Mappings);
+                //    textWriter.Close();
+                //}
             }
             catch (Exception e)
             {

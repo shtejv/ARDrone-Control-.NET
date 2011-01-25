@@ -7,39 +7,39 @@ namespace ARDrone.Input.InputMappings
 {
     public abstract class ValidatedInputMapping : InputMapping
     {
-        protected List<String> validButtons = null;
-        protected List<String> validAxes = null;
+        protected List<String> validBooleanInputValues = null;
+        protected List<String> validContinuousInputValues = null;
 
-        protected ValidatedInputMapping(List<String> validButtons, List<String> validAxes, InputControl controls)
+        protected ValidatedInputMapping(List<String> validBooleanInputValues, List<String> validContinuousInputValues, InputControl controls)
             : base()
         {
-            InitializeValidation(validButtons, validAxes);
+            InitializeValidation(validBooleanInputValues, validContinuousInputValues);
             InitializeControls(controls);
         }
 
-        private void InitializeValidation(List<String> validButtons, List<String> validAxes)
+        private void InitializeValidation(List<String> validBooleanInputValues, List<String> validContinuousInputValues)
         {
-            this.validButtons = new List<String>();
-            this.validAxes = new List<String>();
+            this.validBooleanInputValues = new List<String>();
+            this.validContinuousInputValues = new List<String>();
 
-            for (int i = 0; i < validButtons.Count; i++)
+            for (int i = 0; i < validBooleanInputValues.Count; i++)
             {
-                if (validButtons[i].Contains("-")) { throw new Exception("'-' is not allowed within button names (button name '" + validButtons[i] + "')"); }
-                if (validButtons[i] == null) { throw new Exception("Null is not allowed as a button name"); }
-                this.validButtons.Add(validButtons[i]);
+                if (validBooleanInputValues[i].Contains("-")) { throw new Exception("'-' is not allowed within button names (button name '" + validBooleanInputValues[i] + "')"); }
+                if (validBooleanInputValues[i] == null) { throw new Exception("Null is not allowed as a button name"); }
+                this.validBooleanInputValues.Add(validBooleanInputValues[i]);
             }
-            for (int i = 0; i < validAxes.Count; i++)
+            for (int i = 0; i < validContinuousInputValues.Count; i++)
             {
-                if (validAxes[i].Contains("-")) { throw new Exception("'-' is not allowed within axis names (axis name '" + validButtons[i] + "')"); }
-                if (validAxes[i] == null) { throw new Exception("Null is not allowed as an axis name"); }
-                this.validAxes.Add(validAxes[i]);
+                if (validContinuousInputValues[i].Contains("-")) { throw new Exception("'-' is not allowed within axis names (axis name '" + validBooleanInputValues[i] + "')"); }
+                if (validContinuousInputValues[i] == null) { throw new Exception("Null is not allowed as an axis name"); }
+                this.validContinuousInputValues.Add(validContinuousInputValues[i]);
             }
 
-            if (!this.validButtons.Contains("")) { this.validButtons.Add(""); }
-            if (!this.validAxes.Contains("")) { this.validAxes.Add(""); }
+            if (!this.validBooleanInputValues.Contains("")) { this.validBooleanInputValues.Add(""); }
+            if (!this.validContinuousInputValues.Contains("")) { this.validContinuousInputValues.Add(""); }
 
-            if (this.validButtons == null) { this.validButtons = new List<String>(); }
-            if (this.validAxes == null) { this.validAxes = new List<String>(); }
+            if (this.validBooleanInputValues == null) { this.validBooleanInputValues = new List<String>(); }
+            if (this.validContinuousInputValues == null) { this.validContinuousInputValues = new List<String>(); }
         }
 
         private void InitializeControls(InputControl controls)
@@ -48,10 +48,10 @@ namespace ARDrone.Input.InputMappings
             this.controls = controls.Clone();
         }
 
-        public void CopyValidButtonsAndAxesFrom(ButtonBasedInputMapping mappingToCopyFrom)
+        public void CopyValidInputValuesFrom(ButtonBasedInputMapping mappingToCopyFrom)
         {
-            validButtons = mappingToCopyFrom.ValidButtons;
-            validAxes = mappingToCopyFrom.ValidAxes;
+            validBooleanInputValues = mappingToCopyFrom.ValidBooleanInputValues;
+            validContinuousInputValues = mappingToCopyFrom.ValidContinuousInputValues;
         }
 
         protected override void CheckControls(InputControl controls)
@@ -65,41 +65,41 @@ namespace ARDrone.Input.InputMappings
                 String name = keyValuePair.Key;
                 String value = keyValuePair.Value;
 
-                if (controls.IsAxisMapping(name) && !isValidAxis(value))
+                if (controls.IsContinuousMapping(name) && !isValidContinuousInputValue(value))
                     throw new Exception("The input element '" + name + "' is no valid axis.");
-                else if (controls.IsButtonMapping(name) && !isValidButton(value))
+                else if (controls.IsBooleanMapping(name) && !isValidBooleanInputValue(value))
                     throw new Exception("The input element '" + name + "' is no valid button.");
-                else if (!controls.IsAxisMapping(name) && !controls.IsButtonMapping(name))
+                else if (!controls.IsContinuousMapping(name) && !controls.IsBooleanMapping(name))
                     throw new Exception("The input element '" + name + "' is neither marked as button nor as axis");
             }
         }
 
-        public bool isValidButton(String buttonValue)
+        public bool isValidBooleanInputValue(String buttonValue)
         {
-            return validButtons.Contains(buttonValue);
+            return validBooleanInputValues.Contains(buttonValue);
         }
 
-        public bool isValidAxis(String axisValue)
+        public bool isValidContinuousInputValue(String axisValue)
         {
-            if (validAxes.Contains(axisValue))
+            if (validContinuousInputValues.Contains(axisValue))     // Continuous input values
             {
                 return true;
             }
-            else
+            else                                                    // Two boolean input values, separated by a "-"
             {
                 String[] axisValues = axisValue.Split('-');
-                return (axisValues.Length == 2 && validButtons.Contains(axisValues[0]) && validButtons.Contains(axisValues[1]));
+                return (axisValues.Length == 2 && validBooleanInputValues.Contains(axisValues[0]) && validBooleanInputValues.Contains(axisValues[1]));
             }
         }
 
-        public List<String> ValidButtons
+        public List<String> ValidBooleanInputValues
         {
-            get { return validButtons; }
+            get { return validBooleanInputValues; }
         }
 
-        public List<String> ValidAxes
+        public List<String> ValidContinuousInputValues
         {
-            get { return validAxes; }
+            get { return validContinuousInputValues; }
         }
     }
 }

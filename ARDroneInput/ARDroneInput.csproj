@@ -73,6 +73,7 @@
     <Compile Include="KeyboardInput.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SpeechInput.cs" />
+    <Compile Include="Utility\DictionarySerializer.cs" />
     <Compile Include="WiimoteInput.cs" />
   </ItemGroup>
   <ItemGroup>

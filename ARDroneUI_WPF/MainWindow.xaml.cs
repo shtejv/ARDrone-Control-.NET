@@ -89,17 +89,9 @@ namespace ARDrone.UI
         public void InitializeInputManager()
         {
             inputManager = new ARDrone.Input.InputManager(Utility.GetWindowHandle(this));
-            AddInputListeners();
-        }
+            inputManager.SwitchInputMode(Input.InputManager.InputMode.ControlInput);
 
-        private void AddInputListeners()
-        {
             inputManager.NewInputState += new NewInputStateHandler(inputManager_NewInputState);
-        }
-
-        private void RemoveInputListeners()
-        {
-            inputManager.NewInputState -= new NewInputStateHandler(inputManager_NewInputState);
         }
 
         public void InitializeAviationControls()
@@ -472,12 +464,12 @@ namespace ARDrone.UI
 
         private void OpenConfigDialog()
         {
-            RemoveInputListeners();
+            inputManager.SwitchInputMode(Input.InputManager.InputMode.NoInput);
 
             ConfigInput configInput = new ConfigInput(inputManager);
             configInput.ShowDialog();
 
-            AddInputListeners();
+            inputManager.SwitchInputMode(Input.InputManager.InputMode.ControlInput);
         }
 
         private bool CanCaptureVideo

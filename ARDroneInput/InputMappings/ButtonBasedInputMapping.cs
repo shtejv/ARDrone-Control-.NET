@@ -17,7 +17,7 @@ namespace ARDrone.Input.InputMappings
 
         public override InputMapping Clone()
         {
-            InputMapping clonedMapping = new ButtonBasedInputMapping(validButtons, validAxes, controls);
+            InputMapping clonedMapping = new ButtonBasedInputMapping(validBooleanInputValues, validContinuousInputValues, controls);
             return clonedMapping;
         }
 
@@ -28,10 +28,10 @@ namespace ARDrone.Input.InputMappings
 
         public void SetAxisMappings(Object rollAxisMapping, Object pitchAxisMapping, Object yawAxisMapping, Object gazAxisMapping)
         {
-            controls.SetProperty(ButtonBasedInputControl.RollAxisMappingField, rollAxisMapping.ToString());
-            controls.SetProperty(ButtonBasedInputControl.PitchAxisMappingField, pitchAxisMapping.ToString());
-            controls.SetProperty(ButtonBasedInputControl.YawAxisMappingField, yawAxisMapping.ToString());
-            controls.SetProperty(ButtonBasedInputControl.GazAxisMappingField, gazAxisMapping.ToString());
+            controls.SetProperty(ButtonBasedInputControl.RollAxisField, rollAxisMapping.ToString());
+            controls.SetProperty(ButtonBasedInputControl.PitchAxisField, pitchAxisMapping.ToString());
+            controls.SetProperty(ButtonBasedInputControl.YawAxisField, yawAxisMapping.ToString());
+            controls.SetProperty(ButtonBasedInputControl.GazAxisField, gazAxisMapping.ToString());
         }
 
         public void SetButtonMappings(Object cameraSwapButtonMapping, Object takeOffButtonMapping, Object landButtonMapping, Object hoverButtonMapping, Object emergencyButtonMapping, Object flatTrimButtonMapping, Object specialActionButtonMapping)
@@ -47,31 +47,31 @@ namespace ARDrone.Input.InputMappings
 
         public String RollAxisMapping
         {
-            get { return controls.GetProperty(ButtonBasedInputControl.RollAxisMappingField); }
-            set { controls.SetProperty(ButtonBasedInputControl.RollAxisMappingField, value); }
+            get { return controls.GetProperty(ButtonBasedInputControl.RollAxisField); }
+            set { controls.SetProperty(ButtonBasedInputControl.RollAxisField, value); }
         }
 
         public String PitchAxisMapping
         {
-            get { return controls.GetProperty(ButtonBasedInputControl.PitchAxisMappingField); }
-            set { controls.SetProperty(ButtonBasedInputControl.PitchAxisMappingField, value); }
+            get { return controls.GetProperty(ButtonBasedInputControl.PitchAxisField); }
+            set { controls.SetProperty(ButtonBasedInputControl.PitchAxisField, value); }
         }
 
         public String YawAxisMapping
         {
-            get { return controls.GetProperty(ButtonBasedInputControl.YawAxisMappingField); }
-            set { controls.SetProperty(ButtonBasedInputControl.YawAxisMappingField, value); }
+            get { return controls.GetProperty(ButtonBasedInputControl.YawAxisField); }
+            set { controls.SetProperty(ButtonBasedInputControl.YawAxisField, value); }
         }
 
         public String GazAxisMapping
         {
-            get { return controls.GetProperty(ButtonBasedInputControl.GazAxisMappingField); }
-            set { controls.SetProperty(ButtonBasedInputControl.GazAxisMappingField, value); }
+            get { return controls.GetProperty(ButtonBasedInputControl.GazAxisField); }
+            set { controls.SetProperty(ButtonBasedInputControl.GazAxisField, value); }
         }
 
         public String CameraSwapButton
         {
-            get { return controls.GetProperty(ButtonBasedInputControl.RollAxisMappingField); }
+            get { return controls.GetProperty(ButtonBasedInputControl.CameraSwapButtonField); }
             set { controls.SetProperty(ButtonBasedInputControl.CameraSwapButtonField, value); }
         }
 

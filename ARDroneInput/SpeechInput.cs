@@ -7,6 +7,29 @@ namespace ARDrone.Input
 {
     class SpeechInput : GenericInput
     {
+        public static List<GenericInput> GetNewInputDevices(IntPtr windowHandle, List<GenericInput> currentDevices)
+        {
+            List<GenericInput> newDevices = new List<GenericInput>();
+
+            if (!CheckIfDeviceExists(currentDevices))
+            {
+                newDevices.Add(new SpeechInput());
+            }
+
+            return newDevices;
+        }
+
+        private static bool CheckIfDeviceExists(List<GenericInput> currentDevices)
+        {
+            for (int i = 0; i < currentDevices.Count; i++)
+            {
+                if (currentDevices[i].DeviceInstanceId == "SP")
+                    return true;
+            }
+
+            return false;
+        }
+
         public SpeechInput()
             : base()
         { }
@@ -16,20 +39,40 @@ namespace ARDrone.Input
 
         }
 
-        public override void InitCurrentlyInvokedInput()
+        public override void Init()
         {
 
         }
 
-        public override String GetCurrentlyInvokedInput(out bool isAxis)
+        public override void StartRawInput()
+        {
+
+        }
+
+        public override String GetCurrentRawInput(out bool isAxis)
         {
             isAxis = false;
             return "";
         }
 
-        public override InputState GetCurrentState()
+        public override void EndRawInput()
+        {
+
+        }
+
+        public override void StartControlInput()
+        {
+            
+        }
+
+        public override InputState GetCurrentControlInput()
         {
             return null;
+        }
+
+        public override void EndControlInput()
+        {
+
         }
 
         public override void CancelEvents()
@@ -59,7 +102,5 @@ namespace ARDrone.Input
         {
             get { return "SP"; }
         }
-
-
     }
 }

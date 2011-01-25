@@ -11,6 +11,14 @@ namespace ARDrone.Input.InputMappings
 
         public abstract InputMapping Clone();
 
+        protected InputMapping()
+        { }
+
+        protected InputMapping(InputControl controls)
+        {
+            CopyMappingsFrom(controls);
+        }
+
         public void CopyMappingsFrom(InputMapping mapping)
         {
             SetControls(mapping.controls);

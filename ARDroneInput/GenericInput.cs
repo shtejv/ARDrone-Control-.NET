@@ -8,18 +8,27 @@
  * You should have received a copy of the GNU General Public License along with this program; if not, see <http://www.gnu.org/licenses/>.
  */
 using System;
+using System.Collections.Generic;
 using ARDrone.Input.Utility;
 
 namespace ARDrone.Input
 {
     public abstract class GenericInput
     {
+        public abstract void Init();
         public abstract void Dispose();
 
-        public abstract void InitCurrentlyInvokedInput();
-        public abstract String GetCurrentlyInvokedInput(out bool isAxis);
+        public virtual void StartRawInput()
+        { }
+        public abstract String GetCurrentRawInput(out bool isAxis);
+        public virtual void EndRawInput()
+        { }
 
-        public abstract InputState GetCurrentState();
+        public virtual void StartControlInput()
+        { }
+        public abstract InputState GetCurrentControlInput();
+        public virtual void EndControlInput()
+        { }
 
         public virtual void CancelEvents()
         { }

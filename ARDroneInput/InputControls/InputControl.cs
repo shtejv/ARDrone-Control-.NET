@@ -2,12 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using ARDrone.Input.Utility;
 
 namespace ARDrone.Input.InputControls
 {
     public abstract class InputControl
     {
-        protected enum ControlType { Button, Axis }
+        protected enum ControlType { BooleanValue, ContinuousValue }
         protected Dictionary<String, ControlType> controlTypeMap = new Dictionary<String, ControlType>();
 
         protected Dictionary<String, String> mappings;
@@ -42,14 +43,14 @@ namespace ARDrone.Input.InputControls
                 throw new Exception("The control named '" + name + "' is not within the control type map");
         }
 
-        public bool IsAxisMapping(String name)
+        public bool IsContinuousMapping(String name)
         {
-            return controlTypeMap[name] == ControlType.Axis;
+            return controlTypeMap[name] == ControlType.ContinuousValue;
         }
 
-        public bool IsButtonMapping(String name)
+        public bool IsBooleanMapping(String name)
         {
-            return controlTypeMap[name] == ControlType.Button;
+            return controlTypeMap[name] == ControlType.BooleanValue;
         }
 
         public abstract InputControl Clone();

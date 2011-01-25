@@ -23,6 +23,9 @@ namespace ARDrone.Input
 {
     public class InputManager
     {
+        public enum InputMode { RawInput, ControlInput, NoInput };
+        public const String AllDevices = "ALL";
+
         private IntPtr windowHandle;
         private List<GenericInput> inputDevices = null;
 
@@ -30,6 +33,12 @@ namespace ARDrone.Input
 
         private Thread inputThread = null;
         private bool inputThreadEnded = false;
+
+        private InputMode currentInputMode = InputMode.ControlInput;
+        private String currentDeviceIdToListenTo = AllDevices;
+
+        private InputMode desiredInputMode = InputMode.ControlInput;
+        private String desiredDeviceIdToListenTo = AllDevices;
 
         public event InputDeviceLostHandler InputDeviceLost;
         public event NewInputDeviceHandler NewInputDevice;
@@ -73,7 +82,7 @@ namespace ARDrone.Input
             }
         }
 
-        public void UpdateNewOrLostDevices()
+        private void UpdateNewOrLostDevices()
         {
             DeleteLostDevices();
             AddNewDevices();
@@ -101,148 +110,32 @@ namespace ARDrone.Input
 
         private void AddNewDevices()
         {
-            AddKeyboardDevices(windowHandle);
-            AddJoystickDevices(windowHandle);
-            AddWiimoteDevices();
-            AddSpeechDevice();
-        }
+            List<GenericInput> newDevices = new List<GenericInput>();
 
-        private void AddKeyboardDevices(IntPtr windowHandle)
-        {
-            DeviceList keyboardControllerList = Manager.GetDevices(DeviceClass.Keyboard, EnumDevicesFlags.AttachedOnly);
-            for (int i = 0; i < keyboardControllerList.Count; i++)
+            newDevices.AddRange(KeyboardInput.GetNewInputDevices(windowHandle, inputDevices));
+            newDevices.AddRange(JoystickInput.GetNewInputDevices(windowHandle, inputDevices));
+            newDevices.AddRange(WiimoteInput.GetNewInputDevices(windowHandle, inputDevices));
+            newDevices.AddRange(SpeechInput.GetNewInputDevices(windowHandle, inputDevices));
+
+            foreach (GenericInput inputDevice in newDevices)
             {
-                keyboardControllerList.MoveNext();
-                DeviceInstance deviceInstance = (DeviceInstance)keyboardControllerList.Current;
-
-                Device device = new Device(deviceInstance.InstanceGuid);
-
-                if (!CheckIfDirectInputDeviceExists(device))
-                {
-                    device.SetCooperativeLevel(windowHandle, CooperativeLevelFlags.Background | CooperativeLevelFlags.NonExclusive);
-                    device.SetDataFormat(DeviceDataFormat.Keyboard);
-                    device.Acquire();
-
-                    KeyboardInput input = new KeyboardInput(device);
-                    AddInputDevice(input);
-                    InitInputDevice(input);
-                }
+                AddInputDevice(inputDevice);
+                InitInputDevice(inputDevice);
             }
         }
-
-        private void AddJoystickDevices(IntPtr windowHandle)
-        {
-            DeviceList gameControllerList = Manager.GetDevices(DeviceClass.GameControl, EnumDevicesFlags.AttachedOnly);
-            for (int i = 0; i < gameControllerList.Count; i++)
-            {
-                gameControllerList.MoveNext();
-                DeviceInstance deviceInstance = (DeviceInstance)gameControllerList.Current;
-
-                Device device = new Device(deviceInstance.InstanceGuid);
-
-                if (device.DeviceInformation.ProductGuid != new Guid("0306057e-0000-0000-0000-504944564944") &&       // Wiimotes are excluded
-                    !CheckIfDirectInputDeviceExists(device))
-                {
-                    device.SetCooperativeLevel(windowHandle, CooperativeLevelFlags.Background | CooperativeLevelFlags.NonExclusive);
-                    device.SetDataFormat(DeviceDataFormat.Joystick);
-                    device.Acquire();
-
-                    JoystickInput input = new JoystickInput(device);
-                    AddInputDevice(input);
-                    InitInputDevice(input);
-                }
-            }
-        }
-
-        private bool CheckIfDirectInputDeviceExists(Device device)
-        {
-            for (int i = 0; i < inputDevices.Count; i++)
-            {
-                if (device.DeviceInformation.InstanceGuid.ToString() == inputDevices[i].DeviceInstanceId)
-                {
-                    return true;
-                }
-            }
-            return false;
-        }
-
-        private void AddWiimoteDevices()
-        {
-            WiimoteCollection wiiMoteCollection = new WiimoteCollection();
-
-            try
-            {
-                wiiMoteCollection.FindAllWiimotes();
-            }
-            catch (WiimoteNotFoundException) { }
-            catch (WiimoteException)
-            {
-                Console.WriteLine("Wiimote error");
-            }
-
-            foreach (Wiimote wiimote in wiiMoteCollection)
-            {
-                if (!CheckIfWiimoteInputDeviceExists(wiimote))
-                {
-                    WiimoteInput input = new WiimoteInput(wiimote);
-                    AddInputDevice(input);
-                    InitInputDevice(input);
-
-                    wiimote.SetLEDs(false, false, false, false);
-                }
-            }
-        }
-
-        private bool CheckIfWiimoteInputDeviceExists(Wiimote wiimote)
-        {
-            for (int i = 0; i < inputDevices.Count; i++)
-            {
-                if (wiimote.HIDDevicePath.ToString() == inputDevices[i].DeviceInstanceId)
-                {
-                    return true;
-                }
-            }
-            return false;
-        }
-
-        private void AddSpeechDevice()
-        {
-            if (!CheckIfSpeechInputDeviceExists())
-            {
-                SpeechInput input = new SpeechInput();
-                AddInputDevice(input);
-                InitInputDevice(input);
-            }
-        }
-
-        private bool CheckIfSpeechInputDeviceExists()
-        {
-            for (int i = 0; i < inputDevices.Count; i++)
-            {
-                if (inputDevices[i].DeviceInstanceId == "SP")
-                    return true;
-            }
-
-            return false;
-        }
-
-
 
         private void AddInputDevice(GenericInput input)
         {
             Type typeToSearchFor;
             if (input.GetType() == typeof(KeyboardInput))
-            {
                 typeToSearchFor = typeof(JoystickInput);
-            }
             else if (input.GetType() == typeof(JoystickInput))
-            {
+                typeToSearchFor = typeof(SpeechInput);
+            else if (input.GetType() == typeof(SpeechInput))
                 typeToSearchFor = typeof(WiimoteInput);
-            }
             else
             {
                 Console.WriteLine("Added " + input.DeviceName + " at last position");
-
                 inputDevices.Add(input);
                 return;
             }
@@ -259,13 +152,12 @@ namespace ARDrone.Input
             }
 
             Console.WriteLine("Added " + input.DeviceName + " at last position");
-
             inputDevices.Add(input);
         }
 
         private void InitInputDevice(GenericInput input)
         {
-            input.InitCurrentlyInvokedInput();
+            input.Init();
             InvokeNewInputDeviceEvent(input.DeviceInstanceId, input);
         }
 
@@ -288,13 +180,37 @@ namespace ARDrone.Input
 
         private void UpdateAllInput(int iterationCount)
         {
-            UpdateCurrentState();
-            UpdateRawInput();
+            if (currentInputMode != desiredInputMode)
+                SwitchInputMode();
+
+            if (currentInputMode == InputMode.ControlInput)
+                UpdateCurrentState();
+            else if (currentInputMode == InputMode.RawInput)
+                UpdateRawInput();
 
             if (iterationCount % 20 == 0)
-            {
                 UpdateNewOrLostDevices();
+        }
+
+        private void SwitchInputMode()
+        {
+            InputMode desiredInputMode = this.desiredInputMode;
+
+            for (int i = 0; i < inputDevices.Count; i++)
+            {
+                if (currentInputMode == InputMode.ControlInput)
+                    inputDevices[i].EndControlInput();
+                else if (currentInputMode == InputMode.RawInput)
+                    inputDevices[i].EndRawInput();
+
+                if (desiredInputMode == InputMode.ControlInput)
+                    inputDevices[i].StartControlInput();
+                else if (desiredInputMode == InputMode.RawInput)
+                    inputDevices[i].StartRawInput();
             }
+
+            currentInputMode = desiredInputMode;
+            currentDeviceIdToListenTo = desiredDeviceIdToListenTo;
         }
 
         private void UpdateCurrentState()
@@ -302,18 +218,19 @@ namespace ARDrone.Input
             InputState inputState = GetCurrentState();
 
             if (inputState != null)
-            {
                 InvokeNewInputStateEvent(inputState);
-            }
         }
 
         private InputState GetCurrentState()
         {
-            InputState currentInputState = new InputState();
+            InputState currentInputState = null;
 
             for (int i = 0; i < inputDevices.Count; i++)
             {
-                currentInputState = inputDevices[i].GetCurrentState();
+                if (!IsListeningToDevice(inputDevices[i].DeviceInstanceId))
+                    continue;
+
+                currentInputState = inputDevices[i].GetCurrentControlInput();
 
                 if (currentInputState != null)
                 {
@@ -331,7 +248,7 @@ namespace ARDrone.Input
         {
             for (int i = 0; i < inputDevices.Count; i++)
             {
-                if (inputDevices[i].Cancellable)
+                if (inputDevices[i].Cancellable && inputDevices[i].DeviceInstanceId != deviceId)
                 {
                     inputDevices[i].CancelEvents();
                 }
@@ -340,23 +257,25 @@ namespace ARDrone.Input
 
         private void UpdateRawInput()
         {
-            Dictionary<String, String> rawOutput = new Dictionary<String, String>();
-
-            GenericInput input = null;
-            String deviceId;
-            String inputString;
-            bool isAxis;
             for (int i = 0; i < inputDevices.Count; i++)
             {
-                input = inputDevices[i];
-                deviceId = input.DeviceInstanceId;
-                inputString = input.GetCurrentlyInvokedInput(out isAxis);
+                if (!IsListeningToDevice(inputDevices[i].DeviceInstanceId))
+                    continue;
+
+                bool isAxis;
+                GenericInput input = inputDevices[i];
+                String inputString = input.GetCurrentRawInput(out isAxis);
 
                 if (inputString != null && inputString != "")
                 {
-                    InvokeRawInputReceivedEvent(deviceId, inputString, isAxis);
+                    InvokeRawInputReceivedEvent(input.DeviceInstanceId, inputString, isAxis);
                 }
             }
+        }
+
+        private bool IsListeningToDevice(String deviceId)
+        {
+            return (currentDeviceIdToListenTo == AllDevices || currentDeviceIdToListenTo == deviceId);
         }
 
         private void InvokeNewInputDeviceEvent(String deviceId, GenericInput input)
@@ -431,6 +350,19 @@ namespace ARDrone.Input
             }
 
             return null;
+        }
+
+        public void SwitchInputMode(InputMode inputMode)
+        {
+            SwitchInputMode(inputMode, AllDevices);
+        }
+
+        public void SwitchInputMode(InputMode inputMode, String deviceIdToListenTo)
+        {
+            desiredInputMode = inputMode;
+            desiredDeviceIdToListenTo = deviceIdToListenTo;
+
+            Console.WriteLine("Switching input mode to " + inputMode.ToString() + " for device " + deviceIdToListenTo);
         }
 
         public List<GenericInput> InputDevices
