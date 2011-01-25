@@ -49,7 +49,8 @@ namespace ARDrone.Input
         public KeyboardInput(Device device) : base()
         {
             this.device = device;
-            CreateMapping(GetValidButtons(), GetValidAxes());
+
+            DetermineMapping();
         }
 
         protected override InputMapping GetStandardMapping()

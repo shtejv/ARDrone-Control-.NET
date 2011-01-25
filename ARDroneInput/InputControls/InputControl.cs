@@ -8,7 +8,7 @@ namespace ARDrone.Input.InputControls
 {
     public abstract class InputControl
     {
-        protected enum ControlType { BooleanValue, ContinuousValue }
+        public enum ControlType { BooleanValue, ContinuousValue }
         protected Dictionary<String, ControlType> controlTypeMap = new Dictionary<String, ControlType>();
 
         protected Dictionary<String, String> mappings;
@@ -34,7 +34,10 @@ namespace ARDrone.Input.InputControls
         public String GetProperty(String name)
         {
             CheckPropertyName(name);
-            return mappings[name];
+            if (mappings.ContainsKey(name))
+                return mappings[name];
+
+            return null;
         }
 
         private void CheckPropertyName(String name)
@@ -52,8 +55,6 @@ namespace ARDrone.Input.InputControls
         {
             return controlTypeMap[name] == ControlType.BooleanValue;
         }
-
-        public abstract InputControl Clone();
 
         public Dictionary<String, String> Mappings
         {

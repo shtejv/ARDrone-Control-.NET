@@ -31,11 +31,14 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ARDroneInput", "ARDroneInpu
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{7885A062-281E-475D-AE00-54D56221F433}"
 	ProjectSection(SolutionItems) = preProject
+		ARDrone.vsmdi = ARDrone.vsmdi
 		GNU GPL.txt = GNU GPL.txt
 		LibraryLicenses.txt = LibraryLicenses.txt
+		Local.testsettings = Local.testsettings
 		ParrotCopyrightAndDisclaimer.txt = ParrotCopyrightAndDisclaimer.txt
 		ParrotLicense.txt = ParrotLicense.txt
 		Readme.txt = Readme.txt
+		TraceAndTestImpact.testsettings = TraceAndTestImpact.testsettings
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ARDroneCapture", "ARDroneCapture\ARDroneCapture.csproj", "{DF44B163-A438-4DCC-ADB0-5CDB08803A0F}"
@@ -54,7 +57,12 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DirectionControl", "Directi
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ARDroneInput_Speech", "ARDroneInput_Speech\ARDroneInput_Speech.csproj", "{BE4A76AB-FA50-4E6D-BE06-D2D9A528DBB2}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ARDrone_Testing", "ARDrone_Testing\ARDrone_Testing.csproj", "{EB016BB8-3E68-4DD7-B27E-317B18024FFA}"
+EndProject
 Global
+	GlobalSection(TestCaseManagementSettings) = postSolution
+		CategoryFile = ARDrone.vsmdi
+	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Debug|Mixed Platforms = Debug|Mixed Platforms
@@ -388,6 +396,27 @@ Global
 		{BE4A76AB-FA50-4E6D-BE06-D2D9A528DBB2}.Release|Win32.ActiveCfg = Release|Any CPU
 		{BE4A76AB-FA50-4E6D-BE06-D2D9A528DBB2}.Release|x64.ActiveCfg = Release|Any CPU
 		{BE4A76AB-FA50-4E6D-BE06-D2D9A528DBB2}.Release|x86.ActiveCfg = Release|Any CPU
+		{EB016BB8-3E68-4DD7-B27E-317B18024FFA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EB016BB8-3E68-4DD7-B27E-317B18024FFA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EB016BB8-3E68-4DD7-B27E-317B18024FFA}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{EB016BB8-3E68-4DD7-B27E-317B18024FFA}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{EB016BB8-3E68-4DD7-B27E-317B18024FFA}.Debug|Win32.ActiveCfg = Debug|Any CPU
+		{EB016BB8-3E68-4DD7-B27E-317B18024FFA}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{EB016BB8-3E68-4DD7-B27E-317B18024FFA}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{EB016BB8-3E68-4DD7-B27E-317B18024FFA}.Profile|Any CPU.ActiveCfg = Release|Any CPU
+		{EB016BB8-3E68-4DD7-B27E-317B18024FFA}.Profile|Any CPU.Build.0 = Release|Any CPU
+		{EB016BB8-3E68-4DD7-B27E-317B18024FFA}.Profile|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{EB016BB8-3E68-4DD7-B27E-317B18024FFA}.Profile|Mixed Platforms.Build.0 = Release|Any CPU
+		{EB016BB8-3E68-4DD7-B27E-317B18024FFA}.Profile|Win32.ActiveCfg = Release|Any CPU
+		{EB016BB8-3E68-4DD7-B27E-317B18024FFA}.Profile|x64.ActiveCfg = Release|Any CPU
+		{EB016BB8-3E68-4DD7-B27E-317B18024FFA}.Profile|x86.ActiveCfg = Release|Any CPU
+		{EB016BB8-3E68-4DD7-B27E-317B18024FFA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EB016BB8-3E68-4DD7-B27E-317B18024FFA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EB016BB8-3E68-4DD7-B27E-317B18024FFA}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{EB016BB8-3E68-4DD7-B27E-317B18024FFA}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{EB016BB8-3E68-4DD7-B27E-317B18024FFA}.Release|Win32.ActiveCfg = Release|Any CPU
+		{EB016BB8-3E68-4DD7-B27E-317B18024FFA}.Release|x64.ActiveCfg = Release|Any CPU
+		{EB016BB8-3E68-4DD7-B27E-317B18024FFA}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

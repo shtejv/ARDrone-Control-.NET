@@ -47,6 +47,7 @@
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Speech" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -60,14 +61,22 @@
     <Compile Include="ButtonBasedInput.cs" />
     <Compile Include="ConfigurableInput.cs" />
     <Compile Include="DirectInputInput.cs" />
+    <Compile Include="InputConfigs\ButtonBasedInputConfig.cs" />
+    <Compile Include="InputConfigs\InputConfig.cs" />
+    <Compile Include="InputConfigs\SpeechBasedInputConfig.cs" />
     <Compile Include="InputControls\ButtonBasedInputControl.cs" />
+    <Compile Include="InputControls\SpeechBasedInputControl.cs" />
     <Compile Include="InputMappings\ButtonBasedInputMapping.cs" />
+    <Compile Include="InputMappings\SpeechBasedInputMapping.cs" />
+    <Compile Include="Timing\TimeBasedCommand.cs" />
+    <Compile Include="Speech\SpeechRecognition.cs" />
     <Compile Include="Utility\Events.cs" />
     <Compile Include="GenericInput.cs" />
     <Compile Include="InputManager.cs" />
     <Compile Include="InputMappings\ValidatedInputMapping.cs" />
     <Compile Include="InputControls\InputControl.cs" />
     <Compile Include="InputMappings\InputMapping.cs" />
+    <Compile Include="Utility\InputFactory.cs" />
     <Compile Include="Utility\InputState.cs" />
     <Compile Include="JoystickInput.cs" />
     <Compile Include="KeyboardInput.cs" />
@@ -75,12 +84,6 @@
     <Compile Include="SpeechInput.cs" />
     <Compile Include="Utility\DictionarySerializer.cs" />
     <Compile Include="WiimoteInput.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\ARDroneInput_Speech\ARDroneInput_Speech.csproj">
-      <Project>{BE4A76AB-FA50-4E6D-BE06-D2D9A528DBB2}</Project>
-      <Name>ARDroneInput_Speech</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

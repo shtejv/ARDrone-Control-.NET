@@ -36,24 +36,19 @@ namespace ARDrone.Input.InputControls
         {
             controlTypeMap = new Dictionary<String, ControlType>()
             {
-                { RollAxisField, ControlType.ContinuousValue},
-                { PitchAxisField, ControlType.ContinuousValue},
-                { YawAxisField, ControlType.ContinuousValue},
-                { GazAxisField, ControlType.ContinuousValue},
+                { RollAxisField, ControlType.ContinuousValue },
+                { PitchAxisField, ControlType.ContinuousValue },
+                { YawAxisField, ControlType.ContinuousValue },
+                { GazAxisField, ControlType.ContinuousValue },
 
-                { CameraSwapButtonField, ControlType.BooleanValue},
-                { TakeOffButtonField, ControlType.BooleanValue},
-                { LandButtonField, ControlType.BooleanValue},
-                { HoverButtonField, ControlType.BooleanValue},
-                { EmergencyButtonField, ControlType.BooleanValue},
-                { FlatTrimButtonField, ControlType.BooleanValue},
-                { SpecialActionButtonField, ControlType.BooleanValue}
+                { CameraSwapButtonField, ControlType.BooleanValue },
+                { TakeOffButtonField, ControlType.BooleanValue },
+                { LandButtonField, ControlType.BooleanValue },
+                { HoverButtonField, ControlType.BooleanValue },
+                { EmergencyButtonField, ControlType.BooleanValue },
+                { FlatTrimButtonField, ControlType.BooleanValue },
+                { SpecialActionButtonField, ControlType.BooleanValue }
             };
-        }
-
-        public override InputControl Clone()
-        {
-            return new ButtonBasedInputControl(mappings);
         }
     }
 }

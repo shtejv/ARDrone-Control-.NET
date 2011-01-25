@@ -34,7 +34,7 @@ namespace ARDrone.Input
         private Thread inputThread = null;
         private bool inputThreadEnded = false;
 
-        private InputMode currentInputMode = InputMode.ControlInput;
+        private InputMode currentInputMode = InputMode.NoInput;
         private String currentDeviceIdToListenTo = AllDevices;
 
         private InputMode desiredInputMode = InputMode.ControlInput;
@@ -94,6 +94,8 @@ namespace ARDrone.Input
             {
                 if (!inputDevices[i].IsDevicePresent)
                 {
+                    Console.WriteLine("Lost device " + inputDevices[i].DeviceName);
+
                     try
                     {
                         inputDevices[i].Dispose();
@@ -102,6 +104,8 @@ namespace ARDrone.Input
 
                     String deviceId = inputDevices[i].DeviceInstanceId;
                     inputDevices.RemoveAt(i);
+
+
 
                     InvokeInputDeviceLostEvent(deviceId);
                 }
@@ -142,7 +146,7 @@ namespace ARDrone.Input
 
             for (int i = 0; i < inputDevices.Count; i++)
             {
-                if (inputDevices[i].GetType() == typeof(JoystickInput))
+                if (inputDevices[i].GetType() == typeToSearchFor)
                 {
                     Console.WriteLine("Added " + input.DeviceName + " at position " + i);
 
@@ -157,7 +161,7 @@ namespace ARDrone.Input
 
         private void InitInputDevice(GenericInput input)
         {
-            input.Init();
+            input.InitDevice();
             InvokeNewInputDeviceEvent(input.DeviceInstanceId, input);
         }
 

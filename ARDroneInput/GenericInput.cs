@@ -15,7 +15,7 @@ namespace ARDrone.Input
 {
     public abstract class GenericInput
     {
-        public abstract void Init();
+        public abstract void InitDevice();
         public abstract void Dispose();
 
         public virtual void StartRawInput()

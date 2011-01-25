@@ -86,7 +86,8 @@ namespace ARDrone.Input
         public WiimoteInput(Wiimote wiimote) : base()
         {
             InitWiimote(wiimote);
-            CreateMapping(GetValidButtons(), GetValidAxes());
+
+            DetermineMapping();
         }
 
         private void InitWiimote(Wiimote wiimote)

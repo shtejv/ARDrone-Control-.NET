@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using ARDrone.Input.InputControls;
+using ARDrone.Input.Utility;
 
 namespace ARDrone.Input.InputMappings
 {
@@ -45,7 +46,7 @@ namespace ARDrone.Input.InputMappings
         private void InitializeControls(InputControl controls)
         {
             CheckControls(controls);
-            this.controls = controls.Clone();
+            this.controls = InputFactory.CloneInputControls(controls);
         }
 
         public void CopyValidInputValuesFrom(ButtonBasedInputMapping mappingToCopyFrom)

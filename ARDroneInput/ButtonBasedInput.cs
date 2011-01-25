@@ -26,16 +26,9 @@ namespace ARDrone.Input
 
         public ButtonBasedInput()
             : base()
-        {
+        { }
 
-        }
-
-        protected override InputMapping GetMapping(List<String> validButtons, List<String> validAxes)
-        {
-            return new ButtonBasedInputMapping(validButtons, validAxes);
-        }
-
-        public override void Init()
+        public override void InitDevice()
         {
             Dictionary<String, float> axisValues = GetAxisValues();
             SetLastAxisValues(axisValues);

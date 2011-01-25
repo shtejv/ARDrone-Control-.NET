@@ -21,11 +21,6 @@ namespace ARDrone.Input.InputMappings
             return clonedMapping;
         }
 
-        protected override InputControl CreateInputControlFromMappings(Dictionary<String, String> mappings)
-        {
-            return new ButtonBasedInputControl(mappings);
-        }
-
         public void SetAxisMappings(Object rollAxisMapping, Object pitchAxisMapping, Object yawAxisMapping, Object gazAxisMapping)
         {
             controls.SetProperty(ButtonBasedInputControl.RollAxisField, rollAxisMapping.ToString());

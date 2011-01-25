@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Xml.Serialization;
+using ARDrone.Input.InputConfigs;
 using ARDrone.Input.InputControls;
 using ARDrone.Input.InputMappings;
 using ARDrone.Input.Utility;
@@ -16,10 +17,20 @@ namespace ARDrone.Input
         protected InputMapping mapping = null;
         protected InputMapping backupMapping = null;
 
+        protected InputConfig inputConfig = null;
+
         public ConfigurableInput()
             : base()
         {
-            SetDefaultMapping();
+            inputConfig = InputFactory.CreateConfigFor(this);
+        }
+
+        public void DetermineMapping()
+        {
+            mapping = GetStandardMapping();
+            LoadMapping();
+
+            backupMapping = mapping.Clone();
         }
 
         public void SetDefaultMapping()
@@ -34,17 +45,7 @@ namespace ARDrone.Input
             backupMapping = input.backupMapping.Clone();
         }
 
-        protected void CreateMapping(List<String> validButtons, List<String> validAxes)
-        {
-            if (!LoadMapping())
-            {
-                GetMapping(validButtons, validAxes);
-            }
-            backupMapping = mapping.Clone();
-        }
-
         protected abstract InputMapping GetStandardMapping();
-        protected abstract InputMapping GetMapping(List<String> validButtons, List<String> validAxes);
 
         public bool LoadMapping()
         {
@@ -84,13 +85,6 @@ namespace ARDrone.Input
                 String mappingFilePath = GetMappingFilePath();
 
                 DictionarySerializer.Serialize(mapping.Controls.Mappings, mappingFilePath);
-
-                //XmlSerializer serializer = new XmlSerializer(typeof(Dictionary<String, String>));
-                //using (System.IO.TextWriter textWriter = new System.IO.StreamWriter(mappingFilePath))
-                //{
-                //    serializer.Serialize(textWriter, mapping.Controls.Mappings);
-                //    textWriter.Close();
-                //}
             }
             catch (Exception e)
             {
@@ -128,6 +122,14 @@ namespace ARDrone.Input
         public virtual String FilePrefix
         {
             get { return string.Empty; }
+        }
+
+        public InputConfig InputConfig
+        {
+            get
+            {
+                return inputConfig;
+            }
         }
     }
 }

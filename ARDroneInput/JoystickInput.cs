@@ -62,7 +62,7 @@ namespace ARDrone.Input
         {
             this.device = device;
 
-            CreateMapping(GetValidButtons(), GetValidAxes());
+            DetermineMapping();
         }
 
         protected override InputMapping GetStandardMapping()
@@ -133,7 +133,7 @@ namespace ARDrone.Input
         public override Dictionary<String, float> GetAxisValues()
         {
             Dictionary<String, float> axisValues = new Dictionary<String, float>();
-            axisValues[Axis.Axis_X.ToString()] = axisValues[Axis.Axis_Y.ToString()] =axisValues[Axis.Axis_Z.ToString()] = axisValues[Axis.Axis_R.ToString()] = 0.0f;
+            axisValues[Axis.Axis_X.ToString()] = axisValues[Axis.Axis_Y.ToString()] =axisValues[Axis.Axis_Z.ToString()] = axisValues[Axis.Axis_R.ToString()] = axisValues[Axis.Axis_POV_1.ToString()] = 0.0f;
 
             try
             {

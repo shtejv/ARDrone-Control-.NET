@@ -17,6 +17,7 @@ namespace ARDrone.Input.InputControls
         public const String GazUpInputField = "GazUp";
 
         public const String TickInputField = "Tick";
+        public const String TicksInputField = "Ticks";
 
         public const String CameraSwapInputField = "CameraSwapButton";
         public const String TakeOffInputField = "TakeOffButton";
@@ -51,6 +52,7 @@ namespace ARDrone.Input.InputControls
                 { GazDownInputField, ControlType.BooleanValue },
                 { GazUpInputField, ControlType.BooleanValue },
                 { TickInputField, ControlType.BooleanValue },
+                { TicksInputField, ControlType.BooleanValue },
                 { CameraSwapInputField, ControlType.BooleanValue },
                 { TakeOffInputField, ControlType.BooleanValue },
                 { LandInputField, ControlType.BooleanValue },

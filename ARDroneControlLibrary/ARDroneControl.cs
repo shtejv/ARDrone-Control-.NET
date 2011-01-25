@@ -317,7 +317,8 @@ namespace ARDrone.Control
 
             if (isConnected)
             {
-                return new DroneData(GetDroneState(), GetBatteryLevel(), GetTheta(), GetPhi(), GetPsi(), GetAltitude(), GetVX(), GetVY(), GetVZ());
+                return new DroneData();
+                //return new DroneData(GetDroneState(), GetBatteryLevel(), GetTheta(), GetPhi(), GetPsi(), GetAltitude(), GetVX(), GetVY(), GetVZ());
             }
             else
             {

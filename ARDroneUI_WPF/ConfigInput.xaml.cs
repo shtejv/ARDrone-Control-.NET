@@ -23,29 +23,25 @@ using System.Windows.Shapes;
 using System.Windows.Threading;
 using ARDrone.Input;
 using ARDrone.Input.Utility;
+using ARDrone.Input.InputConfigs;
+using ARDrone.Input.InputControls;
 using ARDrone.Input.InputMappings;
 
 namespace ARDrone.UI
 {
     public partial class ConfigInput : Window
     {
-        private enum Control { None, AxisRoll, AxisPitch, AxisYaw, AxisGaz, ButtonTakeoff, ButtonLand, ButtonHover, ButtonEmergency, ButtonFlatTrim, ButtonChangeCamera, ButtonSpecialAction };
-        private enum ControlType { None, Axis, Button };
-
-        private Dictionary<String, Control> nameControlMap = null;
-        private Dictionary<Control, ControlType> controlTypeMap = null;
-
         private ARDrone.Input.InputManager inputManager = null;
 
-        private ButtonBasedInput selectedDevice = null;
+        List<ConfigurableInput> devices = null;
+        
+        private ConfigurableInput selectedDevice = null;
         private bool isSelectedDevicePresent = false;
 
-        private Control selectedControl = Control.None;
-        private ControlType selectedControlType = ControlType.None;
+        private String selectedControl = null;
+        private String tempContinuousInput = "";
 
-        private String tempAxisInput = "";
-
-        List<ButtonBasedInput> devices = null;
+        private String lastInputValue = null;
 
         public ConfigInput()
         {
@@ -58,37 +54,15 @@ namespace ARDrone.UI
         public ConfigInput(ARDrone.Input.InputManager inputManager)
         {
             InitializeComponent();
+            CreateControlsForNoDevice();
+
             Init(inputManager);
         }
 
         public void Init(ARDrone.Input.InputManager inputManager)
         {
-            InitializeControlMap();
             InitializeInputManager(inputManager);
             InitializeDeviceList();
-        }
-
-        public void InitializeControlMap()
-        {
-            nameControlMap = new Dictionary<String, Control>();
-
-            nameControlMap.Add(textBoxAxisRoll.Name, Control.AxisRoll); nameControlMap.Add(textBoxAxisPitch.Name, Control.AxisPitch);
-            nameControlMap.Add(textBoxAxisYaw.Name, Control.AxisYaw); nameControlMap.Add(textBoxAxisGaz.Name, Control.AxisGaz);
-
-            nameControlMap.Add(textBoxButtonTakeOff.Name, Control.ButtonTakeoff); nameControlMap.Add(textBoxButtonLand.Name, Control.ButtonLand);
-            nameControlMap.Add(textBoxButtonHover.Name, Control.ButtonHover); nameControlMap.Add(textBoxButtonEmergency.Name, Control.ButtonEmergency);
-            nameControlMap.Add(textBoxButtonFlatTrim.Name, Control.ButtonFlatTrim); nameControlMap.Add(textBoxButtonChangeCamera.Name, Control.ButtonChangeCamera);
-            nameControlMap.Add(textBoxButtonSpecialAction.Name, Control.ButtonSpecialAction);
-
-            controlTypeMap = new Dictionary<Control, ControlType>();
-
-            controlTypeMap.Add(Control.AxisRoll, ControlType.Axis); controlTypeMap.Add(Control.AxisPitch, ControlType.Axis);
-            controlTypeMap.Add(Control.AxisYaw, ControlType.Axis); controlTypeMap.Add(Control.AxisGaz, ControlType.Axis);
-
-            controlTypeMap.Add(Control.ButtonTakeoff, ControlType.Button); controlTypeMap.Add(Control.ButtonLand, ControlType.Button);
-            controlTypeMap.Add(Control.ButtonHover, ControlType.Button); controlTypeMap.Add(Control.ButtonEmergency, ControlType.Button);
-            controlTypeMap.Add(Control.ButtonFlatTrim, ControlType.Button); controlTypeMap.Add(Control.ButtonChangeCamera, ControlType.Button);
-            controlTypeMap.Add(Control.ButtonSpecialAction, ControlType.Button);
         }
 
         public void InitializeInputManager(ARDrone.Input.InputManager inputManager)
@@ -103,14 +77,12 @@ namespace ARDrone.UI
 
         public void InitializeDeviceList()
         {
-            devices = new List<ButtonBasedInput>();
+            devices = new List<ConfigurableInput>();
 
             foreach (GenericInput inputDevice in inputManager.InputDevices)
             {
-                if (inputDevice is ButtonBasedInput)
-                {
-                    AddDeviceToDeviceList((ButtonBasedInput)inputDevice);
-                }
+                if (inputDevice is ConfigurableInput)
+                    AddDeviceToDeviceList((ConfigurableInput)inputDevice);
             }
         }
 
@@ -128,7 +100,7 @@ namespace ARDrone.UI
             inputManager.RawInputReceived -= new RawInputReceivedHandler(inputManager_RawInputReceived);
         }
 
-        private void HandleNewDevice(String deviceId, ButtonBasedInput inputDevice)
+        private void HandleNewDevice(String deviceId, ConfigurableInput inputDevice)
         {
             AddDeviceToDeviceList(inputDevice);
 
@@ -143,20 +115,8 @@ namespace ARDrone.UI
             }
         }
 
-        private void HandleLostDevice(String deviceId)
-        {
-            if (selectedDevice != null && selectedDevice.DeviceInstanceId == deviceId)
-            {
-                isSelectedDevicePresent = false;
-                UpdateCurrentDeviceDescription();
-            }
-            else
-            {
-                RemoveDeviceFromDeviceList(deviceId);
-            }            
-        }
 
-        private void AddDeviceToDeviceList(ButtonBasedInput inputDevice)
+        private void AddDeviceToDeviceList(ConfigurableInput inputDevice)
         {
             bool foundReplacement = false;
             for (int i = 0; i < devices.Count; i++)
@@ -181,9 +141,22 @@ namespace ARDrone.UI
             }
         }
 
+        private void HandleLostDevice(String deviceId)
+        {
+            if (selectedDevice != null && selectedDevice.DeviceInstanceId == deviceId)
+            {
+                isSelectedDevicePresent = false;
+                UpdateCurrentDeviceDescription();
+            }
+            else
+            {
+                RemoveDeviceFromDeviceList(deviceId);
+            }            
+        }
+
         private void RemoveDeviceFromDeviceList(String deviceId)
         {
-            ButtonBasedInput inputDevice = GetDeviceById(deviceId);
+            ConfigurableInput inputDevice = GetDeviceById(deviceId);
 
             if (inputDevice != null)
             {
@@ -200,9 +173,9 @@ namespace ARDrone.UI
             }
         }
 
-        private ButtonBasedInput GetDeviceById(String deviceId)
+        private ConfigurableInput GetDeviceById(String deviceId)
         {
-            ButtonBasedInput input = null;
+            ConfigurableInput input = null;
             for (int i = 0; i < devices.Count; i++)
             {
                 if (devices[i].DeviceInstanceId == deviceId)
@@ -229,14 +202,13 @@ namespace ARDrone.UI
                 for (int i = 0; i < devices.Count; i++)
                 {
                     if (devices[i].DeviceName == selectedDeviceName)
-                    {
                         selectedDevice = devices[i];
-                    }
                 }
 
                 if (selectedDevice != null)
                 {
-                    TakeOverMapping((ButtonBasedInputMapping)selectedDevice.Mapping);
+                    CreateControlsForSelectedDevice();
+                    TakeOverMapping(((ConfigurableInput)selectedDevice).Mapping);
                     isSelectedDevicePresent = true;
                     UpdateCurrentDeviceDescription();
                 }
@@ -257,171 +229,192 @@ namespace ARDrone.UI
             labelDevicePresentInfo.Content = isSelectedDevicePresent ? "" : "The device is not connected!";
         }
 
-        private void FocusInputElement(TextBox textBox)
-        {
-            if (textBox != null && nameControlMap.ContainsKey(textBox.Name))
-            {
-                inputManager.SwitchInputMode(Input.InputManager.InputMode.RawInput, selectedDevice.DeviceInstanceId);
-
-                selectedControl = nameControlMap[textBox.Name];
-                selectedControlType = controlTypeMap[selectedControl];
-
-                textBox.Foreground = new SolidColorBrush(Colors.LightGray);
-                textBox.Text = "-- Assigning a value --";
-            }
-        }
-
-        private void UnfocusInputElement(TextBox textBox)
-        {
-            if (textBox != null && nameControlMap.ContainsKey(textBox.Name))
-            {
-                inputManager.SwitchInputMode(Input.InputManager.InputMode.NoInput);
-
-                selectedControl = Control.None;
-                selectedControlType = ControlType.None;
-
-                textBox.Foreground = new SolidColorBrush(Colors.Black);
-
-                if (selectedDevice != null)
-                {
-                    TakeOverMapping((ButtonBasedInputMapping)selectedDevice.Mapping);
-                }
-            }
-        }
-
         private void SetMappingEnabledState(bool enabled)
         {
-            textBoxAxisRoll.IsEnabled = enabled; textBoxAxisPitch.IsEnabled = enabled;
-            textBoxAxisYaw.IsEnabled = enabled; textBoxAxisGaz.IsEnabled = enabled;
-
-            textBoxButtonTakeOff.IsEnabled = enabled; textBoxButtonLand.IsEnabled = enabled;
-            textBoxButtonHover.IsEnabled = enabled; textBoxButtonEmergency.IsEnabled = enabled;
-            textBoxButtonFlatTrim.IsEnabled = enabled; textBoxButtonChangeCamera.IsEnabled = enabled;
-            textBoxButtonSpecialAction.IsEnabled = enabled;
-        }
-
-        private void SaveMapping()
-        {
-            for (int i = 0; i < devices.Count; i++)
+            foreach (UIElement element in gridCommands.Children)
             {
-                devices[i].SaveMapping();
+                if (element is TextBox)
+                    element.IsEnabled = enabled;
             }
         }
 
-        private void RevertMapping()
+        private void CreateControlsForSelectedDevice()
         {
-            for (int i = 0; i < devices.Count; i++)
+            if (selectedDevice != null)
             {
-                devices[i].SaveMapping();
+                InputConfig config = selectedDevice.InputConfig;
+
+                gridCommands.Children.Clear();
+                CreateGridDefinitions(config.MaxRowNumber);
+
+                foreach (KeyValuePair<String, InputConfigState> entry in config.States)
+                {
+                    String name = entry.Key;
+                    InputConfigState state = entry.Value;
+
+                    CreateControl(name, state);
+                }
+            }
+            else
+            {
+                CreateControlsForNoDevice();
             }
         }
 
-        private void ResetMapping()
+        private void CreateGridDefinitions(int maxRowNumber)
         {
-            if (selectedDevice == null)
+            gridCommands.RowDefinitions.Clear();
+            gridCommands.ColumnDefinitions.Clear();
+
+            for (int i = 0; i < 2; i++)
             {
-                return;
+                gridCommands.ColumnDefinitions.Add(new ColumnDefinition() { Width = System.Windows.GridLength.Auto });
+                gridCommands.ColumnDefinitions.Add(new ColumnDefinition() { Width = new System.Windows.GridLength(1.0, GridUnitType.Star) });
             }
-
-            MessageBoxResult result = MessageBox.Show(this, "Do you really want to reset the setting to default values?", "Reset mapping", MessageBoxButton.YesNo, MessageBoxImage.Question);
-
-            if (result == MessageBoxResult.Yes)
+            for (int i = 0; i <= maxRowNumber; i++)
             {
-                selectedDevice.SetDefaultMapping();
-                TakeOverMapping((ButtonBasedInputMapping)selectedDevice.Mapping);
+                gridCommands.RowDefinitions.Add(new RowDefinition() { Height = System.Windows.GridLength.Auto });
             }
         }
 
-        private void TakeOverMapping(ButtonBasedInputMapping mapping)
+        private void CreateControl(String name, InputConfigState state)
         {
-            textBoxAxisRoll.Text = mapping.RollAxisMapping;
-            textBoxAxisPitch.Text = mapping.PitchAxisMapping;
-            textBoxAxisYaw.Text = mapping.YawAxisMapping;
-            textBoxAxisGaz.Text = mapping.GazAxisMapping;
+            if (state is InputValueConfigState)
+            {
+                Label label = new Label() { Content = state.Name + ":" , Style = (Style)gridMain.FindResource("styleContentLabel") };
+                Grid.SetColumn(label, state.LayoutPosition == InputConfigState.Position.LeftColumn ? 0 : 2);
+                Grid.SetRow(label, state.RowNumber);
+                gridCommands.Children.Add(label);
 
-            textBoxButtonTakeOff.Text = mapping.TakeOffButton;
-            textBoxButtonLand.Text = mapping.LandButton;
-            textBoxButtonHover.Text = mapping.HoverButton;
-            textBoxButtonEmergency.Text = mapping.EmergencyButton;
-            textBoxButtonFlatTrim.Text = mapping.FlatTrimButton;
-            textBoxButtonChangeCamera.Text = mapping.CameraSwapButton;
-            textBoxButtonSpecialAction.Text = mapping.SpecialActionButton;
+                TextBox textBox = new TextBox() { Name = "textBox" + name, IsReadOnly = true, Style = (Style)gridMain.FindResource("styleContentTextBox") };
+                Grid.SetColumn(textBox, state.LayoutPosition == InputConfigState.Position.LeftColumn ? 1 : 3);
+                Grid.SetRow(textBox, state.RowNumber);
+
+                gridCommands.Children.Add(textBox);
+
+                textBox.GotFocus += new RoutedEventHandler(textBoxControl_GotFocus);
+                textBox.LostFocus += new RoutedEventHandler(textBoxControl_LostFocus);
+            }
+            else if (state is InputConfigHeader)
+            {
+                Label label = new Label() { Content = state.Name, HorizontalAlignment = System.Windows.HorizontalAlignment.Center };
+                Grid.SetColumn(label, state.LayoutPosition == InputConfigState.Position.LeftColumn ? 0 : 2);
+                Grid.SetRow(label, state.RowNumber);
+                Grid.SetColumnSpan(label, 2);
+
+                gridCommands.Children.Add(label);
+            }
+        }
+
+        private void CreateControlsForNoDevice()
+        {
+            gridCommands.Children.Clear();
+
+            Label label = new Label() { Content = "No device selected", HorizontalAlignment = System.Windows.HorizontalAlignment.Center, VerticalAlignment = System.Windows.VerticalAlignment.Center };
+            label.Margin = new Thickness(20);
+
+            gridCommands.Children.Add(label);
+        }
+
+        private void TakeOverMapping(InputMapping mapping)
+        {
+            Dictionary<String, String> mappings = mapping.Controls.Mappings;
+
+            foreach (KeyValuePair<String, String> entry in mappings)
+            {
+                TextBox control = GetTextBoxByControlName(entry.Key);
+                control.Text = entry.Value;
+            }
 
             CheckForDoubleInput();
         }
 
-        private void UpdateMapping(ButtonBasedInputMapping mapping, Control control, String inputValue)
+        private void UpdateMappings()
         {
-            String currentValue = GetInputMappingValue(mapping, control);
+            if (selectedControl != null)
+            {
+                InputMapping mapping = selectedDevice.Mapping;
+
+                TextBox textBox = GetTextBoxByControlName(selectedControl);
+
+                String inputField = selectedControl;
+                String inputValue = textBox.Text;
+
+                UpdateMapping(mapping, inputField, inputValue);
+            }
+        }
+
+        private void UpdateMapping(InputMapping mapping, String inputField, String inputValue)
+        {
+            String currentValue = GetInputMappingValue(mapping, inputField);
 
             if (currentValue != inputValue)
-            {
-                SetInputMappingValue(mapping, control, inputValue);
-            }
+                mapping.SetControlProperty(inputField, inputValue);
             else
-            {
-                SetInputMappingValue(mapping, control, "");
-            }
+                mapping.SetControlProperty(inputField, "");
         }
 
-        private String GetInputMappingValue(ButtonBasedInputMapping mapping, Control control)
+        private String GetInputMappingValue(InputMapping mapping, String inputField)
         {
-            if (control == Control.AxisRoll) { return mapping.RollAxisMapping; }
-            if (control == Control.AxisPitch) { return mapping.PitchAxisMapping; }
-            if (control == Control.AxisYaw) { return mapping.YawAxisMapping; }
-            if (control == Control.AxisGaz) { return mapping.GazAxisMapping; }
+            Dictionary<String, String> mappings = mapping.Controls.Mappings;
 
-            if (control == Control.ButtonTakeoff) { return mapping.TakeOffButton; }
-            if (control == Control.ButtonLand) { return mapping.LandButton; }
-            if (control == Control.ButtonHover) { return mapping.HoverButton; }
-            if (control == Control.ButtonEmergency) { return mapping.EmergencyButton; }
-            if (control == Control.ButtonFlatTrim) { return mapping.FlatTrimButton; }
-            if (control == Control.ButtonChangeCamera) { return mapping.CameraSwapButton; }
-            if (control == Control.ButtonSpecialAction) { return mapping.SpecialActionButton; }
+            if (mappings.ContainsKey(inputField))
+                return mappings[inputField];
 
-            return "";
+            throw new Exception("There is no mapping value named '" + inputField + "'");
         }
 
-        private void SetInputMappingValue(ButtonBasedInputMapping mapping, Control control, String inputValue)
+        private String GetCombinedText(String inputValue)
         {
-            if (control == Control.AxisRoll) { mapping.RollAxisMapping = inputValue; }
-            if (control == Control.AxisPitch) { mapping.PitchAxisMapping = inputValue; }
-            if (control == Control.AxisYaw) { mapping.YawAxisMapping = inputValue; }
-            if (control == Control.AxisGaz) { mapping.GazAxisMapping = inputValue; }
-
-            if (control == Control.ButtonTakeoff) { mapping.TakeOffButton = inputValue; }
-            if (control == Control.ButtonLand) { mapping.LandButton = inputValue; }
-            if (control == Control.ButtonHover) { mapping.HoverButton = inputValue; }
-            if (control == Control.ButtonEmergency) { mapping.EmergencyButton = inputValue; }
-            if (control == Control.ButtonFlatTrim) { mapping.FlatTrimButton = inputValue; }
-            if (control == Control.ButtonChangeCamera) { mapping.CameraSwapButton = inputValue; }
-            if (control == Control.ButtonSpecialAction) { mapping.SpecialActionButton = inputValue; }
+            TextBox textBox = GetTextBoxByControlName(selectedControl);
+            return textBox.Text;
         }
 
         private void CheckForDoubleInput()
         {
             List<String> inputValues = new List<String>();
 
-            inputValues.AddRange(textBoxAxisRoll.Text.Split('-')); inputValues.AddRange(textBoxAxisPitch.Text.Split('-'));
-            inputValues.AddRange(textBoxAxisYaw.Text.Split('-')); inputValues.AddRange(textBoxAxisGaz.Text.Split('-'));
-            inputValues.Add(textBoxButtonTakeOff.Text); inputValues.Add(textBoxButtonLand.Text); inputValues.Add(textBoxButtonHover.Text);
-            inputValues.Add(textBoxButtonEmergency.Text); inputValues.Add(textBoxButtonFlatTrim.Text); inputValues.Add(textBoxButtonChangeCamera.Text);
+            for (int i = 0; i < gridCommands.Children.Count; i++)
+            {
+                UIElement element = gridCommands.Children[i];
+                if (element is TextBox)
+                {
+                    if (isBooleanInputTextBox((TextBox)element))
+                        inputValues.Add(((TextBox)element).Text);
+                    else
+                        inputValues.AddRange(((TextBox)element).Text.Split('-'));
+                }
+            }
 
-            CheckDoubleInputEntry(textBoxAxisRoll, inputValues); CheckDoubleInputEntry(textBoxAxisPitch, inputValues);
-            CheckDoubleInputEntry(textBoxAxisYaw, inputValues); CheckDoubleInputEntry(textBoxAxisGaz, inputValues);
-            CheckDoubleInputEntry(textBoxButtonTakeOff, inputValues); CheckDoubleInputEntry(textBoxButtonLand, inputValues); CheckDoubleInputEntry(textBoxButtonHover, inputValues);
-            CheckDoubleInputEntry(textBoxButtonEmergency, inputValues); CheckDoubleInputEntry(textBoxButtonFlatTrim, inputValues); CheckDoubleInputEntry(textBoxButtonChangeCamera, inputValues);
-            CheckDoubleInputEntry(textBoxButtonSpecialAction, inputValues);
+            for (int i = 0; i < gridCommands.Children.Count; i++)
+            {
+                UIElement element = gridCommands.Children[i];
+                if (element is TextBox)
+                    SetColorForDoubleEntry((TextBox)element, inputValues);
+            }
         }
 
-        private void CheckDoubleInputEntry(TextBox textBox, List<String> inputValues)
+        private bool isBooleanInputTextBox(TextBox textBox)
         {
-            String[] textBoxValues = textBox.Text.Split('-');
+            String elementName = GetElementNameFromControlName(textBox);
+            InputValueConfigState state = (InputValueConfigState) selectedDevice.InputConfig.States[elementName];
+
+            return state.InputValueType == InputControl.ControlType.BooleanValue;
+        }
+
+        private void SetColorForDoubleEntry(TextBox textBox, List<String> inputValues)
+        {
+            List<String> textBoxValues = new List<String>();
+            if (!isBooleanInputTextBox(textBox))
+                textBoxValues.AddRange(textBox.Text.Split('-'));
+            else
+                textBoxValues.Add(textBox.Text);
 
             bool doubleEntry = false;
-            for (int i = 0; i < textBoxValues.Length; i++)
+            for (int i = 0; i < textBoxValues.Count; i++)
             {
-                if (inputValues.FindAll(delegate(String value) { return value == textBoxValues[i]; }).Count > 1)
+                String textBoxText = textBoxValues[i].Trim();
+                if (inputValues.FindAll(delegate(String value) { return value == textBoxText; }).Count > 1)
                 {
                     doubleEntry = true;
                     break;
@@ -429,59 +422,208 @@ namespace ARDrone.UI
             }
 
             if (doubleEntry)
-            {
                 textBox.Foreground = new SolidColorBrush(Colors.Red);
-            }
             else
-            {
                 textBox.Foreground = new SolidColorBrush(Colors.Black);
-            }
         }
 
-        private void UpdateInputs(String deviceId, String inputValue, bool isAxis)
+        private void UpdateInputs(String deviceId, String inputValue, bool isContinuousValue)
         {
             bool mappingSet = false;
 
-            if (selectedDevice == null || selectedControl == Control.None || selectedDevice.DeviceInstanceId != deviceId)
-            {
+            if (selectedDevice == null || selectedControl == null || selectedDevice.DeviceInstanceId != deviceId)
                 return;
+
+            if (inputValue != null && inputValue != lastInputValue)
+            {
+                lastInputValue = inputValue;
+
+                if (SelectedInputConfigState.InputValueType == InputControl.ControlType.ContinuousValue)
+                {
+                    mappingSet = UpdateContinuousInputField(inputValue, isContinuousValue);
+                }
+                else if (SelectedInputConfigState.InputValueType == InputControl.ControlType.BooleanValue)
+                {
+                    mappingSet = UpdateBooleanInputField(inputValue, isContinuousValue);
+                }
             }
 
-            if (inputValue != null)
-            {
-                if (selectedControlType == ControlType.Axis)
-                {
-                    if (isAxis)
-                    {
-                        UpdateMapping((ButtonBasedInputMapping)selectedDevice.Mapping, selectedControl, inputValue);
-                        mappingSet = true;
-                    }
-                    else
-                    {
-                        if (tempAxisInput == null || tempAxisInput == "")
-                        {
-                            tempAxisInput = inputValue;
-                        }
-                        else
-                        {
-                            tempAxisInput = tempAxisInput + "-" + inputValue;
+            if (mappingSet && SelectedInputConfigState.InputMode == InputValueConfigState.Mode.DisableOnInput)
+                buttonSubmit.Focus();
+        }
 
-                            UpdateMapping((ButtonBasedInputMapping)selectedDevice.Mapping, selectedControl, tempAxisInput);
-                            tempAxisInput = "";
-                            mappingSet = true;
-                        }
-                    }
-                }
-                else if (selectedControlType == ControlType.Button && !isAxis)
+        private bool UpdateContinuousInputField(String inputValue, bool isContinuousValue)
+        {
+            bool mappingSet = false;
+
+            if (isContinuousValue)
+            {
+                mappingSet = true;
+            }
+            else
+            {
+                if (tempContinuousInput == null || tempContinuousInput == "")
                 {
-                    UpdateMapping((ButtonBasedInputMapping)selectedDevice.Mapping, selectedControl, inputValue);
+                    tempContinuousInput = inputValue;
+                }
+                else
+                {
+                    tempContinuousInput = tempContinuousInput + "-" + inputValue;
+
+                    TextBox textBox = GetTextBoxByControlName(selectedControl);
+                    textBox.Text = tempContinuousInput;
+
+                    tempContinuousInput = "";
                     mappingSet = true;
                 }
             }
 
-            if (mappingSet)
+            return mappingSet;
+        }
+
+        private bool UpdateBooleanInputField(String inputValue, bool isContinuousValue)
+        {
+            bool mappingSet = false;
+            if (!isContinuousValue)
             {
-                buttonSubmit.Focus();
+                if (SelectedInputConfigState.InputMode == InputValueConfigState.Mode.DisableOnInput)
+                {
+                    ReplaceTextBoxText(inputValue);
+                    mappingSet = true;
+                }
+                else
+                {
+                    AddTextToTextBox(inputValue);
+                }
+            }
+
+            return mappingSet;
+        }
+
+        private void AddTextToTextBox(String inputValue)
+        {
+            TextBox textBox = GetTextBoxByControlName(selectedControl);
+
+            int selectionStart = textBox.SelectionStart;
+            int selectionLength = textBox.SelectionLength;
+
+            String currentText = textBox.Text;
+
+            if (selectionLength != 0)
+                currentText = currentText.Remove(selectionStart, selectionLength);
+
+            currentText = currentText.Insert(selectionStart, inputValue);
+            selectionStart += inputValue.Length;
+
+            textBox.Text = currentText;
+            textBox.Select(selectionStart, 0);
+        }
+
+        private void ReplaceTextBoxText(String inputValue)
+        {
+            TextBox textBox = GetTextBoxByControlName(selectedControl);
+            textBox.Text = inputValue;
+        }
+
+        private void FocusInputElement(TextBox textBox)
+        {
+            if (textBox != null && textBox.Parent == gridCommands)
+            {
+                inputManager.SwitchInputMode(Input.InputManager.InputMode.RawInput, selectedDevice.DeviceInstanceId);
+
+                selectedControl = GetElementNameFromControlName(textBox);
+
+                StyleFocussedControl(textBox);
+            }
+        }
+
+        private String GetElementNameFromControlName(TextBox textBox)
+        {
+            String name = textBox.Name;
+            if (name.IndexOf("textBox") == 0)
+                name = name.Replace("textBox", "");
+
+            return name;
+        }
+
+        private void StyleFocussedControl(TextBox textBox)
+        {
+            if (SelectedInputConfigState.InputMode == InputValueConfigState.Mode.DisableManuallyKeyboardAvailable)
+            {
+                textBox.IsReadOnly = false;
+                textBox.Foreground = new SolidColorBrush(Colors.Black);
+            }
+            else
+            {
+                textBox.Text = "-- Assigning a value --";
+                textBox.Foreground = new SolidColorBrush(Colors.LightGray);
+            }
+        }
+
+        private void UnfocusInputElement(TextBox textBox)
+        {
+            if (textBox != null && textBox.Parent == gridCommands)
+            {
+                UpdateMappings();
+
+                StyleUnfocussedControl(textBox);
+                CheckForDoubleInput();
+
+                inputManager.SwitchInputMode(Input.InputManager.InputMode.NoInput);
+                selectedControl = null;
+                lastInputValue = null;
+            }
+        }
+
+        private void StyleUnfocussedControl(TextBox textBox)
+        {
+            textBox.Foreground = new SolidColorBrush(Colors.Black);
+            textBox.IsReadOnly = true;
+        }
+
+        private void ResetMapping()
+        {
+            if (selectedDevice == null)
+                return;
+
+            MessageBoxResult result = MessageBox.Show(this, "Do you really want to reset the setting to default values?", "Reset mapping", MessageBoxButton.YesNo, MessageBoxImage.Question);
+
+            if (result == MessageBoxResult.Yes)
+            {
+                selectedDevice.SetDefaultMapping();
+                TakeOverMapping((InputMapping)selectedDevice.Mapping);
+            }
+        }
+
+        private void SaveAllMappings()
+        {
+            for (int i = 0; i < devices.Count; i++)
+                devices[i].SaveMapping();
+        }
+
+        private void RevertAllMappings()
+        {
+            for (int i = 0; i < devices.Count; i++)
+                devices[i].RevertMapping();
+        }
+
+        private TextBox GetTextBoxByControlName(String name)
+        {
+            for (int i = 0; i < gridCommands.Children.Count; i++)
+            {
+                UIElement element = gridCommands.Children[i];
+                if (element is TextBox && ((TextBox)element).Name == "textBox" + name)
+                    return (TextBox)element;
+            }
+
+            throw new Exception("There is no control named '" + name + "'");
+        }
+
+        public InputValueConfigState SelectedInputConfigState
+        {
+            get
+            {
+                return (InputValueConfigState)selectedDevice.InputConfig.States[this.selectedControl];
             }
         }
 
@@ -493,7 +635,7 @@ namespace ARDrone.UI
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             Dispose();
-            RevertMapping();
+            RevertAllMappings();
         }
 
         private void comboBoxDevices_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -518,13 +660,13 @@ namespace ARDrone.UI
 
         private void buttonCancel_Click(object sender, RoutedEventArgs e)
         {
-            RevertMapping();
+            RevertAllMappings();
             Close();
         }
 
         private void buttonSubmit_Click(object sender, RoutedEventArgs e)
         {
-            SaveMapping();
+            SaveAllMappings();
             Close();
         }
 
@@ -536,7 +678,7 @@ namespace ARDrone.UI
 
         private void inputManagerSync_NewInputDevice(object sender, NewInputDeviceEventArgs e)
         {
-            HandleNewDevice(e.DeviceId, (ButtonBasedInput)e.Input);
+            HandleNewDevice(e.DeviceId, (ConfigurableInput)e.Input);
         }
 
         private void inputManager_InputDeviceLost(object sender, InputDeviceLostEventArgs e)

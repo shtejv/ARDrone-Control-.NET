@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using ARDrone.Input.InputControls;
+using ARDrone.Input.Utility;
 
 namespace ARDrone.Input.InputMappings
 {
@@ -31,16 +32,14 @@ namespace ARDrone.Input.InputMappings
 
         public void CopyMappingsFrom(Dictionary<String, String> mappings)
         {
-            InputControl controls = CreateInputControlFromMappings(mappings);
+            InputControl controls = InputFactory.CreateInputControlFromMappings(mappings, this);
             SetControls(controls);
         }
-
-        protected abstract InputControl CreateInputControlFromMappings(Dictionary<String, String> mappings);
 
         private void SetControls(InputControl controls)
         {
             CheckControls(controls);
-            this.controls = controls.Clone();
+            this.controls = InputFactory.CloneInputControls(controls);
         }
 
         protected virtual void CheckControls(InputControl controls)
@@ -51,11 +50,16 @@ namespace ARDrone.Input.InputMappings
             }
         }
 
+        public void SetControlProperty(String name, String value)
+        {
+            controls.SetProperty(name, value);
+        }
+
         public InputControl Controls
         {
             get
             {
-                return controls.Clone();
+                return InputFactory.CloneInputControls(controls);
             }
         }
     }
