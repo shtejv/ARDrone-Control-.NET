@@ -31,7 +31,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ARDroneInput", "ARDroneInpu
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{7885A062-281E-475D-AE00-54D56221F433}"
 	ProjectSection(SolutionItems) = preProject
-		ARDrone.vsmdi = ARDrone.vsmdi
 		GNU GPL.txt = GNU GPL.txt
 		LibraryLicenses.txt = LibraryLicenses.txt
 		Local.testsettings = Local.testsettings
