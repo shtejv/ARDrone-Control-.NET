@@ -26,7 +26,6 @@ namespace ARDrone.Control
     {
         public class DroneData : EventArgs
         {
-            public string DroneState { get; private set; }
             public int BatteryLevel { get; private set; }
             public double Theta { get; private set; }
             public double Phi { get; private set; }
@@ -38,7 +37,6 @@ namespace ARDrone.Control
 
             public DroneData()
             {
-                DroneState = "";
                 BatteryLevel = 0;
                 Theta = 0.0f;
                 Phi = 0.0f;
@@ -49,9 +47,8 @@ namespace ARDrone.Control
                 vZ = 0.0;
             }
 
-            public DroneData(string droneState, int batteryLevel, double theta, double phi, double psi, int altitude, double vx, double vy, double vz)
+            public DroneData(int batteryLevel, double theta, double phi, double psi, int altitude, double vx, double vy, double vz)
             {
-                DroneState = droneState;
                 BatteryLevel = batteryLevel;
                 Theta = theta / 1000.0;
                 Phi = phi / 1000.0;
@@ -64,7 +61,7 @@ namespace ARDrone.Control
 
             public override String ToString()
             {
-                return "Drone state: " + DroneState + " , Theta: " + Theta + " , Phi: " + Phi + " , Psi: " + Psi + " , Altitude: " + Altitude + " , vX: " + vX + " , vY: " + vY + " , vZ: " + vZ;
+                return "Theta: " + Theta + " , Phi: " + Phi + " , Psi: " + Psi + " , Altitude: " + Altitude + " , vX: " + vX + " , vY: " + vY + " , vZ: " + vZ;
             }
         }
 
@@ -103,9 +100,6 @@ namespace ARDrone.Control
 
         [DllImport(@"..\ARDroneDLL\ARDroneDLL.dll")]
         static extern bool ShutdownDrone();
-
-        [DllImport(@"..\ARDroneDLL\ARDroneDLL.dll")]
-        static extern string GetDroneState();
 
         [DllImport(@"..\ARDroneDLL\ARDroneDLL.dll")]
         static extern int GetBatteryLevel();
@@ -307,7 +301,7 @@ namespace ARDrone.Control
             {
                 if (isConnected)
                 {
-                    return new DroneData("enabled", 100, 0.0, 0.0, 0.0, 0, 0.0, 0.0, 0.0);
+                    return new DroneData(100, 0.0, 0.0, 0.0, 0, 0.0, 0.0, 0.0);
                 }
                 else
                 {
@@ -317,7 +311,7 @@ namespace ARDrone.Control
 
             if (isConnected)
             {
-                return new DroneData();
+                return new DroneData(GetBatteryLevel(), GetTheta(), GetPhi(), GetPsi(), GetAltitude(), GetVX(), GetVY(), GetVZ());
                 //return new DroneData(GetDroneState(), GetBatteryLevel(), GetTheta(), GetPhi(), GetPsi(), GetAltitude(), GetVX(), GetVY(), GetVZ());
             }
             else
@@ -547,7 +541,7 @@ namespace ARDrone.Control
         {
             if (DroneEvent != null)
             {
-                DroneEvent(new DroneData(GetDroneState(), GetBatteryLevel(), GetTheta(), GetPhi(), GetPsi(), GetAltitude(), GetVX(), GetVY(), GetVZ()));
+                DroneEvent(new DroneData(GetBatteryLevel(), GetTheta(), GetPhi(), GetPsi(), GetAltitude(), GetVX(), GetVY(), GetVZ()));
             }
         }
     }

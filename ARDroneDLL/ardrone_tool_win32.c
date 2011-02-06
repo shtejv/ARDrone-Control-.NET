@@ -672,7 +672,6 @@ int sdk_demo_stop=0;
 	  return VP_SUCCEEDED(res) ? 0 : -1;
 	}
 
-	char* _stdcall GetDroneState() { return "CTRL_LANDED";}
 	int _stdcall GetBatteryLevel() { return BatteryLevel;}
 
 	double _stdcall GetTheta() { return Theta;}

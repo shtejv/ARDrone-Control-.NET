@@ -26,11 +26,6 @@ jboolean JNICALL Java_ardrone_ARDrone_shutdownDrone(JNIEnv *env, jclass cls)
 	return ShutdownDrone();
 }
 
-jint JNICALL Java_ardrone_ARDrone_getDroneState(JNIEnv *env, jclass cls)
-{
-	return GetDroneState();
-}
-
 jint JNICALL Java_ardrone_ARDrone_getBatteryLevel(JNIEnv *env, jclass cls)
 {
 	return GetBatteryLevel();

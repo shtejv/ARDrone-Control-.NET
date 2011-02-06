@@ -45,7 +45,6 @@ extern "C" __declspec(dllimport) int _stdcall TestLibrary();
 extern "C" __declspec(dllimport) int _stdcall InitDrone();
 extern "C" __declspec(dllimport) BOOL _stdcall UpdateDrone();
 extern "C" __declspec(dllimport) BOOL _stdcall ShutdownDrone();
-extern "C" __declspec(dllimport) int _stdcall GetDroneState();
 extern "C" __declspec(dllimport) int _stdcall GetBatteryLevel();
 extern "C" __declspec(dllimport) double _stdcall GetTheta();
 extern "C" __declspec(dllimport) double _stdcall GetPhi();

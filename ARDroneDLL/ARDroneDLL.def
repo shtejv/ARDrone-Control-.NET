@@ -3,7 +3,6 @@ EXPORTS
    InitDrone   @1
    UpdateDrone   @2
    ShutdownDrone   @3
-   GetDroneState @4
    GetBatteryLevel @5 
    GetTheta @6
    GetPhi @7
