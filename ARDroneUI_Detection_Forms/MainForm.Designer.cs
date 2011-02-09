@@ -47,11 +47,6 @@
             this.labelStatusHoveringInfo = new System.Windows.Forms.Label();
             this.labelStatusFlyingInfo = new System.Windows.Forms.Label();
             this.labelStatusBatteryInfo = new System.Windows.Forms.Label();
-            this.sliderThresholdMin = new System.Windows.Forms.TrackBar();
-            this.sliderThresholdMax = new System.Windows.Forms.TrackBar();
-            this.groupBoxOtherStuff = new System.Windows.Forms.GroupBox();
-            this.checkBoxThresholdInvert = new System.Windows.Forms.CheckBox();
-            this.labelThreshold = new System.Windows.Forms.Label();
             this.timerStatusUpdate = new System.Windows.Forms.Timer(this.components);
             this.timerVideoUpdate = new System.Windows.Forms.Timer(this.components);
             this.labelCamera = new System.Windows.Forms.Label();
@@ -61,9 +56,6 @@
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxVideo)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxMask)).BeginInit();
             this.groupBoxStatus.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.sliderThresholdMin)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.sliderThresholdMax)).BeginInit();
-            this.groupBoxOtherStuff.SuspendLayout();
             this.SuspendLayout();
             // 
             // pictureBoxVideo
@@ -315,66 +307,6 @@
             this.labelStatusBatteryInfo.TabIndex = 0;
             this.labelStatusBatteryInfo.Text = "Battery";
             // 
-            // sliderThresholdMin
-            // 
-            this.sliderThresholdMin.LargeChange = 20;
-            this.sliderThresholdMin.Location = new System.Drawing.Point(6, 29);
-            this.sliderThresholdMin.Maximum = 180;
-            this.sliderThresholdMin.Name = "sliderThresholdMin";
-            this.sliderThresholdMin.Size = new System.Drawing.Size(104, 45);
-            this.sliderThresholdMin.SmallChange = 5;
-            this.sliderThresholdMin.TabIndex = 42;
-            this.sliderThresholdMin.Value = 20;
-            this.sliderThresholdMin.Scroll += new System.EventHandler(this.sliderThresholdMin_Scroll);
-            // 
-            // sliderThresholdMax
-            // 
-            this.sliderThresholdMax.LargeChange = 20;
-            this.sliderThresholdMax.Location = new System.Drawing.Point(113, 29);
-            this.sliderThresholdMax.Maximum = 180;
-            this.sliderThresholdMax.Name = "sliderThresholdMax";
-            this.sliderThresholdMax.Size = new System.Drawing.Size(104, 45);
-            this.sliderThresholdMax.SmallChange = 5;
-            this.sliderThresholdMax.TabIndex = 43;
-            this.sliderThresholdMax.Value = 160;
-            this.sliderThresholdMax.Scroll += new System.EventHandler(this.sliderThresholdMax_Scroll);
-            // 
-            // groupBoxOtherStuff
-            // 
-            this.groupBoxOtherStuff.Controls.Add(this.checkBoxThresholdInvert);
-            this.groupBoxOtherStuff.Controls.Add(this.labelThreshold);
-            this.groupBoxOtherStuff.Controls.Add(this.sliderThresholdMax);
-            this.groupBoxOtherStuff.Controls.Add(this.sliderThresholdMin);
-            this.groupBoxOtherStuff.Location = new System.Drawing.Point(488, 283);
-            this.groupBoxOtherStuff.Name = "groupBoxOtherStuff";
-            this.groupBoxOtherStuff.Size = new System.Drawing.Size(220, 187);
-            this.groupBoxOtherStuff.TabIndex = 44;
-            this.groupBoxOtherStuff.TabStop = false;
-            this.groupBoxOtherStuff.Text = "Other Stuff";
-            // 
-            // checkBoxThresholdInvert
-            // 
-            this.checkBoxThresholdInvert.AutoSize = true;
-            this.checkBoxThresholdInvert.Checked = true;
-            this.checkBoxThresholdInvert.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.checkBoxThresholdInvert.Location = new System.Drawing.Point(6, 73);
-            this.checkBoxThresholdInvert.Name = "checkBoxThresholdInvert";
-            this.checkBoxThresholdInvert.Size = new System.Drawing.Size(53, 17);
-            this.checkBoxThresholdInvert.TabIndex = 45;
-            this.checkBoxThresholdInvert.Text = "Invert";
-            this.checkBoxThresholdInvert.UseVisualStyleBackColor = true;
-            this.checkBoxThresholdInvert.CheckedChanged += new System.EventHandler(this.checkBoxThresholdInvert_CheckedChanged);
-            // 
-            // labelThreshold
-            // 
-            this.labelThreshold.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.labelThreshold.Location = new System.Drawing.Point(110, 69);
-            this.labelThreshold.Name = "labelThreshold";
-            this.labelThreshold.Size = new System.Drawing.Size(100, 23);
-            this.labelThreshold.TabIndex = 44;
-            this.labelThreshold.Text = "20...160";
-            this.labelThreshold.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            // 
             // timerStatusUpdate
             // 
             this.timerStatusUpdate.Interval = 1000;
@@ -418,7 +350,7 @@
             // 
             // directionControl
             // 
-            this.directionControl.Location = new System.Drawing.Point(714, 287);
+            this.directionControl.Location = new System.Drawing.Point(488, 283);
             this.directionControl.MaximumSize = new System.Drawing.Size(200, 200);
             this.directionControl.MinimumSize = new System.Drawing.Size(200, 200);
             this.directionControl.Name = "directionControl";
@@ -429,12 +361,11 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(924, 498);
+            this.ClientSize = new System.Drawing.Size(861, 483);
             this.Controls.Add(this.directionControl);
             this.Controls.Add(this.labelCamera);
             this.Controls.Add(this.buttonConnect);
             this.Controls.Add(this.buttonShutdown);
-            this.Controls.Add(this.groupBoxOtherStuff);
             this.Controls.Add(this.groupBoxStatus);
             this.Controls.Add(this.textBoxOutput);
             this.Controls.Add(this.buttonCommandEmergency);
@@ -452,10 +383,6 @@
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxMask)).EndInit();
             this.groupBoxStatus.ResumeLayout(false);
             this.groupBoxStatus.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.sliderThresholdMin)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.sliderThresholdMax)).EndInit();
-            this.groupBoxOtherStuff.ResumeLayout(false);
-            this.groupBoxOtherStuff.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -488,11 +415,6 @@
         private System.Windows.Forms.Label labelStatusRollInfo;
         private System.Windows.Forms.Label labelStatusPitch;
         private System.Windows.Forms.Label labelStatusPitchInfo;
-        private System.Windows.Forms.TrackBar sliderThresholdMin;
-        private System.Windows.Forms.TrackBar sliderThresholdMax;
-        private System.Windows.Forms.GroupBox groupBoxOtherStuff;
-        private System.Windows.Forms.CheckBox checkBoxThresholdInvert;
-        private System.Windows.Forms.Label labelThreshold;
         private System.Windows.Forms.Timer timerStatusUpdate;
         private System.Windows.Forms.Timer timerVideoUpdate;
         private System.Windows.Forms.Label labelCamera;

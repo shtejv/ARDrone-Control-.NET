@@ -47,7 +47,7 @@ namespace ARDrone.Detection
 
         #endregion
 
-        private SURFTracker surfaceTracker;
+        private Features2DTracker featureTracker;
         private SURFDetector surfaceParameters;
         private MemStorage octagonStorage;
         private Contour<Point> octagonContour;
@@ -63,7 +63,7 @@ namespace ARDrone.Detection
 
         protected override void DisposeObject()
         {
-            surfaceTracker.Dispose();
+            featureTracker.Dispose();
             octagonStorage.Dispose();
         }
 
@@ -73,7 +73,7 @@ namespace ARDrone.Detection
             using (Image<Bgr, Byte> stopSignModel = new Image<Bgr, Byte>(Properties.Resources.SignModel))
             using (Image<Gray, Byte> redMask = GetRedPixelMask(stopSignModel))
             {
-                surfaceTracker = new SURFTracker(redMask.ExtractSURF(ref surfaceParameters));
+                featureTracker = new Features2DTracker(surfaceParameters.DetectFeatures(redMask, null));
             }
         }
 
@@ -229,11 +229,12 @@ namespace ARDrone.Detection
         [HandleProcessCorruptedStateExceptions]
         private int GetMatchedFeatureCount(Image<Gray, Byte> contourImage)
         {
-            SURFTracker.MatchedSURFFeature[] matchedFeatures;
+            Features2DTracker.MatchedImageFeature[] matchedFeatures;
             try
             {
-                SURFFeature[] features = contourImage.ExtractSURF(ref surfaceParameters);
-                matchedFeatures = surfaceTracker.MatchFeature(features, 2, 20);
+                //return 20;
+                ImageFeature[] features = surfaceParameters.DetectFeatures(contourImage, null);
+                matchedFeatures = featureTracker.MatchFeature(features, 2, 20);
             }
             catch (AccessViolationException)
             {
@@ -246,12 +247,10 @@ namespace ARDrone.Detection
             }
 
             int matchedFeatureCount = 0;
-            foreach (SURFTracker.MatchedSURFFeature feature in matchedFeatures)
+            foreach (Features2DTracker.MatchedImageFeature feature in matchedFeatures)
             {
                 if (feature.SimilarFeatures[0].Distance < 0.5)
-                {
                     matchedFeatureCount++;
-                }
             }
 
             return matchedFeatureCount;

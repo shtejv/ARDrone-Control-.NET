@@ -81,14 +81,9 @@ namespace ARDroneUI_Detection_Forms
 
         public void InitDetectionSliders()
         {
-            sliderThresholdMin.Value = minValue;
-            sliderThresholdMax.Value = maxValue;
-            signDetector.invertChannel = checkBoxThresholdInvert.Checked;
-
+            signDetector.invertChannel = true;
             signDetector.channelSliderMin = minValue;
             signDetector.channelSliderMax = maxValue;
-
-            labelThreshold.Text = minValue.ToString() + "..." + maxValue.ToString();
         }
 
         private void AddInputListeners()
@@ -518,34 +513,6 @@ namespace ARDroneUI_Detection_Forms
         private void inputManagerSync_NewInputState(object sender, NewInputStateEventArgs e)
         {
             UpdateInputState(e.CurrentInputState);
-        }
-
-        private void checkBoxThresholdInvert_CheckedChanged(object sender, EventArgs e)
-        {
-            if (signDetector != null)
-            {
-                signDetector.invertChannel = checkBoxThresholdInvert.Checked;
-            }
-        }
-
-        private void sliderThresholdMin_Scroll(object sender, EventArgs e)
-        {
-            if (signDetector != null)
-            {
-                minValue = (int)sliderThresholdMin.Value;
-                signDetector.channelSliderMin = minValue;
-                labelThreshold.Text = minValue.ToString() + "..." + maxValue.ToString();
-            }
-        }
-
-        private void sliderThresholdMax_Scroll(object sender, EventArgs e)
-        {
-            if (signDetector != null)
-            {
-                maxValue = (int)sliderThresholdMax.Value;
-                signDetector.channelSliderMax = maxValue;
-                labelThreshold.Text = minValue.ToString() + "..." + maxValue.ToString();
-            }
         }
     }
 }
