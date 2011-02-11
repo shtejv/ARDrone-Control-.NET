@@ -349,9 +349,14 @@ namespace ARDrone.UI
             String currentValue = GetInputMappingValue(mapping, inputField);
 
             if (currentValue != inputValue)
+            {
                 mapping.SetControlProperty(inputField, inputValue);
-            else
+            }
+            else if (SelectedInputConfigState.InputMode != InputValueConfigState.Mode.DisableManuallyKeyboardAvailable)
+            {
                 mapping.SetControlProperty(inputField, "");
+                GetTextBoxByControlName(selectedControl).Text = "";
+            }
         }
 
         private String GetInputMappingValue(InputMapping mapping, String inputField)
