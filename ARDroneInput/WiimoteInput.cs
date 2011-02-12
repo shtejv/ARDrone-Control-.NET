@@ -21,8 +21,10 @@ namespace ARDrone.Input
         {
             // "Normal" axes
             Axis_X, Axis_Y, Axis_Z,
-            // Nunchuk axis
-            Axis_Nunchuk_X, Axis_Nunchuk_Y
+            // Nunchuk axes
+            Axis_Nunchuk_X, Axis_Nunchuk_Y,
+            // Balance board axes
+            Axis_BalanceBoard_X, Axis_BalanceBoard_Y
         }
 
         enum Button {
@@ -130,7 +132,7 @@ namespace ARDrone.Input
         {
             ButtonBasedInputMapping mapping = new ButtonBasedInputMapping(GetValidButtons(), GetValidAxes());
 
-            mapping.SetAxisMappings(Axis.Axis_Y, Axis.Axis_X, "Button_Left-Button_Right", "Button_B-Button_A");
+            mapping.SetAxisMappings(Axis.Axis_BalanceBoard_X, Axis.Axis_BalanceBoard_Y, "Button_Left-Button_Right", "Button_B-Button_A");
             mapping.SetButtonMappings("", Button.Button_Plus, Button.Button_Plus, Button.Button_Minus, Button.Button_Home, "", "");
 
             return mapping;
@@ -173,6 +175,9 @@ namespace ARDrone.Input
 
             axisValues[Axis.Axis_Nunchuk_X.ToString()] = state.NunchukState.Joystick.X;
             axisValues[Axis.Axis_Nunchuk_Y.ToString()] = state.NunchukState.Joystick.Y;
+
+            axisValues[Axis.Axis_BalanceBoard_X.ToString()] = (state.BalanceBoardState.CenterOfGravity.X + 4.0f) / 20.0f;
+            axisValues[Axis.Axis_BalanceBoard_Y.ToString()] = -(state.BalanceBoardState.CenterOfGravity.Y - 4.5f) / 10.0f;
 
             List<String> buttonsPressed = new List<String>();
 
