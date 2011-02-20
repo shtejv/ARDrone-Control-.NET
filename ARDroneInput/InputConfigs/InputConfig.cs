@@ -47,11 +47,6 @@ namespace ARDrone.Input.InputConfigs
         }
     }
 
-    public interface EditableConfigState
-    {
-
-    }
-
     public abstract class InputConfigState
     {
         public enum Position { LeftColumn, RightColumn };
@@ -90,54 +85,148 @@ namespace ARDrone.Input.InputConfigs
                 return name;
             }
         }
+
+
     }
 
-    public class InputValueTextBoxConfigState : InputConfigState, EditableConfigState
+    public abstract class ControlInputConfigState : InputConfigState
     {
-        public enum Mode { DisableOnInput, DisableManually, DisableManuallyKeyboardAvailable };
+        public ControlInputConfigState(String name, Position layoutPosition, int rowNumber)
+            : base(name, layoutPosition, rowNumber)
+        { }    
 
-        private Mode inputMode;
+        public abstract InputControl.ControlType InputValueType
+        {
+            get;
+        }
+
+        public abstract bool DisabledOnInput
+        {
+            get;
+        }
+    }
+
+    public class DeviceInputConfigState : ControlInputConfigState
+    {
         private InputControl.ControlType inputValueType;
 
-        public InputValueTextBoxConfigState(String name, Position layoutPosition, int rowNumber, Mode inputMode, InputControl.ControlType inputValueType)
+        public DeviceInputConfigState(String name, Position layoutPosition, int rowNumber, InputControl.ControlType inputValueType)
             : base(name, layoutPosition, rowNumber)
         {
-            this.inputMode = inputMode;
             this.inputValueType = inputValueType;
         }
 
-        public Mode InputMode
-        {
-            get
-            {
-                return inputMode;
-            }
-        }
-
-        public InputControl.ControlType InputValueType
+        public override InputControl.ControlType InputValueType
         {
             get
             {
                 return inputValueType;
             }
         }
-    }
 
-    public class InputValueCheckBoxConfigState : InputConfigState, EditableConfigState
-    {
-        private List<String> inputValues = new List<String>();
-
-        public InputValueCheckBoxConfigState(String name, Position layoutPosition, int rowNumber, List<String> inputValues)
-            : base(name, layoutPosition, rowNumber)
-        {
-            this.inputValues = new List<String>(inputValues);
-        }
-
-        public String[] InputValues
+        public override bool DisabledOnInput
         {
             get
             {
-                return inputValues.ToArray();
+                return true;
+            }
+        }
+    }
+
+    public class DeviceAndSelectionConfigState : ControlInputConfigState
+    {
+        private InputControl.ControlType inputValueType;
+        private Dictionary<String, String> selectionToControlMap;
+        private List<String> controlsNotRecognized;
+
+        public DeviceAndSelectionConfigState(String name, Position layoutPosition, int rowNumber, InputControl.ControlType inputValueType, Dictionary<String, String> selectionToControlMap, List<String> controlsNotRecognized)
+            : base(name, layoutPosition, rowNumber)
+        {
+            this.inputValueType = inputValueType;
+            this.selectionToControlMap = new Dictionary<String, String>(selectionToControlMap);
+            this.controlsNotRecognized = new List<String>(controlsNotRecognized);
+        }
+
+        public bool IsRecognized(String control)
+        {
+            return !controlsNotRecognized.Contains(control);
+        }
+
+        public override InputControl.ControlType InputValueType
+        {
+            get
+            {
+                return inputValueType;
+            }
+        }
+
+        public override bool DisabledOnInput
+        {
+            get
+            {
+                return true;
+            }
+        }
+
+        public Dictionary<String, String> SelectionValues
+        {
+            get
+            {
+                return new Dictionary<String, String>(selectionToControlMap);
+            }
+        }
+
+        public List<String> ControlsNotRecognized
+        {
+            get
+            {
+                return new List<String>(controlsNotRecognized);
+            }
+        }
+    }
+
+    public class KeyboardInputConfigState : ControlInputConfigState
+    {
+        public KeyboardInputConfigState(String name, Position layoutPosition, int rowNumber)
+            : base(name, layoutPosition, rowNumber)
+        { }
+
+        public override InputControl.ControlType InputValueType
+        {
+            get
+            {
+                return InputControl.ControlType.BooleanValue;
+            }
+        }
+
+        public override bool DisabledOnInput
+        {
+            get
+            {
+                return false;
+            }
+        }
+    }
+
+    public class KeyboardAndDeviceInputConfigState : ControlInputConfigState
+    {
+        public KeyboardAndDeviceInputConfigState(String name, Position layoutPosition, int rowNumber)
+            : base(name, layoutPosition, rowNumber)
+        { }
+
+        public override InputControl.ControlType InputValueType
+        {
+            get
+            {
+                return InputControl.ControlType.BooleanValue;
+            }
+        }
+
+        public override bool DisabledOnInput
+        {
+            get
+            {
+                return false;
             }
         }
     }

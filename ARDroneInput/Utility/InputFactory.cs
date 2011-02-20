@@ -25,7 +25,8 @@ namespace ARDrone.Input.Utility
             if (input is WiiMoteInput)
                 return new AxisDitheredInputConfig(((WiiMoteInput)input).AxisMappingNames);
             else if (input is ButtonBasedInput)
-                return new ButtonBasedInputConfig();
+                return new AxisDitheredInputConfig(((KeyboardInput)input).AxisMappingNames);
+                //return new ButtonBasedInputConfig();
             else if (input is SpeechInput)
                 return new SpeechBasedInputConfig();
 

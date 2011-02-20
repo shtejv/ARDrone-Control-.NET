@@ -40,6 +40,7 @@ namespace ARDrone.UI
         private bool isSelectedDevicePresent = false;
 
         private String selectedControl = null;
+        private bool selectedControlModified = false;
         private String tempContinuousInput = "";
 
         private String lastInputValue = null;
@@ -223,7 +224,7 @@ namespace ARDrone.UI
                 RemoveDeviceFromDeviceList(selectedDevice.DeviceInstanceId);
             }
         }
-
+        
         private void UpdateCurrentDeviceDescription()
         {
             labelDevicePresentInfo.Content = isSelectedDevicePresent ? "" : "The device is not connected!";
@@ -279,42 +280,57 @@ namespace ARDrone.UI
 
         private void CreateControl(String name, InputConfigState state)
         {
-            if (state is InputValueTextBoxConfigState)
-                CreateInputValueTextBoxConfigState(name, (InputValueTextBoxConfigState)state);
-            else if (state is InputValueCheckBoxConfigState)
-                CreateInputValueTextBoxConfigState(name, (InputValueCheckBoxConfigState)state);
+            if (state is KeyboardAndDeviceInputConfigState || state is KeyboardInputConfigState || state is DeviceInputConfigState)
+                CreateInputValueTextBoxConfigState(name, (ControlInputConfigState)state);
+            else if (state is DeviceAndSelectionConfigState)
+                CreateInputValueComboBoxConfigState(name, (ControlInputConfigState)state);
             else if (state is InputConfigHeader)
                 CreateInputConfigHeaderState(name, (InputConfigHeader)state);
         }
 
-        private void CreateInputValueTextBoxConfigState(String name, InputValueTextBoxConfigState state)
+        private void CreateInputValueTextBoxConfigState(String name, ControlInputConfigState state)
         {
             CreateLabelForValueConfigState(name, state);
 
-            TextBox textBox = new TextBox() { Name = inputBoxPrefix + name, IsReadOnly = true, Style = (Style)gridMain.FindResource("styleContentInput") };
+            TextBox textBox = new TextBox() { Name = inputBoxPrefix + name, IsReadOnly = true, Style = (Style)gridMain.FindResource("styleContentTextBox") };
             Grid.SetColumn(textBox, state.LayoutPosition == InputConfigState.Position.LeftColumn ? 1 : 3);
             Grid.SetRow(textBox, state.RowNumber);
 
             gridCommands.Children.Add(textBox);
 
-            textBox.GotFocus += new RoutedEventHandler(textBoxControl_GotFocus);
-            textBox.LostFocus += new RoutedEventHandler(textBoxControl_LostFocus);
+            textBox.GotFocus += new RoutedEventHandler(inputBoxControl_GotFocus);
+            textBox.LostFocus += new RoutedEventHandler(inputBoxControl_LostFocus);
+            textBox.KeyUp += new KeyEventHandler(inputBoxControl_KeyUp);
         }
-
-        private void CreateInputValueTextBoxConfigState(String name, InputValueCheckBoxConfigState state)
+        
+        private void CreateInputValueComboBoxConfigState(String name, ControlInputConfigState state)
         {
+            DeviceAndSelectionConfigState selectionState = (DeviceAndSelectionConfigState)state;
+
             CreateLabelForValueConfigState(name, state);
 
-            ComboBox comboBox = new ComboBox() { Name = inputBoxPrefix + name, Style = (Style)gridMain.FindResource("styleContentInput") };
+            ComboBox comboBox = new ComboBox() { Name = inputBoxPrefix + name, Style = (Style)gridMain.FindResource("styleContentComboBox"), IsEditable = true, IsReadOnly = true };
             Grid.SetColumn(comboBox, state.LayoutPosition == InputConfigState.Position.LeftColumn ? 1 : 3);
             Grid.SetRow(comboBox, state.RowNumber);
+
+            foreach (KeyValuePair<String, String> entry in selectionState.SelectionValues)
+            {
+                ComboBoxItem item = new ComboBoxItem();
+                item.Name = entry.Key;
+                item.Content = entry.Value;
+                comboBox.Items.Add(item);
+            }
 
             gridCommands.Children.Add(comboBox);
 
             comboBox.SelectionChanged += new SelectionChangedEventHandler(comboBoxControl_SelectionChanged);
+            comboBox.DropDownOpened += new EventHandler(inputBoxControl_DropDownOpened);
+            comboBox.DropDownClosed += new EventHandler(inputBoxControl_DropDownClosed);
+            comboBox.GotFocus += new RoutedEventHandler(inputBoxControl_GotFocus);
+            comboBox.LostFocus += new RoutedEventHandler(inputBoxControl_LostFocus);
         }
 
-        private void CreateLabelForValueConfigState(String name, InputConfigState state)
+        private void CreateLabelForValueConfigState(String name, ControlInputConfigState state)
         {
             Label label = new Label() { Content = state.Name + ":", Style = (Style)gridMain.FindResource("styleContentLabel") };
             Grid.SetColumn(label, state.LayoutPosition == InputConfigState.Position.LeftColumn ? 0 : 2);
@@ -345,14 +361,8 @@ namespace ARDrone.UI
         private void TakeOverMapping(InputMapping mapping)
         {
             Dictionary<String, String> mappings = mapping.Controls.Mappings;
-
             foreach (KeyValuePair<String, String> entry in mappings)
-            {
-                // TODO
-
-                TextBox control = GetTextBoxByControlName(entry.Key);
-                control.Text = entry.Value;
-            }
+                SetControlText(GetControlByControlName(entry.Key), entry.Value);
 
             CheckForDoubleInput();
         }
@@ -361,33 +371,43 @@ namespace ARDrone.UI
         {
             if (selectedControl != null)
             {
-                // TODO
-
                 InputMapping mapping = selectedDevice.Mapping;
 
-                TextBox textBox = GetTextBoxByControlName(selectedControl);
+                System.Windows.Controls.Control control = GetControlByControlName(selectedControl);
 
                 String inputField = selectedControl;
-                String inputValue = textBox.Text;
+
+                // TODO not text for combo box
+                String inputValue = GetControlText(GetControlByControlName(selectedControl));
 
                 UpdateMapping(mapping, inputField, inputValue);
+                selectedControlModified = false;
             }
         }
 
         private void UpdateMapping(InputMapping mapping, String inputField, String inputValue)
         {
-            // TODO
-
             String currentValue = GetInputMappingValue(mapping, inputField);
 
-            if (currentValue != inputValue)
+            if (!selectedControlModified)
             {
-                mapping.SetControlProperty(inputField, inputValue);
+                Console.WriteLine("--> No changes");
+
+                SetControlText(GetControlByControlName(selectedControl), currentValue);
             }
-            else if (SelectedInputConfigState.InputMode != InputValueTextBoxConfigState.Mode.DisableManuallyKeyboardAvailable)
+            else if (currentValue != inputValue)
             {
+                Console.WriteLine("--> Setting value to '" + inputValue + "'");
+
+                mapping.SetControlProperty(inputField, inputValue);
+                SetControlText(GetControlByControlName(selectedControl), inputValue);
+            }
+            else if (SelectedInputConfigState.DisabledOnInput)
+            {
+                Console.WriteLine("--> Setting value to ''");
+
                 mapping.SetControlProperty(inputField, "");
-                GetTextBoxByControlName(selectedControl).Text = "";
+                SetControlText(GetControlByControlName(selectedControl), "");
             }
         }
 
@@ -401,12 +421,6 @@ namespace ARDrone.UI
             throw new Exception("There is no mapping value named '" + inputField + "'");
         }
 
-        private String GetCombinedText(String inputValue)
-        {
-            TextBox textBox = GetTextBoxByControlName(selectedControl);
-            return textBox.Text;
-        }
-
         private void CheckForDoubleInput()
         {
             List<String> inputValues = new List<String>();
@@ -414,47 +428,48 @@ namespace ARDrone.UI
             for (int i = 0; i < gridCommands.Children.Count; i++)
             {
                 UIElement element = gridCommands.Children[i];
-                // TODO
-
-                if (element is TextBox)
+                
+                if (!(element is Label))
                 {
-                    if (isBooleanInputTextBox((TextBox)element))
-                        inputValues.Add(((TextBox)element).Text);
+                    String controlText = GetControlText((System.Windows.Controls.Control) element);
+
+                    if (IsBooleanInputControl((System.Windows.Controls.Control)element))
+                        inputValues.Add(controlText);
                     else
-                        inputValues.AddRange(((TextBox)element).Text.Split('-'));
+                        inputValues.AddRange(controlText.Split('-'));
                 }
             }
 
             for (int i = 0; i < gridCommands.Children.Count; i++)
             {
                 UIElement element = gridCommands.Children[i];
-                if (element is TextBox)
-                    SetColorForDoubleEntry((TextBox)element, inputValues);
+                if (!(element is Label))
+                    SetColorForDoubleEntry((System.Windows.Controls.Control)element, inputValues);
             }
         }
 
-        private bool isBooleanInputTextBox(TextBox textBox)
+        private bool IsBooleanInputControl(System.Windows.Controls.Control control)
         {
-            // TODO
-
-            String elementName = GetElementNameFromControlName(textBox);
-            InputValueTextBoxConfigState state = (InputValueTextBoxConfigState) selectedDevice.InputConfig.States[elementName];
+            String elementName = GetElementNameFromControlName(control);
+            ControlInputConfigState state = (ControlInputConfigState)selectedDevice.InputConfig.States[elementName];
 
             return state.InputValueType == InputControl.ControlType.BooleanValue;
         }
 
-        private void SetColorForDoubleEntry(TextBox textBox, List<String> inputValues)
+        private void SetColorForDoubleEntry(System.Windows.Controls.Control control, List<String> inputValues)
         {
-            List<String> textBoxValues = new List<String>();
-            if (!isBooleanInputTextBox(textBox))
-                textBoxValues.AddRange(textBox.Text.Split('-'));
+            List<String> controlValues = new List<String>();
+            String controlText = GetControlText((System.Windows.Controls.Control)control);
+
+            if (!IsBooleanInputControl(control))
+                controlValues.AddRange(controlText.Split('-'));
             else
-                textBoxValues.Add(textBox.Text);
+                controlValues.Add(controlText);
 
             bool doubleEntry = false;
-            for (int i = 0; i < textBoxValues.Count; i++)
+            for (int i = 0; i < controlValues.Count; i++)
             {
-                String textBoxText = textBoxValues[i].Trim();
+                String textBoxText = controlValues[i].Trim();
                 if (inputValues.FindAll(delegate(String value) { return value == textBoxText; }).Count > 1)
                 {
                     doubleEntry = true;
@@ -463,9 +478,9 @@ namespace ARDrone.UI
             }
 
             if (doubleEntry)
-                textBox.Foreground = new SolidColorBrush(Colors.Red);
+                control.Foreground = new SolidColorBrush(Colors.Red);
             else
-                textBox.Foreground = new SolidColorBrush(Colors.Black);
+                control.Foreground = new SolidColorBrush(Colors.Black);
         }
 
         private void UpdateInputs(String deviceId, String inputValue, bool isContinuousValue)
@@ -475,22 +490,36 @@ namespace ARDrone.UI
             if (selectedDevice == null || selectedControl == null || selectedDevice.DeviceInstanceId != deviceId)
                 return;
 
-            if (inputValue != null && inputValue != lastInputValue)
+            if (inputValue != null && lastInputValue != inputValue && IsControlRecognized(inputValue))
             {
-                lastInputValue = inputValue;
-
                 if (SelectedInputConfigState.InputValueType == InputControl.ControlType.ContinuousValue)
-                {
                     mappingSet = UpdateContinuousInputField(inputValue, isContinuousValue);
-                }
                 else if (SelectedInputConfigState.InputValueType == InputControl.ControlType.BooleanValue)
-                {
                     mappingSet = UpdateBooleanInputField(inputValue, isContinuousValue);
+
+
+                if (mappingSet)
+                    selectedControlModified = true;
+
+                lastInputValue = inputValue;
+            }
+
+            if (mappingSet && SelectedInputConfigState.DisabledOnInput)
+                buttonSubmit.Focus();
+        }
+
+        private bool IsControlRecognized(String inputValue)
+        {
+            if (SelectedInputConfigState is DeviceAndSelectionConfigState)
+            {
+                DeviceAndSelectionConfigState selectionState = (DeviceAndSelectionConfigState)SelectedInputConfigState;
+                if (selectionState.ControlsNotRecognized.Contains(inputValue))
+                {
+                    return false;
                 }
             }
 
-            if (mappingSet && SelectedInputConfigState.InputMode == InputValueTextBoxConfigState.Mode.DisableOnInput)
-                buttonSubmit.Focus();
+            return true;
         }
 
         private bool UpdateContinuousInputField(String inputValue, bool isContinuousValue)
@@ -499,6 +528,7 @@ namespace ARDrone.UI
 
             if (isContinuousValue)
             {
+                SetControlText(GetControlByControlName(selectedControl), inputValue);
                 mappingSet = true;
             }
             else
@@ -510,9 +540,7 @@ namespace ARDrone.UI
                 else
                 {
                     tempContinuousInput = tempContinuousInput + "-" + inputValue;
-
-                    TextBox textBox = GetTextBoxByControlName(selectedControl);
-                    textBox.Text = tempContinuousInput;
+                    SetControlText(GetControlByControlName(selectedControl), tempContinuousInput);
 
                     tempContinuousInput = "";
                     mappingSet = true;
@@ -527,12 +555,12 @@ namespace ARDrone.UI
             bool mappingSet = false;
             if (!isContinuousValue)
             {
-                if (SelectedInputConfigState.InputMode == InputValueTextBoxConfigState.Mode.DisableOnInput)
+                if (!(SelectedInputConfigState is KeyboardAndDeviceInputConfigState))
                 {
                     ReplaceTextBoxText(inputValue);
                     mappingSet = true;
                 }
-                else
+                else if (SelectedInputConfigState is KeyboardAndDeviceInputConfigState)
                 {
                     AddTextToTextBox(inputValue);
                 }
@@ -541,9 +569,15 @@ namespace ARDrone.UI
             return mappingSet;
         }
 
+        private void ReplaceTextBoxText(String inputValue)
+        {
+            SetControlText(GetControlByControlName(selectedControl), inputValue);
+        }
+
         private void AddTextToTextBox(String inputValue)
         {
-            TextBox textBox = GetTextBoxByControlName(selectedControl);
+            System.Windows.Controls.Control control = GetControlByControlName(selectedControl);
+            TextBox textBox = (TextBox)control;
 
             int selectionStart = textBox.SelectionStart;
             int selectionLength = textBox.SelectionLength;
@@ -560,59 +594,40 @@ namespace ARDrone.UI
             textBox.Select(selectionStart, 0);
         }
 
-        private void ReplaceTextBoxText(String inputValue)
+        private void FocusInputElement(System.Windows.Controls.Control control)
         {
-            TextBox textBox = GetTextBoxByControlName(selectedControl);
-            textBox.Text = inputValue;
-        }
-
-        private void FocusInputElement(TextBox textBox)
-        {
-            if (textBox != null && textBox.Parent == gridCommands)
+            if (control != null)
             {
-                inputManager.SwitchInputMode(Input.InputManager.InputMode.RawInput, selectedDevice.DeviceInstanceId);
+                selectedControl = GetElementNameFromControlName(control);
 
-                selectedControl = GetElementNameFromControlName(textBox);
-
-                StyleFocussedControl(textBox);
+                if (!(control is ComboBox) || !((ComboBox)control).IsDropDownOpen)
+                {
+                    inputManager.SwitchInputMode(Input.InputManager.InputMode.RawInput, selectedDevice.DeviceInstanceId);
+                    StyleFocussedControl(control);
+                }
             }
         }
 
-        private String GetElementNameFromControlName(TextBox textBox)
+        private String GetElementNameFromControlName(System.Windows.Controls.Control control)
         {
-            String name = textBox.Name;
-            if (name.IndexOf("textBox") == 0)
-                name = name.Replace("textBox", "");
+            String name = control.Name;
+            if (name.IndexOf(inputBoxPrefix) == 0)
+                name = name.Replace(inputBoxPrefix, "");
 
             return name;
         }
 
-        private void StyleFocussedControl(TextBox textBox)
+        private void StyleFocussedControl(System.Windows.Controls.Control control)
         {
-            if (SelectedInputConfigState.InputMode == InputValueTextBoxConfigState.Mode.DisableManuallyKeyboardAvailable)
+            if (!SelectedInputConfigState.DisabledOnInput)
             {
-                textBox.IsReadOnly = false;
-                textBox.Foreground = new SolidColorBrush(Colors.Black);
+                SetControlReadOnly(control, false);
+                control.Foreground = new SolidColorBrush(Colors.Black);
             }
             else
             {
-                textBox.Text = "-- Assigning a value --";
-                textBox.Foreground = new SolidColorBrush(Colors.LightGray);
-            }
-        }
-
-        private void UnfocusInputElement(TextBox textBox)
-        {
-            if (textBox != null && textBox.Parent == gridCommands)
-            {
-                UpdateMappings();
-
-                StyleUnfocussedControl(textBox);
-                CheckForDoubleInput();
-
-                inputManager.SwitchInputMode(Input.InputManager.InputMode.NoInput);
-                selectedControl = null;
-                lastInputValue = null;
+                SetControlText(control, "-- Assigning a value --");
+                control.Foreground = new SolidColorBrush(Colors.LightGray);
             }
         }
 
@@ -620,19 +635,52 @@ namespace ARDrone.UI
         {
             if (comboBox != null && comboBox.Parent == gridCommands)
             {
-                selectedControl = comboBox.Name;
+                if (comboBox.SelectedIndex != -1)
+                {
+                    selectedControl = GetElementNameFromControlName(comboBox);
+                    selectedControlModified = true;
 
-                UpdateMappings();
-                CheckForDoubleInput();
-
-                selectedControl = null;
+                    UnfocusInputElement(comboBox);
+                }
             }
         }
 
-        private void StyleUnfocussedControl(TextBox textBox)
+        private void UnfocusInputElement(System.Windows.Controls.Control control)
         {
-            textBox.Foreground = new SolidColorBrush(Colors.Black);
-            textBox.IsReadOnly = true;
+            if (control != null && control.Parent == gridCommands && selectedControl != null)
+            {
+                UpdateMappings();
+
+                StyleUnfocussedControl(control);
+                CheckForDoubleInput();
+
+                inputManager.SwitchInputMode(Input.InputManager.InputMode.NoInput);
+                tempContinuousInput = null;
+                selectedControl = null;
+                lastInputValue = null;
+            }
+        }
+
+        private void StyleUnfocussedControl(System.Windows.Controls.Control control)
+        {
+            control.Foreground = new SolidColorBrush(Colors.Black);
+            SetControlReadOnly(control, true);
+        }
+
+        private void InvokeComboBoxDropDownOpened(ComboBox comboBox)
+        {
+            comboBox.Foreground = new SolidColorBrush(Colors.Black);
+        }
+
+        private void InvokeComboBoxDropDownClosed()
+        {
+            buttonSubmit.Focus();
+        }
+
+        private void SetInputControlChanged()
+        {
+            if (SelectedInputConfigState is KeyboardAndDeviceInputConfigState || SelectedInputConfigState is KeyboardInputConfigState)
+                selectedControlModified = true;
         }
 
         private void ResetMapping()
@@ -661,23 +709,64 @@ namespace ARDrone.UI
                 devices[i].RevertMapping();
         }
 
-        private TextBox GetTextBoxByControlName(String name)
+        private System.Windows.Controls.Control GetControlByControlName(String name)
         {
             for (int i = 0; i < gridCommands.Children.Count; i++)
             {
                 UIElement element = gridCommands.Children[i];
-                if (element is TextBox && ((TextBox)element).Name == inputBoxPrefix + name)
-                    return (TextBox)element;
+                if (element is System.Windows.Controls.Control && ((System.Windows.Controls.Control)element).Name == inputBoxPrefix + name)
+                    return (System.Windows.Controls.Control) element;
             }
 
             throw new Exception("There is no control named '" + name + "'");
         }
 
-        public InputValueTextBoxConfigState SelectedInputConfigState
+        private String GetControlText(System.Windows.Controls.Control control)
+        {
+            if (control is TextBox)
+            {
+                return ((TextBox)control).Text;
+            }
+            else if (control is ComboBox)
+            {
+                ComboBox comboBox = (ComboBox)control;
+
+                if (comboBox.SelectedIndex == -1)
+                    return comboBox.Text;
+                else
+                    return ((ComboBoxItem)comboBox.SelectedItem).Content.ToString();
+            }
+            else
+            {
+                throw new Exception("The given control must be a text box or a combo box");
+            }
+        }
+
+        private void SetControlText(System.Windows.Controls.Control control, String value)
+        {
+            if (control is TextBox)
+                ((TextBox)control).Text = value;
+            else if (control is ComboBox)
+                ((ComboBox)control).Text = value;
+            else
+                throw new Exception("The given control must be a text box or a combo box");
+        }
+
+        private void SetControlReadOnly(System.Windows.Controls.Control control, bool value)
+        {
+            if (control is TextBox)
+                ((TextBox)control).IsReadOnly = value;
+            else if (control is ComboBox)
+                ((ComboBox)control).IsReadOnly = value;
+            else
+                throw new Exception("The given control must be a text box or a combo box");
+        }
+
+        public ControlInputConfigState SelectedInputConfigState
         {
             get
             {
-                return (InputValueTextBoxConfigState)selectedDevice.InputConfig.States[this.selectedControl];
+                return (ControlInputConfigState)selectedDevice.InputConfig.States[this.selectedControl];
             }
         }
 
@@ -697,19 +786,34 @@ namespace ARDrone.UI
             ChangeInputDevice();
         }
 
-        private void textBoxControl_GotFocus(object sender, RoutedEventArgs e)
+        private void inputBoxControl_GotFocus(object sender, RoutedEventArgs e)
         {
-            FocusInputElement((TextBox)e.OriginalSource);
+            FocusInputElement((System.Windows.Controls.Control)sender);
         }
 
-        private void textBoxControl_LostFocus(object sender, RoutedEventArgs e)
+        private void inputBoxControl_LostFocus(object sender, RoutedEventArgs e)
         {
-            UnfocusInputElement((TextBox)e.OriginalSource);
+            UnfocusInputElement((System.Windows.Controls.Control)sender);
+        }
+
+        void inputBoxControl_KeyUp(object sender, KeyEventArgs e)
+        {
+            SetInputControlChanged();
         }
 
         void comboBoxControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             ChangeInputElementSelection((ComboBox)e.OriginalSource);
+        }
+
+        void inputBoxControl_DropDownOpened(object sender, EventArgs e)
+        {
+            InvokeComboBoxDropDownOpened((ComboBox)sender);
+        }
+
+        void inputBoxControl_DropDownClosed(object sender, EventArgs e)
+        {
+            InvokeComboBoxDropDownClosed();
         }
 
         private void buttonReset_Click(object sender, RoutedEventArgs e)

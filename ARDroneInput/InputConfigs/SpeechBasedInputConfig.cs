@@ -25,26 +25,26 @@ namespace ARDrone.Input.InputConfigs
         private void SetStates()
         {
             states.Add("leftHeader", new InputConfigHeader("Axes", InputConfigState.Position.LeftColumn, 0));
-            states.Add(SpeechBasedInputControl.RollLeftInputField, new InputValueTextBoxConfigState("Roll Left", InputConfigState.Position.LeftColumn, 1, InputValueTextBoxConfigState.Mode.DisableManuallyKeyboardAvailable, InputControl.ControlType.BooleanValue));
-            states.Add(SpeechBasedInputControl.RollRightInputField, new InputValueTextBoxConfigState("Roll Right", InputConfigState.Position.LeftColumn, 2, InputValueTextBoxConfigState.Mode.DisableManuallyKeyboardAvailable, InputControl.ControlType.BooleanValue));
-            states.Add(SpeechBasedInputControl.PitchForwardInputField, new InputValueTextBoxConfigState("Pitch Forward", InputConfigState.Position.LeftColumn, 3, InputValueTextBoxConfigState.Mode.DisableManuallyKeyboardAvailable, InputControl.ControlType.BooleanValue));
-            states.Add(SpeechBasedInputControl.PitchBackwardInputField, new InputValueTextBoxConfigState("Pitch Backward", InputConfigState.Position.LeftColumn, 4, InputValueTextBoxConfigState.Mode.DisableManuallyKeyboardAvailable, InputControl.ControlType.BooleanValue));
-            states.Add(SpeechBasedInputControl.YawLeftInputField, new InputValueTextBoxConfigState("Yaw Left", InputConfigState.Position.LeftColumn, 5, InputValueTextBoxConfigState.Mode.DisableManuallyKeyboardAvailable, InputControl.ControlType.BooleanValue));
-            states.Add(SpeechBasedInputControl.YawRightInputField, new InputValueTextBoxConfigState("Yaw Right", InputConfigState.Position.LeftColumn, 6, InputValueTextBoxConfigState.Mode.DisableManuallyKeyboardAvailable, InputControl.ControlType.BooleanValue));
-            states.Add(SpeechBasedInputControl.GazUpInputField, new InputValueTextBoxConfigState("Gaz Up", InputConfigState.Position.LeftColumn, 7, InputValueTextBoxConfigState.Mode.DisableManuallyKeyboardAvailable, InputControl.ControlType.BooleanValue));
-            states.Add(SpeechBasedInputControl.GazDownInputField, new InputValueTextBoxConfigState("Gaz Down", InputConfigState.Position.LeftColumn, 8, InputValueTextBoxConfigState.Mode.DisableManuallyKeyboardAvailable, InputControl.ControlType.BooleanValue));
+            states.Add(SpeechBasedInputControl.RollLeftInputField, new KeyboardAndDeviceInputConfigState("Roll Left", InputConfigState.Position.LeftColumn, 1));
+            states.Add(SpeechBasedInputControl.RollRightInputField, new KeyboardAndDeviceInputConfigState("Roll Right", InputConfigState.Position.LeftColumn, 2));
+            states.Add(SpeechBasedInputControl.PitchForwardInputField, new KeyboardAndDeviceInputConfigState("Pitch Forward", InputConfigState.Position.LeftColumn, 3));
+            states.Add(SpeechBasedInputControl.PitchBackwardInputField, new KeyboardAndDeviceInputConfigState("Pitch Backward", InputConfigState.Position.LeftColumn, 4));
+            states.Add(SpeechBasedInputControl.YawLeftInputField, new KeyboardAndDeviceInputConfigState("Yaw Left", InputConfigState.Position.LeftColumn, 5));
+            states.Add(SpeechBasedInputControl.YawRightInputField, new KeyboardAndDeviceInputConfigState("Yaw Right", InputConfigState.Position.LeftColumn, 6));
+            states.Add(SpeechBasedInputControl.GazUpInputField, new KeyboardAndDeviceInputConfigState("Gaz Up", InputConfigState.Position.LeftColumn, 7));
+            states.Add(SpeechBasedInputControl.GazDownInputField, new KeyboardAndDeviceInputConfigState("Gaz Down", InputConfigState.Position.LeftColumn, 8));
 
-            states.Add(SpeechBasedInputControl.TickInputField, new InputValueTextBoxConfigState("Tick Word", InputConfigState.Position.LeftColumn, 9, InputValueTextBoxConfigState.Mode.DisableManuallyKeyboardAvailable, InputControl.ControlType.BooleanValue));
-            states.Add(SpeechBasedInputControl.TicksInputField, new InputValueTextBoxConfigState("Tick Words", InputConfigState.Position.LeftColumn, 10, InputValueTextBoxConfigState.Mode.DisableManuallyKeyboardAvailable, InputControl.ControlType.BooleanValue));
+            states.Add(SpeechBasedInputControl.TickInputField, new KeyboardAndDeviceInputConfigState("Tick Word", InputConfigState.Position.LeftColumn, 9));
+            states.Add(SpeechBasedInputControl.TicksInputField, new KeyboardAndDeviceInputConfigState("Tick Words", InputConfigState.Position.LeftColumn, 10));
 
             states.Add("rightHeader", new InputConfigHeader("Buttons", InputConfigState.Position.RightColumn, 0));
-            states.Add(SpeechBasedInputControl.CameraSwapInputField, new InputValueTextBoxConfigState("Change Camera", InputConfigState.Position.RightColumn, 1, InputValueTextBoxConfigState.Mode.DisableManuallyKeyboardAvailable, InputControl.ControlType.BooleanValue));
-            states.Add(SpeechBasedInputControl.TakeOffInputField, new InputValueTextBoxConfigState("Take Off", InputConfigState.Position.RightColumn, 2, InputValueTextBoxConfigState.Mode.DisableManuallyKeyboardAvailable, InputControl.ControlType.BooleanValue));
-            states.Add(SpeechBasedInputControl.LandInputField, new InputValueTextBoxConfigState("Land", InputConfigState.Position.RightColumn, 3, InputValueTextBoxConfigState.Mode.DisableManuallyKeyboardAvailable, InputControl.ControlType.BooleanValue));
-            states.Add(SpeechBasedInputControl.HoverInputField, new InputValueTextBoxConfigState("Hover", InputConfigState.Position.RightColumn, 4, InputValueTextBoxConfigState.Mode.DisableManuallyKeyboardAvailable, InputControl.ControlType.BooleanValue));
-            states.Add(SpeechBasedInputControl.EmergencyInputField, new InputValueTextBoxConfigState("Emergency", InputConfigState.Position.RightColumn, 5, InputValueTextBoxConfigState.Mode.DisableManuallyKeyboardAvailable, InputControl.ControlType.BooleanValue));
-            states.Add(SpeechBasedInputControl.FlatTrimInputField, new InputValueTextBoxConfigState("Flat Trim", InputConfigState.Position.RightColumn, 6, InputValueTextBoxConfigState.Mode.DisableManuallyKeyboardAvailable, InputControl.ControlType.BooleanValue));
-            states.Add(SpeechBasedInputControl.SpecialActionInputField, new InputValueTextBoxConfigState("Special Action", InputConfigState.Position.RightColumn, 7, InputValueTextBoxConfigState.Mode.DisableManuallyKeyboardAvailable, InputControl.ControlType.BooleanValue));
+            states.Add(SpeechBasedInputControl.CameraSwapInputField, new KeyboardAndDeviceInputConfigState("Change Camera", InputConfigState.Position.RightColumn, 1));
+            states.Add(SpeechBasedInputControl.TakeOffInputField, new KeyboardAndDeviceInputConfigState("Take Off", InputConfigState.Position.RightColumn, 2));
+            states.Add(SpeechBasedInputControl.LandInputField, new KeyboardAndDeviceInputConfigState("Land", InputConfigState.Position.RightColumn, 3));
+            states.Add(SpeechBasedInputControl.HoverInputField, new KeyboardAndDeviceInputConfigState("Hover", InputConfigState.Position.RightColumn, 4));
+            states.Add(SpeechBasedInputControl.EmergencyInputField, new KeyboardAndDeviceInputConfigState("Emergency", InputConfigState.Position.RightColumn, 5));
+            states.Add(SpeechBasedInputControl.FlatTrimInputField, new KeyboardAndDeviceInputConfigState("Flat Trim", InputConfigState.Position.RightColumn, 6));
+            states.Add(SpeechBasedInputControl.SpecialActionInputField, new KeyboardAndDeviceInputConfigState("Special Action", InputConfigState.Position.RightColumn, 7));
         }
     }
 }

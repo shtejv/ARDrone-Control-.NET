@@ -25,19 +25,19 @@ namespace ARDrone.Input.InputConfigs
         private void SetStates()
         { 
             states.Add("leftHeader", new InputConfigHeader("Axes", InputConfigState.Position.LeftColumn, 0));
-            states.Add(ButtonBasedInputControl.RollAxisField, new InputValueTextBoxConfigState("Roll", InputConfigState.Position.LeftColumn, 1, InputValueTextBoxConfigState.Mode.DisableOnInput, InputControl.ControlType.ContinuousValue));
-            states.Add(ButtonBasedInputControl.PitchAxisField, new InputValueTextBoxConfigState("Pitch", InputConfigState.Position.LeftColumn, 2, InputValueTextBoxConfigState.Mode.DisableOnInput, InputControl.ControlType.ContinuousValue));
-            states.Add(ButtonBasedInputControl.YawAxisField, new InputValueTextBoxConfigState("Yaw", InputConfigState.Position.LeftColumn, 3, InputValueTextBoxConfigState.Mode.DisableOnInput, InputControl.ControlType.ContinuousValue));
-            states.Add(ButtonBasedInputControl.GazAxisField, new InputValueTextBoxConfigState("Gaz", InputConfigState.Position.LeftColumn, 4, InputValueTextBoxConfigState.Mode.DisableOnInput, InputControl.ControlType.ContinuousValue));
+            states.Add(ButtonBasedInputControl.RollAxisField, new DeviceInputConfigState("Roll", InputConfigState.Position.LeftColumn, 1, InputControl.ControlType.ContinuousValue));
+            states.Add(ButtonBasedInputControl.PitchAxisField, new DeviceInputConfigState("Pitch", InputConfigState.Position.LeftColumn, 2, InputControl.ControlType.ContinuousValue));
+            states.Add(ButtonBasedInputControl.YawAxisField, new DeviceInputConfigState("Yaw", InputConfigState.Position.LeftColumn, 3, InputControl.ControlType.ContinuousValue));
+            states.Add(ButtonBasedInputControl.GazAxisField, new DeviceInputConfigState("Gaz", InputConfigState.Position.LeftColumn, 4, InputControl.ControlType.ContinuousValue));
 
             states.Add("rightHeader", new InputConfigHeader("Buttons", InputConfigState.Position.RightColumn, 0));
-            states.Add(ButtonBasedInputControl.CameraSwapButtonField, new InputValueTextBoxConfigState("Change Camera", InputConfigState.Position.RightColumn, 1, InputValueTextBoxConfigState.Mode.DisableOnInput, InputControl.ControlType.BooleanValue));
-            states.Add(ButtonBasedInputControl.TakeOffButtonField, new InputValueTextBoxConfigState("Take Off", InputConfigState.Position.RightColumn, 2, InputValueTextBoxConfigState.Mode.DisableOnInput, InputControl.ControlType.BooleanValue));
-            states.Add(ButtonBasedInputControl.LandButtonField, new InputValueTextBoxConfigState("Land", InputConfigState.Position.RightColumn, 3, InputValueTextBoxConfigState.Mode.DisableOnInput, InputControl.ControlType.BooleanValue));
-            states.Add(ButtonBasedInputControl.HoverButtonField, new InputValueTextBoxConfigState("Hover", InputConfigState.Position.RightColumn, 4, InputValueTextBoxConfigState.Mode.DisableOnInput, InputControl.ControlType.BooleanValue));
-            states.Add(ButtonBasedInputControl.EmergencyButtonField, new InputValueTextBoxConfigState("Emergency", InputConfigState.Position.RightColumn, 5, InputValueTextBoxConfigState.Mode.DisableOnInput, InputControl.ControlType.BooleanValue));
-            states.Add(ButtonBasedInputControl.FlatTrimButtonField, new InputValueTextBoxConfigState("Flat Trim", InputConfigState.Position.RightColumn, 6, InputValueTextBoxConfigState.Mode.DisableOnInput, InputControl.ControlType.BooleanValue));
-            states.Add(ButtonBasedInputControl.SpecialActionButtonField, new InputValueTextBoxConfigState("Special Action", InputConfigState.Position.RightColumn, 7, InputValueTextBoxConfigState.Mode.DisableOnInput, InputControl.ControlType.BooleanValue));
+            states.Add(ButtonBasedInputControl.CameraSwapButtonField, new DeviceInputConfigState("Change Camera", InputConfigState.Position.RightColumn, 1, InputControl.ControlType.BooleanValue));
+            states.Add(ButtonBasedInputControl.TakeOffButtonField, new DeviceInputConfigState("Take Off", InputConfigState.Position.RightColumn, 2, InputControl.ControlType.BooleanValue));
+            states.Add(ButtonBasedInputControl.LandButtonField, new DeviceInputConfigState("Land", InputConfigState.Position.RightColumn, 3, InputControl.ControlType.BooleanValue));
+            states.Add(ButtonBasedInputControl.HoverButtonField, new DeviceInputConfigState("Hover", InputConfigState.Position.RightColumn, 4, InputControl.ControlType.BooleanValue));
+            states.Add(ButtonBasedInputControl.EmergencyButtonField, new DeviceInputConfigState("Emergency", InputConfigState.Position.RightColumn, 5, InputControl.ControlType.BooleanValue));
+            states.Add(ButtonBasedInputControl.FlatTrimButtonField, new DeviceInputConfigState("Flat Trim", InputConfigState.Position.RightColumn, 6, InputControl.ControlType.BooleanValue));
+            states.Add(ButtonBasedInputControl.SpecialActionButtonField, new DeviceInputConfigState("Special Action", InputConfigState.Position.RightColumn, 7, InputControl.ControlType.BooleanValue));
         }
     }
 }

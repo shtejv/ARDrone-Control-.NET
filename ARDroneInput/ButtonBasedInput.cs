@@ -62,7 +62,7 @@ namespace ARDrone.Input
                 String axis = keyValuePair.Key;
                 float axisValue = keyValuePair.Value;
 
-                if (lastAxisValues.ContainsKey(axis) && Math.Abs(lastAxisValues[axis] - axisValue) > 0.1f)
+                if (lastAxisValues.ContainsKey(axis) && Math.Abs(lastAxisValues[axis] - axisValue) > 0.1f && axisValue != 0.0f)
                 {
                     isAxis = true;
                     return axis;

@@ -19,6 +19,12 @@ namespace ARDrone.Input
 {
     class KeyboardInput : DirectInputInput
     {
+        public enum Axis
+        {
+            // "Normal" axes
+            Axis_X, Axis_Y, Axis_Z,
+        }
+
         protected ArrayList keysPressedBefore = new ArrayList();
 
         public static List<GenericInput> GetNewInputDevices(IntPtr windowHandle, List<GenericInput> currentDevices)
@@ -136,6 +142,21 @@ namespace ARDrone.Input
             {
                 if (device == null) { return string.Empty; }
                 else { return "KB"; }
+            }
+        }
+
+        // TODO remove
+        public Dictionary<String, String> AxisMappingNames
+        {
+            get
+            {
+                Dictionary<String, String> axisMappingNames = new Dictionary<String, String>();
+
+                axisMappingNames.Add(Axis.Axis_X.ToString(), "X axis");
+                axisMappingNames.Add(Axis.Axis_Y.ToString(), "Y axis");
+                axisMappingNames.Add(Axis.Axis_Z.ToString(), "Z axis");
+
+                return axisMappingNames;
             }
         }
     }
