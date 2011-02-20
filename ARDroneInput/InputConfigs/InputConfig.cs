@@ -47,6 +47,11 @@ namespace ARDrone.Input.InputConfigs
         }
     }
 
+    public interface EditableConfigState
+    {
+
+    }
+
     public abstract class InputConfigState
     {
         public enum Position { LeftColumn, RightColumn };
@@ -87,14 +92,14 @@ namespace ARDrone.Input.InputConfigs
         }
     }
 
-    public class InputValueConfigState : InputConfigState
+    public class InputValueTextBoxConfigState : InputConfigState, EditableConfigState
     {
         public enum Mode { DisableOnInput, DisableManually, DisableManuallyKeyboardAvailable };
 
         private Mode inputMode;
         private InputControl.ControlType inputValueType;
 
-        public InputValueConfigState(String name, Position layoutPosition, int rowNumber, Mode inputMode, InputControl.ControlType inputValueType)
+        public InputValueTextBoxConfigState(String name, Position layoutPosition, int rowNumber, Mode inputMode, InputControl.ControlType inputValueType)
             : base(name, layoutPosition, rowNumber)
         {
             this.inputMode = inputMode;
@@ -114,6 +119,25 @@ namespace ARDrone.Input.InputConfigs
             get
             {
                 return inputValueType;
+            }
+        }
+    }
+
+    public class InputValueCheckBoxConfigState : InputConfigState, EditableConfigState
+    {
+        private List<String> inputValues = new List<String>();
+
+        public InputValueCheckBoxConfigState(String name, Position layoutPosition, int rowNumber, List<String> inputValues)
+            : base(name, layoutPosition, rowNumber)
+        {
+            this.inputValues = new List<String>(inputValues);
+        }
+
+        public String[] InputValues
+        {
+            get
+            {
+                return inputValues.ToArray();
             }
         }
     }

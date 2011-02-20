@@ -12,23 +12,38 @@ using System.Collections.Generic;
 using System.Text;
 using ARDrone.Input.InputControls;
 
+
 namespace ARDrone.Input.InputConfigs
 {
-    public class ButtonBasedInputConfig : InputConfig
+    class AxisDitheredInputConfig : InputConfig
     {
-        public ButtonBasedInputConfig()
+        Dictionary<String, String> axisMappingNames = new Dictionary<String, String>();
+        List<String> axisValues = new List<String>();
+
+        public AxisDitheredInputConfig(Dictionary<String, String> axisMappingNames)
             : base()
         {
+            PrepareAxisValues(axisMappingNames);
             SetStates();
         }
 
+        private void PrepareAxisValues(Dictionary<String, String> axisMappingNames)
+        {
+            this.axisMappingNames = new Dictionary<String, String>(axisMappingNames);
+
+            foreach (KeyValuePair<String, String> entry in axisMappingNames)
+                axisValues.Add(entry.Value);
+
+            axisValues.Sort();
+        }
+
         private void SetStates()
-        { 
+        {
             states.Add("leftHeader", new InputConfigHeader("Axes", InputConfigState.Position.LeftColumn, 0));
-            states.Add(ButtonBasedInputControl.RollAxisField, new InputValueTextBoxConfigState("Roll", InputConfigState.Position.LeftColumn, 1, InputValueTextBoxConfigState.Mode.DisableOnInput, InputControl.ControlType.ContinuousValue));
-            states.Add(ButtonBasedInputControl.PitchAxisField, new InputValueTextBoxConfigState("Pitch", InputConfigState.Position.LeftColumn, 2, InputValueTextBoxConfigState.Mode.DisableOnInput, InputControl.ControlType.ContinuousValue));
-            states.Add(ButtonBasedInputControl.YawAxisField, new InputValueTextBoxConfigState("Yaw", InputConfigState.Position.LeftColumn, 3, InputValueTextBoxConfigState.Mode.DisableOnInput, InputControl.ControlType.ContinuousValue));
-            states.Add(ButtonBasedInputControl.GazAxisField, new InputValueTextBoxConfigState("Gaz", InputConfigState.Position.LeftColumn, 4, InputValueTextBoxConfigState.Mode.DisableOnInput, InputControl.ControlType.ContinuousValue));
+            states.Add(ButtonBasedInputControl.RollAxisField, new InputValueCheckBoxConfigState("Roll", InputConfigState.Position.LeftColumn, 1, axisValues));
+            states.Add(ButtonBasedInputControl.PitchAxisField, new InputValueCheckBoxConfigState("Pitch", InputConfigState.Position.LeftColumn, 2, axisValues));
+            states.Add(ButtonBasedInputControl.YawAxisField, new InputValueCheckBoxConfigState("Yaw", InputConfigState.Position.LeftColumn, 3, axisValues));
+            states.Add(ButtonBasedInputControl.GazAxisField, new InputValueCheckBoxConfigState("Gaz", InputConfigState.Position.LeftColumn, 4, axisValues));
 
             states.Add("rightHeader", new InputConfigHeader("Buttons", InputConfigState.Position.RightColumn, 0));
             states.Add(ButtonBasedInputControl.CameraSwapButtonField, new InputValueTextBoxConfigState("Change Camera", InputConfigState.Position.RightColumn, 1, InputValueTextBoxConfigState.Mode.DisableOnInput, InputControl.ControlType.BooleanValue));
@@ -38,6 +53,16 @@ namespace ARDrone.Input.InputConfigs
             states.Add(ButtonBasedInputControl.EmergencyButtonField, new InputValueTextBoxConfigState("Emergency", InputConfigState.Position.RightColumn, 5, InputValueTextBoxConfigState.Mode.DisableOnInput, InputControl.ControlType.BooleanValue));
             states.Add(ButtonBasedInputControl.FlatTrimButtonField, new InputValueTextBoxConfigState("Flat Trim", InputConfigState.Position.RightColumn, 6, InputValueTextBoxConfigState.Mode.DisableOnInput, InputControl.ControlType.BooleanValue));
             states.Add(ButtonBasedInputControl.SpecialActionButtonField, new InputValueTextBoxConfigState("Special Action", InputConfigState.Position.RightColumn, 7, InputValueTextBoxConfigState.Mode.DisableOnInput, InputControl.ControlType.BooleanValue));
+        }
+
+        private String GetMappingNameValue(String mappingName)
+        {
+            foreach (KeyValuePair<String, String> entry in axisMappingNames)
+            {
+                if (entry.Value == mappingName)
+                    return entry.Key;
+            }
+            return null;
         }
     }
 }

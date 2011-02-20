@@ -18,7 +18,7 @@
                 <Setter Property="Padding" Value="2,4,0,0" />
                 <Setter Property="Margin" Value="10,3,10,3" />
             </Style>
-            <Style x:Key="styleContentTextBox" TargetType="{x:Type TextBox}">
+            <Style x:Key="styleContentInput" TargetType="{x:Type TextBox}">
                 <Setter Property="Padding" Value="2" />
                 <Setter Property="Margin" Value="10,3,25,3" />
                 <Setter Property="HorizontalAlignment" Value="Stretch" />

@@ -22,7 +22,9 @@ namespace ARDrone.Input.Utility
 
         public static InputConfig CreateConfigFor(GenericInput input)
         {
-            if (input is ButtonBasedInput)
+            if (input is WiiMoteInput)
+                return new AxisDitheredInputConfig(((WiiMoteInput)input).AxisMappingNames);
+            else if (input is ButtonBasedInput)
                 return new ButtonBasedInputConfig();
             else if (input is SpeechInput)
                 return new SpeechBasedInputConfig();

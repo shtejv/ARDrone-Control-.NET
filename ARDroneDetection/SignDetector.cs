@@ -164,7 +164,7 @@ namespace ARDrone.Detection
                 {
                     double ratio = CvInvoke.cvMatchShapes(octagonContour, contours, Emgu.CV.CvEnum.CONTOURS_MATCH_TYPE.CV_CONTOURS_MATCH_I3, 0);
 
-                    if (ratio > 0.1) //not a good match of contour shape
+                    if (ratio > 0.05) //not a good match of contour shape
                     {
                         results.AddRange(FindSignInChildren(image, contours));
                     }
@@ -232,9 +232,9 @@ namespace ARDrone.Detection
             Features2DTracker.MatchedImageFeature[] matchedFeatures;
             try
             {
-                //return 20;
-                ImageFeature[] features = surfaceParameters.DetectFeatures(contourImage, null);
-                matchedFeatures = featureTracker.MatchFeature(features, 2, 20);
+                return 20;
+                //ImageFeature[] features = surfaceParameters.DetectFeatures(contourImage, null);
+                //matchedFeatures = featureTracker.MatchFeature(features, 2, 20);
             }
             catch (AccessViolationException)
             {

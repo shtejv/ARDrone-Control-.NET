@@ -117,7 +117,7 @@ namespace ARDrone.Input
 
             newDevices.AddRange(KeyboardInput.GetNewInputDevices(windowHandle, inputDevices));
             newDevices.AddRange(JoystickInput.GetNewInputDevices(windowHandle, inputDevices));
-            newDevices.AddRange(WiimoteInput.GetNewInputDevices(windowHandle, inputDevices));
+            newDevices.AddRange(WiiMoteInput.GetNewInputDevices(windowHandle, inputDevices));
             newDevices.AddRange(SpeechInput.GetNewInputDevices(windowHandle, inputDevices));
 
             foreach (GenericInput inputDevice in newDevices)
@@ -135,7 +135,7 @@ namespace ARDrone.Input
             else if (input.GetType() == typeof(JoystickInput))
                 typeToSearchFor = typeof(SpeechInput);
             else if (input.GetType() == typeof(SpeechInput))
-                typeToSearchFor = typeof(WiimoteInput);
+                typeToSearchFor = typeof(WiiMoteInput);
             else
             {
                 Console.WriteLine("Added " + input.DeviceName + " at last position");
@@ -321,9 +321,9 @@ namespace ARDrone.Input
         {
             for (int i = 0; i < inputDevices.Count; i++)
             {
-                if (inputDevices[i] is WiimoteInput)
+                if (inputDevices[i] is WiiMoteInput)
                 {
-                    WiimoteInput wiimoteInput = (WiimoteInput)inputDevices[i];
+                    WiiMoteInput wiimoteInput = (WiiMoteInput)inputDevices[i];
                     wiimoteInput.SetLEDs(isConnected, isFlying, isHovering, isEmergency);
                 }
             }

@@ -15,9 +15,9 @@ using ARDrone.Input.InputMappings;
 
 namespace ARDrone.Input
 {
-    public class WiimoteInput : ButtonBasedInput
+    public class WiiMoteInput : ButtonBasedInput
     {
-        enum Axis
+        public enum Axis
         {
             // "Normal" axes
             Axis_X, Axis_Y, Axis_Z,
@@ -27,7 +27,7 @@ namespace ARDrone.Input
             Axis_BalanceBoard_X, Axis_BalanceBoard_Y
         }
 
-        enum Button {
+        public enum Button {
             // "Normal" buttons
             Button_A, Button_B, Button_Minus, Button_Plus, Button_Home, Button_One, Button_Two, Button_Left, Button_Up, Button_Right, Button_Down,
             // Nunchuk buttons
@@ -62,7 +62,7 @@ namespace ARDrone.Input
             {
                 if (!CheckIfDeviceExists(wiimote, currentDevices))
                 {
-                    WiimoteInput input = new WiimoteInput(wiimote);
+                    WiiMoteInput input = new WiiMoteInput(wiimote);
                     wiimote.SetLEDs(false, false, false, false);
 
                     newDevices.Add(input);
@@ -84,7 +84,7 @@ namespace ARDrone.Input
             return false;
         }
 
-        public WiimoteInput(Wiimote wiimote) : base()
+        public WiiMoteInput(Wiimote wiimote) : base()
         {
             InitWiimote(wiimote);
 
@@ -250,6 +250,26 @@ namespace ARDrone.Input
             {
                 if (wiimote == null) { return string.Empty; }
                 else { return wiimote.HIDDevicePath; }
+            }
+        }
+
+        public Dictionary<String, String> AxisMappingNames
+        {
+            get
+            {
+                Dictionary<String, String> axisMappingNames = new Dictionary<String, String>();
+
+                axisMappingNames.Add(Axis.Axis_X.ToString(), "X axis");
+                axisMappingNames.Add(Axis.Axis_Y.ToString(), "Y axis");
+                axisMappingNames.Add(Axis.Axis_Z.ToString(), "Z axis");
+
+                axisMappingNames.Add(Axis.Axis_Nunchuk_X.ToString(), "Nunchuk X axis");
+                axisMappingNames.Add(Axis.Axis_Nunchuk_Y.ToString(), "Nunchuk Y axis");
+
+                axisMappingNames.Add(Axis.Axis_BalanceBoard_X.ToString(), "Balance board X axis");
+                axisMappingNames.Add(Axis.Axis_BalanceBoard_Y.ToString(), "Balance board Y axis");
+
+                return axisMappingNames;
             }
         }
     }

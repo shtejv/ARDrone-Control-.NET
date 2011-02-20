@@ -58,6 +58,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ARDroneInput_Speech", "ARDr
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ARDrone_Testing", "ARDrone_Testing\ARDrone_Testing.csproj", "{EB016BB8-3E68-4DD7-B27E-317B18024FFA}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test_Drone", "Test_Drone\Test_Drone.csproj", "{A8FD9A04-A8F4-46DF-9D3F-75867F44B5C8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ARDroneUI_Minimalistic", "ARDroneUI_Minimalistic\ARDroneUI_Minimalistic.csproj", "{C989C887-7D08-4A17-9B0F-B829547546F6}"
+EndProject
 Global
 	GlobalSection(TestCaseManagementSettings) = postSolution
 		CategoryFile = ARDrone.vsmdi
@@ -416,6 +420,48 @@ Global
 		{EB016BB8-3E68-4DD7-B27E-317B18024FFA}.Release|Win32.ActiveCfg = Release|Any CPU
 		{EB016BB8-3E68-4DD7-B27E-317B18024FFA}.Release|x64.ActiveCfg = Release|Any CPU
 		{EB016BB8-3E68-4DD7-B27E-317B18024FFA}.Release|x86.ActiveCfg = Release|Any CPU
+		{A8FD9A04-A8F4-46DF-9D3F-75867F44B5C8}.Debug|Any CPU.ActiveCfg = Debug|x86
+		{A8FD9A04-A8F4-46DF-9D3F-75867F44B5C8}.Debug|Mixed Platforms.ActiveCfg = Debug|x86
+		{A8FD9A04-A8F4-46DF-9D3F-75867F44B5C8}.Debug|Mixed Platforms.Build.0 = Debug|x86
+		{A8FD9A04-A8F4-46DF-9D3F-75867F44B5C8}.Debug|Win32.ActiveCfg = Debug|x86
+		{A8FD9A04-A8F4-46DF-9D3F-75867F44B5C8}.Debug|x64.ActiveCfg = Debug|x86
+		{A8FD9A04-A8F4-46DF-9D3F-75867F44B5C8}.Debug|x86.ActiveCfg = Debug|x86
+		{A8FD9A04-A8F4-46DF-9D3F-75867F44B5C8}.Debug|x86.Build.0 = Debug|x86
+		{A8FD9A04-A8F4-46DF-9D3F-75867F44B5C8}.Profile|Any CPU.ActiveCfg = Release|x86
+		{A8FD9A04-A8F4-46DF-9D3F-75867F44B5C8}.Profile|Mixed Platforms.ActiveCfg = Release|x86
+		{A8FD9A04-A8F4-46DF-9D3F-75867F44B5C8}.Profile|Mixed Platforms.Build.0 = Release|x86
+		{A8FD9A04-A8F4-46DF-9D3F-75867F44B5C8}.Profile|Win32.ActiveCfg = Release|x86
+		{A8FD9A04-A8F4-46DF-9D3F-75867F44B5C8}.Profile|x64.ActiveCfg = Release|x86
+		{A8FD9A04-A8F4-46DF-9D3F-75867F44B5C8}.Profile|x86.ActiveCfg = Release|x86
+		{A8FD9A04-A8F4-46DF-9D3F-75867F44B5C8}.Profile|x86.Build.0 = Release|x86
+		{A8FD9A04-A8F4-46DF-9D3F-75867F44B5C8}.Release|Any CPU.ActiveCfg = Release|x86
+		{A8FD9A04-A8F4-46DF-9D3F-75867F44B5C8}.Release|Mixed Platforms.ActiveCfg = Release|x86
+		{A8FD9A04-A8F4-46DF-9D3F-75867F44B5C8}.Release|Mixed Platforms.Build.0 = Release|x86
+		{A8FD9A04-A8F4-46DF-9D3F-75867F44B5C8}.Release|Win32.ActiveCfg = Release|x86
+		{A8FD9A04-A8F4-46DF-9D3F-75867F44B5C8}.Release|x64.ActiveCfg = Release|x86
+		{A8FD9A04-A8F4-46DF-9D3F-75867F44B5C8}.Release|x86.ActiveCfg = Release|x86
+		{A8FD9A04-A8F4-46DF-9D3F-75867F44B5C8}.Release|x86.Build.0 = Release|x86
+		{C989C887-7D08-4A17-9B0F-B829547546F6}.Debug|Any CPU.ActiveCfg = Debug|x86
+		{C989C887-7D08-4A17-9B0F-B829547546F6}.Debug|Mixed Platforms.ActiveCfg = Debug|x86
+		{C989C887-7D08-4A17-9B0F-B829547546F6}.Debug|Mixed Platforms.Build.0 = Debug|x86
+		{C989C887-7D08-4A17-9B0F-B829547546F6}.Debug|Win32.ActiveCfg = Debug|x86
+		{C989C887-7D08-4A17-9B0F-B829547546F6}.Debug|x64.ActiveCfg = Debug|x86
+		{C989C887-7D08-4A17-9B0F-B829547546F6}.Debug|x86.ActiveCfg = Debug|x86
+		{C989C887-7D08-4A17-9B0F-B829547546F6}.Debug|x86.Build.0 = Debug|x86
+		{C989C887-7D08-4A17-9B0F-B829547546F6}.Profile|Any CPU.ActiveCfg = Release|x86
+		{C989C887-7D08-4A17-9B0F-B829547546F6}.Profile|Mixed Platforms.ActiveCfg = Release|x86
+		{C989C887-7D08-4A17-9B0F-B829547546F6}.Profile|Mixed Platforms.Build.0 = Release|x86
+		{C989C887-7D08-4A17-9B0F-B829547546F6}.Profile|Win32.ActiveCfg = Release|x86
+		{C989C887-7D08-4A17-9B0F-B829547546F6}.Profile|x64.ActiveCfg = Release|x86
+		{C989C887-7D08-4A17-9B0F-B829547546F6}.Profile|x86.ActiveCfg = Release|x86
+		{C989C887-7D08-4A17-9B0F-B829547546F6}.Profile|x86.Build.0 = Release|x86
+		{C989C887-7D08-4A17-9B0F-B829547546F6}.Release|Any CPU.ActiveCfg = Release|x86
+		{C989C887-7D08-4A17-9B0F-B829547546F6}.Release|Mixed Platforms.ActiveCfg = Release|x86
+		{C989C887-7D08-4A17-9B0F-B829547546F6}.Release|Mixed Platforms.Build.0 = Release|x86
+		{C989C887-7D08-4A17-9B0F-B829547546F6}.Release|Win32.ActiveCfg = Release|x86
+		{C989C887-7D08-4A17-9B0F-B829547546F6}.Release|x64.ActiveCfg = Release|x86
+		{C989C887-7D08-4A17-9B0F-B829547546F6}.Release|x86.ActiveCfg = Release|x86
+		{C989C887-7D08-4A17-9B0F-B829547546F6}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

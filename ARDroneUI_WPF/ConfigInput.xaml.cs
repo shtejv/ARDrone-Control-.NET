@@ -7,7 +7,6 @@
  * 
  * You should have received a copy of the GNU General Public License along with this program; if not, see <http://www.gnu.org/licenses/>.
  */
-
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -31,6 +30,8 @@ namespace ARDrone.UI
 {
     public partial class ConfigInput : Window
     {
+        private const String inputBoxPrefix = "inputBox";
+
         private ARDrone.Input.InputManager inputManager = null;
 
         List<ConfigurableInput> devices = null;
@@ -114,7 +115,6 @@ namespace ARDrone.UI
                 UpdateCurrentDeviceDescription();
             }
         }
-
 
         private void AddDeviceToDeviceList(ConfigurableInput inputDevice)
         {
@@ -279,31 +279,57 @@ namespace ARDrone.UI
 
         private void CreateControl(String name, InputConfigState state)
         {
-            if (state is InputValueConfigState)
-            {
-                Label label = new Label() { Content = state.Name + ":" , Style = (Style)gridMain.FindResource("styleContentLabel") };
-                Grid.SetColumn(label, state.LayoutPosition == InputConfigState.Position.LeftColumn ? 0 : 2);
-                Grid.SetRow(label, state.RowNumber);
-                gridCommands.Children.Add(label);
-
-                TextBox textBox = new TextBox() { Name = "textBox" + name, IsReadOnly = true, Style = (Style)gridMain.FindResource("styleContentTextBox") };
-                Grid.SetColumn(textBox, state.LayoutPosition == InputConfigState.Position.LeftColumn ? 1 : 3);
-                Grid.SetRow(textBox, state.RowNumber);
-
-                gridCommands.Children.Add(textBox);
-
-                textBox.GotFocus += new RoutedEventHandler(textBoxControl_GotFocus);
-                textBox.LostFocus += new RoutedEventHandler(textBoxControl_LostFocus);
-            }
+            if (state is InputValueTextBoxConfigState)
+                CreateInputValueTextBoxConfigState(name, (InputValueTextBoxConfigState)state);
+            else if (state is InputValueCheckBoxConfigState)
+                CreateInputValueTextBoxConfigState(name, (InputValueCheckBoxConfigState)state);
             else if (state is InputConfigHeader)
-            {
-                Label label = new Label() { Content = state.Name, HorizontalAlignment = System.Windows.HorizontalAlignment.Center };
-                Grid.SetColumn(label, state.LayoutPosition == InputConfigState.Position.LeftColumn ? 0 : 2);
-                Grid.SetRow(label, state.RowNumber);
-                Grid.SetColumnSpan(label, 2);
+                CreateInputConfigHeaderState(name, (InputConfigHeader)state);
+        }
 
-                gridCommands.Children.Add(label);
-            }
+        private void CreateInputValueTextBoxConfigState(String name, InputValueTextBoxConfigState state)
+        {
+            CreateLabelForValueConfigState(name, state);
+
+            TextBox textBox = new TextBox() { Name = inputBoxPrefix + name, IsReadOnly = true, Style = (Style)gridMain.FindResource("styleContentInput") };
+            Grid.SetColumn(textBox, state.LayoutPosition == InputConfigState.Position.LeftColumn ? 1 : 3);
+            Grid.SetRow(textBox, state.RowNumber);
+
+            gridCommands.Children.Add(textBox);
+
+            textBox.GotFocus += new RoutedEventHandler(textBoxControl_GotFocus);
+            textBox.LostFocus += new RoutedEventHandler(textBoxControl_LostFocus);
+        }
+
+        private void CreateInputValueTextBoxConfigState(String name, InputValueCheckBoxConfigState state)
+        {
+            CreateLabelForValueConfigState(name, state);
+
+            ComboBox comboBox = new ComboBox() { Name = inputBoxPrefix + name, Style = (Style)gridMain.FindResource("styleContentInput") };
+            Grid.SetColumn(comboBox, state.LayoutPosition == InputConfigState.Position.LeftColumn ? 1 : 3);
+            Grid.SetRow(comboBox, state.RowNumber);
+
+            gridCommands.Children.Add(comboBox);
+
+            comboBox.SelectionChanged += new SelectionChangedEventHandler(comboBoxControl_SelectionChanged);
+        }
+
+        private void CreateLabelForValueConfigState(String name, InputConfigState state)
+        {
+            Label label = new Label() { Content = state.Name + ":", Style = (Style)gridMain.FindResource("styleContentLabel") };
+            Grid.SetColumn(label, state.LayoutPosition == InputConfigState.Position.LeftColumn ? 0 : 2);
+            Grid.SetRow(label, state.RowNumber);
+            gridCommands.Children.Add(label);
+        }
+
+        private void CreateInputConfigHeaderState(String name, InputConfigHeader state)
+        {
+            Label label = new Label() { Content = state.Name, HorizontalAlignment = System.Windows.HorizontalAlignment.Center };
+            Grid.SetColumn(label, state.LayoutPosition == InputConfigState.Position.LeftColumn ? 0 : 2);
+            Grid.SetRow(label, state.RowNumber);
+            Grid.SetColumnSpan(label, 2);
+
+            gridCommands.Children.Add(label);
         }
 
         private void CreateControlsForNoDevice()
@@ -322,6 +348,8 @@ namespace ARDrone.UI
 
             foreach (KeyValuePair<String, String> entry in mappings)
             {
+                // TODO
+
                 TextBox control = GetTextBoxByControlName(entry.Key);
                 control.Text = entry.Value;
             }
@@ -333,6 +361,8 @@ namespace ARDrone.UI
         {
             if (selectedControl != null)
             {
+                // TODO
+
                 InputMapping mapping = selectedDevice.Mapping;
 
                 TextBox textBox = GetTextBoxByControlName(selectedControl);
@@ -346,13 +376,15 @@ namespace ARDrone.UI
 
         private void UpdateMapping(InputMapping mapping, String inputField, String inputValue)
         {
+            // TODO
+
             String currentValue = GetInputMappingValue(mapping, inputField);
 
             if (currentValue != inputValue)
             {
                 mapping.SetControlProperty(inputField, inputValue);
             }
-            else if (SelectedInputConfigState.InputMode != InputValueConfigState.Mode.DisableManuallyKeyboardAvailable)
+            else if (SelectedInputConfigState.InputMode != InputValueTextBoxConfigState.Mode.DisableManuallyKeyboardAvailable)
             {
                 mapping.SetControlProperty(inputField, "");
                 GetTextBoxByControlName(selectedControl).Text = "";
@@ -382,6 +414,8 @@ namespace ARDrone.UI
             for (int i = 0; i < gridCommands.Children.Count; i++)
             {
                 UIElement element = gridCommands.Children[i];
+                // TODO
+
                 if (element is TextBox)
                 {
                     if (isBooleanInputTextBox((TextBox)element))
@@ -401,8 +435,10 @@ namespace ARDrone.UI
 
         private bool isBooleanInputTextBox(TextBox textBox)
         {
+            // TODO
+
             String elementName = GetElementNameFromControlName(textBox);
-            InputValueConfigState state = (InputValueConfigState) selectedDevice.InputConfig.States[elementName];
+            InputValueTextBoxConfigState state = (InputValueTextBoxConfigState) selectedDevice.InputConfig.States[elementName];
 
             return state.InputValueType == InputControl.ControlType.BooleanValue;
         }
@@ -453,7 +489,7 @@ namespace ARDrone.UI
                 }
             }
 
-            if (mappingSet && SelectedInputConfigState.InputMode == InputValueConfigState.Mode.DisableOnInput)
+            if (mappingSet && SelectedInputConfigState.InputMode == InputValueTextBoxConfigState.Mode.DisableOnInput)
                 buttonSubmit.Focus();
         }
 
@@ -491,7 +527,7 @@ namespace ARDrone.UI
             bool mappingSet = false;
             if (!isContinuousValue)
             {
-                if (SelectedInputConfigState.InputMode == InputValueConfigState.Mode.DisableOnInput)
+                if (SelectedInputConfigState.InputMode == InputValueTextBoxConfigState.Mode.DisableOnInput)
                 {
                     ReplaceTextBoxText(inputValue);
                     mappingSet = true;
@@ -553,7 +589,7 @@ namespace ARDrone.UI
 
         private void StyleFocussedControl(TextBox textBox)
         {
-            if (SelectedInputConfigState.InputMode == InputValueConfigState.Mode.DisableManuallyKeyboardAvailable)
+            if (SelectedInputConfigState.InputMode == InputValueTextBoxConfigState.Mode.DisableManuallyKeyboardAvailable)
             {
                 textBox.IsReadOnly = false;
                 textBox.Foreground = new SolidColorBrush(Colors.Black);
@@ -577,6 +613,19 @@ namespace ARDrone.UI
                 inputManager.SwitchInputMode(Input.InputManager.InputMode.NoInput);
                 selectedControl = null;
                 lastInputValue = null;
+            }
+        }
+
+        private void ChangeInputElementSelection(ComboBox comboBox)
+        {
+            if (comboBox != null && comboBox.Parent == gridCommands)
+            {
+                selectedControl = comboBox.Name;
+
+                UpdateMappings();
+                CheckForDoubleInput();
+
+                selectedControl = null;
             }
         }
 
@@ -617,18 +666,18 @@ namespace ARDrone.UI
             for (int i = 0; i < gridCommands.Children.Count; i++)
             {
                 UIElement element = gridCommands.Children[i];
-                if (element is TextBox && ((TextBox)element).Name == "textBox" + name)
+                if (element is TextBox && ((TextBox)element).Name == inputBoxPrefix + name)
                     return (TextBox)element;
             }
 
             throw new Exception("There is no control named '" + name + "'");
         }
 
-        public InputValueConfigState SelectedInputConfigState
+        public InputValueTextBoxConfigState SelectedInputConfigState
         {
             get
             {
-                return (InputValueConfigState)selectedDevice.InputConfig.States[this.selectedControl];
+                return (InputValueTextBoxConfigState)selectedDevice.InputConfig.States[this.selectedControl];
             }
         }
 
@@ -656,6 +705,11 @@ namespace ARDrone.UI
         private void textBoxControl_LostFocus(object sender, RoutedEventArgs e)
         {
             UnfocusInputElement((TextBox)e.OriginalSource);
+        }
+
+        void comboBoxControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            ChangeInputElementSelection((ComboBox)e.OriginalSource);
         }
 
         private void buttonReset_Click(object sender, RoutedEventArgs e)
