@@ -841,7 +841,8 @@ namespace ARDrone.UI
 
         private void inputManagerSync_NewInputDevice(object sender, NewInputDeviceEventArgs e)
         {
-            HandleNewDevice(e.DeviceId, (ConfigurableInput)e.Input);
+            if (e.Input is ConfigurableInput)
+                HandleNewDevice(e.DeviceId, (ConfigurableInput)e.Input);
         }
 
         private void inputManager_InputDeviceLost(object sender, InputDeviceLostEventArgs e)

@@ -34,14 +34,14 @@ namespace ARDrone.Input.InputMappings
 
             for (int i = 0; i < validBooleanInputValues.Count; i++)
             {
-                if (validBooleanInputValues[i].Contains("-")) { throw new Exception("'-' is not allowed within button names (button name '" + validBooleanInputValues[i] + "')"); }
-                if (validBooleanInputValues[i] == null) { throw new Exception("Null is not allowed as a button name"); }
+                if (validBooleanInputValues[i].Contains("-")) { throw new Exception("'-' is not allowed within boolean names (boolean name '" + validBooleanInputValues[i] + "')"); }
+                if (validBooleanInputValues[i] == null) { throw new Exception("Null is not allowed as a boolean name"); }
                 this.validBooleanInputValues.Add(validBooleanInputValues[i]);
             }
             for (int i = 0; i < validContinuousInputValues.Count; i++)
             {
-                if (validContinuousInputValues[i].Contains("-")) { throw new Exception("'-' is not allowed within axis names (axis name '" + validBooleanInputValues[i] + "')"); }
-                if (validContinuousInputValues[i] == null) { throw new Exception("Null is not allowed as an axis name"); }
+                if (validContinuousInputValues[i].Contains("-")) { throw new Exception("'-' is not allowed within continuous names (continuous name '" + validBooleanInputValues[i] + "')"); }
+                if (validContinuousInputValues[i] == null) { throw new Exception("Null is not allowed as a continuous name"); }
                 this.validContinuousInputValues.Add(validContinuousInputValues[i]);
             }
 
