@@ -120,6 +120,10 @@
       <Project>{A61853C5-1CFE-4858-9D4E-11C1D2622034}</Project>
       <Name>AviationInstruments</Name>
     </ProjectReference>
+    <ProjectReference Include="..\HudInstruments\HudInstruments.csproj">
+      <Project>{8E63741B-70D7-4FE0-A13C-BA749FEB96A4}</Project>
+      <Name>HudInstruments</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <SplashScreen Include="SplashScreen.png" />

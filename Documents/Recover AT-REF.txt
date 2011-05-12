@@ -1,0 +1,4 @@
+A wrong AT*REF command will add bad manual/factory trims files onto the drone. These files are NOT cleaned by the reset button.
+If you have this issue on your drone, here's the way to correct it :
+- Telnet on you drone (192.168.1.1:23)
+- Remove "/data/trims.bin" and "/data/fact_trims.bin" files.

@@ -16,20 +16,21 @@ using System.Threading;
 using System.Windows.Forms;
 using ARDrone;
 using ARDrone.Control;
+using ARDrone.Control.Data;
 
 namespace AviationInstruments
 {
     public class InstrumentsManager
     {
-        private ARDroneControl arDroneControl;
+        private DroneControl droneControl;
         private List<InstrumentControl> instrumentList;
 
         readonly object stateLock = new object();
         bool shouldThreadBeTerminated = false;
 
-        public InstrumentsManager(ARDroneControl arDroneControl)
+        public InstrumentsManager(DroneControl arDroneControl)
         {
-            this.arDroneControl = arDroneControl;
+            this.droneControl = arDroneControl;
             instrumentList = new List<InstrumentControl>();
         }
 
@@ -78,9 +79,9 @@ namespace AviationInstruments
 
         private void updateInstruments()
         {
-            if (this.arDroneControl.IsConnected)
+            if (this.droneControl.IsConnected)
             {
-                ARDrone.Control.ARDroneControl.DroneData droneData = arDroneControl.GetCurrentDroneData();
+                DroneData droneData = droneControl.NavigationData;
                 foreach (InstrumentControl instrumentControl in instrumentList)
                 {
                     try
@@ -112,16 +113,15 @@ namespace AviationInstruments
             }
         }
 
-        private void updateInstrument(AttitudeIndicatorInstrumentControl control, ARDrone.Control.ARDroneControl.DroneData droneData)
+        private void updateInstrument(AttitudeIndicatorInstrumentControl control, DroneData droneData)
         {
             control.Invoke((MethodInvoker)delegate
             {
-
-                control.SetAttitudeIndicatorParameters((droneData.Theta / 1000), -(droneData.Phi / 1000));
+                control.SetAttitudeIndicatorParameters((droneData.Theta), -(droneData.Phi));
             });
         }
 
-        private void updateInstrument(AltimeterInstrumentControl control, ARDrone.Control.ARDroneControl.DroneData droneData)
+        private void updateInstrument(AltimeterInstrumentControl control, DroneData droneData)
         {
             control.Invoke((MethodInvoker)delegate
             {
@@ -130,24 +130,24 @@ namespace AviationInstruments
             });
         }
 
-        private void updateInstrument(HeadingIndicatorInstrumentControl control, ARDrone.Control.ARDroneControl.DroneData droneData)
+        private void updateInstrument(HeadingIndicatorInstrumentControl control, DroneData droneData)
         {
             control.Invoke((MethodInvoker)delegate
             {
                 // Psi range -180..0..180 but heading indicator require 0..360
                 if (droneData.Psi > 0)
                 {
-                    control.SetHeadingIndicatorParameters(Convert.ToInt32(droneData.Psi / 1000));
+                    control.SetHeadingIndicatorParameters(Convert.ToInt32(droneData.Psi));
                 }
                 else
                 {
-                    control.SetHeadingIndicatorParameters(360 + Convert.ToInt32(droneData.Psi / 1000));
+                    control.SetHeadingIndicatorParameters(360 + Convert.ToInt32(droneData.Psi));
                 }
 
             });
         }
 
-        private void updateInstrument(VerticalSpeedIndicatorInstrumentControl control, ARDrone.Control.ARDroneControl.DroneData droneData)
+        private void updateInstrument(VerticalSpeedIndicatorInstrumentControl control, DroneData droneData)
         {
             control.Invoke((MethodInvoker)delegate
             {
