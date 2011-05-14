@@ -6,16 +6,20 @@ using System.Text;
 
 namespace ARDrone.Control.Network
 {
-    public abstract class UdpWorker : NetworkWorker
+    public abstract class UdpWorker : KeepAliveNetworkWorker
     {
         protected UdpClient client;
+
+        public UdpWorker(String remoteIpAddress, int port, int timeoutValue)
+            : base(remoteIpAddress, port, timeoutValue)
+        { }
 
         protected override void CreateSocket()
         {
             client = CreateUdpSocket(LocalIpAddress, Port, TimeoutValue);
         }
 
-        protected override void DisconnectFromSocket()
+        public override void DisconnectFromSocket()
         {
             client.Close();
             client = null;
@@ -38,18 +42,18 @@ namespace ARDrone.Control.Network
             return client;
         }
 
-        protected override void SendMessage(int message)
+        public override void SendMessage(int message)
         {
             SendMessage(BitConverter.GetBytes(message));
         }
 
-        protected override void SendMessage(String message)
+        public override void SendMessage(String message)
         {
             byte[] buffer = Encoding.ASCII.GetBytes(message);
             SendMessage(buffer);
         }
 
-        protected override void SendMessage(byte[] message)
+        public override void SendMessage(byte[] message)
         {
             client.Send(message, message.Length, endpoint);
         }

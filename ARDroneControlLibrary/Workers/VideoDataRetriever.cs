@@ -17,35 +17,47 @@ namespace ARDrone.Control.Workers
 {
     public class VideoDataRetriever : UdpWorker
     {
+        private const int keepAliveSignalInterval = 200;
+
         private BitmapUtils bitmapUtils;
 
         private VideoUtils videoUtils;
         private Bitmap currentBitmap;
         private ImageSource currentImage;
 
-        public VideoDataRetriever()
+        public VideoDataRetriever(String remoteIpAddress, int port, int timeoutValue)
+            : base(remoteIpAddress, port, timeoutValue)
         {
             bitmapUtils = new BitmapUtils();
+
+            ResetVariables();
         }
 
-        protected override void BeforeConnect()
+        protected override void ResetVariables()
         {
-            CreateVideoProcessor();
-        }
+            base.ResetVariables();
 
-        private void CreateVideoProcessor()
-        {
             videoUtils = new VideoUtils();
             videoUtils.ImageComplete += VideoImage_ImageComplete;
         }
 
+        protected override void BeforeConnect()
+        {
+            ResetVariables();
+        }
+
         protected override void ProcessWorkerThread()
         {
+            StartKeepAliveSignal();
             SendMessage(1);
 
             do
             {
+                if (IsKeepAliveSignalNeeded())
+                    SendMessage(1);
+
                 byte[] buffer = client.Receive(ref endpoint);
+
                 if (buffer.Length > 0)
                     videoUtils.ProcessByteStream(buffer);
             }
@@ -54,13 +66,8 @@ namespace ARDrone.Control.Workers
 
         protected override void AfterDisconnect()
         {
-            FreeVideoProcessor();
+            ResetVariables();
             currentBitmap = null;
-        }
-
-        protected void FreeVideoProcessor()
-        {
-            videoUtils = null;
         }
 
         private void VideoImage_ImageComplete(object sender, DroneImageCompleteEventArgs e)

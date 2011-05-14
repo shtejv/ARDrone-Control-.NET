@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Net.Sockets;
 using System.Runtime.InteropServices;
@@ -15,7 +14,6 @@ namespace ARDrone.Control.Workers
     public class NavigationDataRetriever : UdpWorker
     {
         private const int initialSequenceNumber = 0;
-        private const int keepAliveSignalInterval = 200;
 
         private uint checksum;
         private NavigationDataHeaderStruct currentNavigationDataHeaderStruct;
@@ -28,18 +26,15 @@ namespace ARDrone.Control.Workers
         private bool initialized = false;
         private bool commandModeEnabled = false;
 
-        private Stopwatch keepAliveStopwatch;
-
-        public NavigationDataRetriever()
+        public NavigationDataRetriever(String remoteIpAddress, int port, int timeoutValue)
+            : base(remoteIpAddress, port, timeoutValue)
         {
-            keepAliveStopwatch = new Stopwatch();
-
             ResetVariables();
         }
 
-        private void ResetVariables()
+        protected override void ResetVariables()
         {
-            keepAliveStopwatch.Stop();
+            base.ResetVariables();
 
             currentNavigationDataStruct = new NavigationDataStruct();
             currentNavigationDataHeaderStruct = new NavigationDataHeaderStruct();
@@ -64,47 +59,55 @@ namespace ARDrone.Control.Workers
 
         protected override void  ProcessWorkerThread()
         {
-            keepAliveStopwatch.Restart();
             SendMessage(1);
+            StartKeepAliveSignal();
 
             do
             {
                 if (IsKeepAliveSignalNeeded())
                     SendMessage(1);
 
-                byte[] buffer = client.Receive(ref endpoint);
+                byte[] buffer = ReceiveData();
 
-                DetermineNavigationDataHeader(buffer);
-                if (IsNavigationDataHeaderValid())
+                if (buffer != null)
                 {
-                    UpdateNavigationData(buffer);
+                    DetermineNavigationDataHeader(buffer);
+                    if (IsNavigationDataHeaderValid())
+                    {
+                        UpdateNavigationData(buffer);
 
-                    if (!IsChecksumValid(buffer))
-                        ProcessInvalidChecksum();
+                        if (!IsChecksumValid(buffer))
+                            ProcessInvalidChecksum();
+                    }
+
+                    currentSequenceNumber = currentNavigationDataHeaderStruct.SequenceNumber;
                 }
-
-                currentSequenceNumber = currentNavigationDataHeaderStruct.SequenceNumber;
             }
             while (!workerThreadEnded);
         }
 
-        private bool IsKeepAliveSignalNeeded()
+        private byte[] ReceiveData()
         {
-            if (keepAliveStopwatch.ElapsedMilliseconds > keepAliveSignalInterval)
+            byte[] buffer = null;
+            try
             {
-                keepAliveStopwatch.Restart();
-                return true;
+                if (client != null)
+                    buffer = client.Receive(ref endpoint);
             }
-            else
+            catch (SocketException e)
             {
-                return false;
+                if (e.ErrorCode == 10060) //Timeout
+                    SendMessage(1);
+
+                if (client != null)
+                    buffer = client.Receive(ref endpoint);
             }
+
+            return buffer;
         }
 
         protected override void AfterDisconnect()
         {
-            keepAliveStopwatch.Stop();
-
             ResetVariables();
         }
 

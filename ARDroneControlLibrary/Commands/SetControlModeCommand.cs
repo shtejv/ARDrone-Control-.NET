@@ -19,7 +19,7 @@ namespace ARDrone.Control.Commands
         {
             CheckSequenceNumber();
             return String.Format("AT*CTRL={0},{1},0\r", sequenceNumber, (int)mode);
-        }        
+        }
     }
 
     public enum DroneControlMode
@@ -27,7 +27,7 @@ namespace ARDrone.Control.Commands
         IdleMode = 0,
         SoftwareUpdateReceptionMode,
         PicSoftwareUpdateReceptionMode,
-        LogControlMode,
         ControlMode,
+        LogControlMode,
     }
 }

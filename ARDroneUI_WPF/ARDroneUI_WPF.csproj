@@ -61,6 +61,10 @@
       <DependentUpon>ConfigInput.xaml</DependentUpon>
     </Compile>
     <Compile Include="Utility.cs" />
+    <Compile Include="DroneConfigurationOutput.xaml.cs">
+      <DependentUpon>DroneConfigurationOutput.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Utils\CellConverter.cs" />
     <Page Include="ConfigInput.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -77,6 +81,10 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="DroneConfigurationOutput.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs">

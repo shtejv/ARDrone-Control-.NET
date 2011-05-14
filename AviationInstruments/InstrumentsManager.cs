@@ -79,36 +79,39 @@ namespace AviationInstruments
 
         private void updateInstruments()
         {
-            if (this.droneControl.IsConnected)
+            DroneData droneData = null;
+            if (droneControl.IsConnected)
+               droneData = droneControl.NavigationData;
+            else
+                droneData = new DroneData();
+
+            foreach (InstrumentControl instrumentControl in instrumentList)
             {
-                DroneData droneData = droneControl.NavigationData;
-                foreach (InstrumentControl instrumentControl in instrumentList)
+                try
                 {
-                    try
+                    switch (instrumentControl.GetType().Name)
                     {
-                        switch (instrumentControl.GetType().Name)
-                        {
-                            case "AttitudeIndicatorInstrumentControl":
-                                updateInstrument((AttitudeIndicatorInstrumentControl)instrumentControl, droneData);
-                                break;
+                        case "AttitudeIndicatorInstrumentControl":
+                            updateInstrument((AttitudeIndicatorInstrumentControl)instrumentControl, droneData);
+                            break;
 
-                            case "AltimeterInstrumentControl":
-                                updateInstrument((AltimeterInstrumentControl)instrumentControl, droneData);
-                                break;
+                        case "AltimeterInstrumentControl":
+                            updateInstrument((AltimeterInstrumentControl)instrumentControl, droneData);
+                            break;
 
-                            case "HeadingIndicatorInstrumentControl":
-                                updateInstrument((HeadingIndicatorInstrumentControl)instrumentControl, droneData);
-                                break;
-                            case "VerticalSpeedIndicatorInstrumentControl":
-                                updateInstrument((VerticalSpeedIndicatorInstrumentControl)instrumentControl, droneData);
-                                break;
-                        }
+                        case "HeadingIndicatorInstrumentControl":
+                            updateInstrument((HeadingIndicatorInstrumentControl)instrumentControl, droneData);
+                            break;
+                        case "VerticalSpeedIndicatorInstrumentControl":
+                            updateInstrument((VerticalSpeedIndicatorInstrumentControl)instrumentControl, droneData);
+                            break;
                     }
-                    catch (Exception e)
-                    {
-                        Console.WriteLine(e.Message);
-                        this.stopManage();
-                    }
+                }
+                catch (InvalidOperationException)
+                { }
+                catch (Exception e)
+                {
+                    this.stopManage();
                 }
             }
         }

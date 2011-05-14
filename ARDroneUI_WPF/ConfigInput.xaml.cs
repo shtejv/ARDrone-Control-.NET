@@ -372,6 +372,7 @@ namespace ARDrone.UI
             if (selectedControl != null)
             {
                 InputMapping mapping = selectedDevice.Mapping;
+                InputConfig config = selectedDevice.InputConfig;
 
                 System.Windows.Controls.Control control = GetControlByControlName(selectedControl);
 
@@ -380,12 +381,21 @@ namespace ARDrone.UI
                 // TODO not text for combo box
                 String inputValue = GetControlText(GetControlByControlName(selectedControl));
 
-                UpdateMapping(mapping, inputField, inputValue);
+                if (config is AxisDitheredInputConfig)
+                {
+                    inputValue = ((AxisDitheredInputConfig)config).GetMappingNameValue(inputValue);
+                    UpdateMapping(mapping, inputField, inputValue, false);
+                }
+                else
+                {
+                    UpdateMapping(mapping, inputField, inputValue, true);
+                }
+   
                 selectedControlModified = false;
             }
         }
 
-        private void UpdateMapping(InputMapping mapping, String inputField, String inputValue)
+        private void UpdateMapping(InputMapping mapping, String inputField, String inputValue, bool setControlText)
         {
             String currentValue = GetInputMappingValue(mapping, inputField);
 
@@ -393,21 +403,26 @@ namespace ARDrone.UI
             {
                 Console.WriteLine("--> No changes");
 
-                SetControlText(GetControlByControlName(selectedControl), currentValue);
+                if (setControlText)
+                    SetControlText(GetControlByControlName(selectedControl), currentValue);
             }
             else if (currentValue != inputValue)
             {
                 Console.WriteLine("--> Setting value to '" + inputValue + "'");
 
                 mapping.SetControlProperty(inputField, inputValue);
-                SetControlText(GetControlByControlName(selectedControl), inputValue);
+                
+                if (setControlText)
+                    SetControlText(GetControlByControlName(selectedControl), inputValue);
             }
             else if (SelectedInputConfigState.DisabledOnInput)
             {
                 Console.WriteLine("--> Setting value to ''");
 
                 mapping.SetControlProperty(inputField, "");
-                SetControlText(GetControlByControlName(selectedControl), "");
+
+                if (setControlText)
+                    SetControlText(GetControlByControlName(selectedControl), "");
             }
         }
 

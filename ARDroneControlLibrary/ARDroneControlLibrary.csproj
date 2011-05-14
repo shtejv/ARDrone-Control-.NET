@@ -54,20 +54,26 @@
     <Compile Include="Commands\SetControlModeCommand.cs" />
     <Compile Include="Commands\SwitchCameraCommand.cs" />
     <Compile Include="Commands\WatchDogCommand.cs" />
+    <Compile Include="Data\InternalDroneConfiguration.cs" />
     <Compile Include="Data\NavigationData.cs" />
     <Compile Include="DroneConfig.cs" />
     <Compile Include="DroneControl.cs" />
     <Compile Include="Events\DroneEvents.cs" />
+    <Compile Include="Events\DroneExceptions.cs" />
     <Compile Include="Events\NetworkWorkerEvents.cs" />
+    <Compile Include="Network\KeepAliveNetworkWorker.cs" />
     <Compile Include="Network\NetworkWorker.cs" />
     <Compile Include="Network\TcpWorker.cs" />
     <Compile Include="Network\UdpWorker.cs" />
+    <Compile Include="Network\BackgroundWorker.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Utils\BitmapUtils.cs" />
     <Compile Include="Utils\NetworkUtils.cs" />
     <Compile Include="Utils\VideoUtils.cs" />
     <Compile Include="Workers\CommandSender.cs" />
+    <Compile Include="Workers\ControlInfoRetriever.cs" />
     <Compile Include="Workers\NavigationDataRetriever.cs" />
+    <Compile Include="Workers\NetworkSanityChecker.cs" />
     <Compile Include="Workers\VideoDataRetriever.cs" />
   </ItemGroup>
   <ItemGroup />

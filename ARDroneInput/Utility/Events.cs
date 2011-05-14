@@ -39,11 +39,14 @@ namespace ARDrone.Input.Utility
 
     public class NewInputDeviceEventArgs : DeviceSpecificInputEventArgs
     {
+        private String deviceName;
         private GenericInput input = null;
 
-        public NewInputDeviceEventArgs(String deviceId, GenericInput input)
+
+        public NewInputDeviceEventArgs(String deviceId, String deviceName, GenericInput input)
             : base(deviceId)
         {
+            this.deviceName = deviceName;
             this.input = input;
         }
 
@@ -54,13 +57,33 @@ namespace ARDrone.Input.Utility
                 return input;
             }
         }
+
+        public String DeviceName
+        {
+            get
+            {
+                return deviceName;
+            }
+        }
     }
 
     public class InputDeviceLostEventArgs : DeviceSpecificInputEventArgs
     {
-        public InputDeviceLostEventArgs(String deviceId)
+        private String deviceName;
+
+        public InputDeviceLostEventArgs(String deviceId, String deviceName)
             : base(deviceId)
-        { }
+        {
+            this.deviceName = deviceName;
+        }
+
+        public String DeviceName
+        {
+            get
+            {
+                return deviceName;
+            }
+        }
     }
 
     public class RawInputReceivedEventArgs : DeviceSpecificInputEventArgs

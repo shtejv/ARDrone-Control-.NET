@@ -49,8 +49,6 @@ namespace ARDrone.Input
             this.windowHandle = windowHandle;
 
             inputDevices = new List<GenericInput>();
-            AddNewDevices();
-
             lastInputState = new InputState();
 
             StartInputThread();
@@ -102,11 +100,11 @@ namespace ARDrone.Input
                     catch (Exception) { }
 
                     String deviceId = inputDevices[i].DeviceInstanceId;
+                    String deviceName = inputDevices[i].DeviceName;
+
                     inputDevices.RemoveAt(i);
 
-
-
-                    InvokeInputDeviceLostEvent(deviceId);
+                    InvokeInputDeviceLostEvent(deviceId, deviceName);
                 }
             }
         }
@@ -118,7 +116,7 @@ namespace ARDrone.Input
             newDevices.AddRange(KeyboardInput.GetNewInputDevices(windowHandle, inputDevices));
             newDevices.AddRange(JoystickInput.GetNewInputDevices(windowHandle, inputDevices));
             newDevices.AddRange(WiiMoteInput.GetNewInputDevices(windowHandle, inputDevices));
-            newDevices.AddRange(SpeechInput.GetNewInputDevices(windowHandle, inputDevices));
+            //newDevices.AddRange(SpeechInput.GetNewInputDevices(windowHandle, inputDevices));
 
             foreach (GenericInput inputDevice in newDevices)
             {
@@ -161,7 +159,7 @@ namespace ARDrone.Input
         private void InitInputDevice(GenericInput input)
         {
             input.InitDevice();
-            InvokeNewInputDeviceEvent(input.DeviceInstanceId, input);
+            InvokeNewInputDeviceEvent(input);
         }
 
         private void CollectInputByThread()
@@ -281,20 +279,20 @@ namespace ARDrone.Input
             return (currentDeviceIdToListenTo == AllDevices || currentDeviceIdToListenTo == deviceId);
         }
 
-        private void InvokeNewInputDeviceEvent(String deviceId, GenericInput input)
+        private void InvokeNewInputDeviceEvent(GenericInput input)
         {
             if (NewInputDevice != null)
             {
-                NewInputDeviceEventArgs eventArgs = new NewInputDeviceEventArgs(deviceId, input);
+                NewInputDeviceEventArgs eventArgs = new NewInputDeviceEventArgs(input.DeviceInstanceId, input.DeviceName, input);
                 NewInputDevice.Invoke(this, eventArgs);
             }
         }
 
-        private void InvokeInputDeviceLostEvent(String deviceId)
+        private void InvokeInputDeviceLostEvent(String deviceId, String deviceName)
         {
             if (InputDeviceLost != null)
             {
-                InputDeviceLostEventArgs eventArgs = new InputDeviceLostEventArgs(deviceId);
+                InputDeviceLostEventArgs eventArgs = new InputDeviceLostEventArgs(deviceId, deviceName);
                 InputDeviceLost.Invoke(this, eventArgs);
             }
         }

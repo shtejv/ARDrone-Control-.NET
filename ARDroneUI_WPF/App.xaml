@@ -11,8 +11,15 @@
 <Application x:Class="ARDrone.UI.App"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="clr-namespace:ARDrone.UI"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
-         
+        <local:CellConverter x:Key="cellConverter" />
+        
+        <DataTemplate x:Key="stringCell">
+            <StackPanel>
+                <TextBlock Grid.Row="0" Grid.Column="0" Text="{Binding Path=Value, Converter={StaticResource cellConverter}}" />
+            </StackPanel>
+        </DataTemplate>
     </Application.Resources>
 </Application>

@@ -22,9 +22,11 @@ namespace ARDrone.Control
 
         // Workers
 
+        private NetworkSanityChecker networkSanityChecker;
         private VideoDataRetriever videoDataRetriever;
         private NavigationDataRetriever navigationDataRetriever;
         private CommandSender commandSender;
+        private ControlInfoRetriever controlInfoRetriever;
 
         // Config
 
@@ -41,6 +43,8 @@ namespace ARDrone.Control
         private float lastGazValue = 0.0f;
         private float lastYawValue = 0.0f;
 
+        public bool lastConnectionState;
+
         private DroneVideoMode currentCameraType = DroneVideoMode.FrontCamera;
 
         // Informational values
@@ -51,6 +55,7 @@ namespace ARDrone.Control
         // Event handlers
 
         public event DroneErrorEventHandler Error;
+        public event DroneConnectionStateChangedEventHandler ConnectionStateChanged;
 
         public DroneControl(DroneConfig droneConfig)
         {
@@ -71,37 +76,106 @@ namespace ARDrone.Control
 
         private void CreateWorkers()
         {
-            commandSender = new CommandSender();
-            commandSender.Error += networkWorker_Error;
-
-            videoDataRetriever = new VideoDataRetriever();
+            videoDataRetriever = new VideoDataRetriever(droneConfig.DroneIpAddress, droneConfig.VideoPort, droneConfig.TimeoutValue);
+            videoDataRetriever.ConnectionStateChanged += networkWorker_ConnectionStateChanged;
             videoDataRetriever.Error += networkWorker_Error;
 
-            navigationDataRetriever = new NavigationDataRetriever();
+            navigationDataRetriever = new NavigationDataRetriever(droneConfig.DroneIpAddress, droneConfig.NavigationPort, droneConfig.TimeoutValue);
+            navigationDataRetriever.ConnectionStateChanged += networkWorker_ConnectionStateChanged;
             navigationDataRetriever.Error += networkWorker_Error;
+
+            commandSender = new CommandSender(droneConfig.DroneIpAddress, droneConfig.CommandPort, droneConfig.TimeoutValue);
+            commandSender.ConnectionStateChanged += networkWorker_ConnectionStateChanged;
+            commandSender.Error += networkWorker_Error;
+
+            controlInfoRetriever = new ControlInfoRetriever(droneConfig.DroneIpAddress, droneConfig.ControlInfoPort, 0);
+            controlInfoRetriever.ConnectionStateChanged += networkWorker_ConnectionStateChanged;
+            controlInfoRetriever.Error += networkWorker_Error;
 
             // Interop between the different threads
             commandSender.DataRetriever = navigationDataRetriever;
+
+            networkSanityChecker = new NetworkSanityChecker(videoDataRetriever, navigationDataRetriever, commandSender, controlInfoRetriever);
+            networkSanityChecker.SanityCheckComplete += networkSanityChecker_SanityChecked;
         }
 
-        public void Connect()
+        public void RunNetworkSanityCheck()
+        {
+            networkSanityChecker.CheckNetworkSanity();
+        }
+
+        private void ProcessSanityCheckResult(NetworkSanityCheckEventArgs e)
+        {
+            if (e.IsSane)
+            {
+                ConnectWorkers();
+            }
+            else
+            {
+                InvokeError(new Exception("Error while connecting to the drone. Have you connected to the drone network?", e.Exception));
+            }
+        }
+
+        private void InvokeError(Exception exception)
+        {
+            if (Error != null)
+                Error.Invoke(this, new DroneErrorEventArgs(this.GetType(), exception));
+        }
+
+        private void InvokeConnectionStateChange()
+        {
+            if (videoDataRetriever.Connected && navigationDataRetriever.Connected &&
+                commandSender.Connected && controlInfoRetriever.Connected)
+            {
+                if (lastConnectionState == false)
+                {
+                    InvokeConnectionStateChange(true);
+                    lastConnectionState = true;
+                }
+            }
+            else
+            {
+                if (lastConnectionState == true)
+                {
+                    InvokeConnectionStateChange(false);
+                    lastConnectionState = false;
+                }
+            }
+        }
+
+        private void InvokeConnectionStateChange(bool connected)
+        {
+            if (ConnectionStateChanged != null)
+                ConnectionStateChanged.Invoke(this, new ConnectionStateChangedEventArgs(IsConnected));
+        }
+
+        public void ConnectWorkers()
         {
             // The connect sequence is important since the command sender waits for the navigation data retriever
 
             if (!videoDataRetriever.Connected)
-                videoDataRetriever.Connect(droneConfig.DroneIpAddress, droneConfig.VideoPort, droneConfig.TimeoutValue);
+                videoDataRetriever.Connect();
             if (!navigationDataRetriever.Connected)
-                navigationDataRetriever.Connect(droneConfig.DroneIpAddress, droneConfig.NavigationPort, droneConfig.TimeoutValue);
+                navigationDataRetriever.Connect();
+            if (!controlInfoRetriever.Connected)
+                controlInfoRetriever.Connect();
             if (!commandSender.Connected)
-                commandSender.Connect(droneConfig.DroneIpAddress, droneConfig.CommandPort, droneConfig.TimeoutValue);
+                commandSender.Connect();
 
             ResetFlightVariables();
+        }
+
+        public void Connect()
+        {
+            RunNetworkSanityCheck();
         }
 
         public void Disconnect()
         {
             if (commandSender.Connected)
                 commandSender.Disconnect();
+            if (controlInfoRetriever.Connected)
+                controlInfoRetriever.Disconnect();
             if (navigationDataRetriever.Connected)
                 navigationDataRetriever.Disconnect();
             if (videoDataRetriever.Connected)
@@ -208,10 +282,27 @@ namespace ARDrone.Control
             }
         }
 
-        private void networkWorker_Error(object sender, NetworkWorkerErrorEventArgs args)
+        public InternalDroneConfiguration InternalDroneConfiguration
         {
-            if (Error != null)
-                Error.Invoke(this, new DroneErrorEventArgs(sender.GetType(), args.CausingException));
+            get
+            {
+                return controlInfoRetriever.CurrentConfiguration;
+            }
+        }
+
+        private void networkSanityChecker_SanityChecked(object sender, NetworkSanityCheckEventArgs e)
+        {
+            ProcessSanityCheckResult(e);
+        }
+
+        private void networkWorker_ConnectionStateChanged(object sender, ConnectionStateChangedEventArgs e)
+        {
+            InvokeConnectionStateChange();
+        }
+        
+        private void networkWorker_Error(object sender, NetworkWorkerErrorEventArgs e)
+        {
+            InvokeError(e.CausingException);
         }
 
         // Current drone state

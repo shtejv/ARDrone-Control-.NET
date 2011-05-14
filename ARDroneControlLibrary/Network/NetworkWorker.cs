@@ -9,14 +9,8 @@ using ARDrone.Control.Events;
 
 namespace ARDrone.Control.Network
 {
-    public abstract class NetworkWorker
+    public abstract class NetworkWorker : BackgroundWorker
     {
-        private const int workerThreadCloseTimeout = 10000;
-
-        // Threading
-        protected Thread workerThread;
-        protected bool workerThreadEnded = false;
-
         // Networking
         protected IPEndPoint endpoint;
 
@@ -28,20 +22,12 @@ namespace ARDrone.Control.Network
 
         // Event handlers
         public event NetworkWorkerErrorEventHandler Error;
+        public event NetworkWorkerConnectionSateChangedEventHandler ConnectionStateChanged;
 
-        public void Connect(String remoteIpAddress, int port, int timeoutValue)
+        public NetworkWorker(String remoteIpAddress, int port, int timeoutValue)
         {
-            if (connected)
-                throw new InvalidOperationException("The client is already connected");
-
             SetVariables(remoteIpAddress, port, timeoutValue);
-            BeforeConnect();
-
-            StartWorkerThread();
-            connected = true;
         }
-
-        protected virtual void BeforeConnect() { }
 
         private void SetVariables(String remoteIpAddress, int port, int timeoutValue)
         {
@@ -50,33 +36,42 @@ namespace ARDrone.Control.Network
             this.timeoutValue = timeoutValue;
         }
 
+        public void Connect()
+        {
+            if (connected)
+                throw new InvalidOperationException("The client is already connected");
+
+            BeforeConnect();
+
+            StartWorkerThread();
+            Connected = true;
+        }
+
+        protected virtual void BeforeConnect() { }
+
         public void Disconnect()
         {
             if (!connected)
                 throw new InvalidOperationException("The client is not yet connected");
 
-            DisconnectFromSocket();
             StopWorkerThread();
+
+            try
+            {
+                DisconnectFromSocket();
+            }
+            catch (Exception) { }
 
             AfterDisconnect();
 
-            connected = false;
+            Connected = false;
         }
 
-        protected abstract void DisconnectFromSocket();
+        public abstract void DisconnectFromSocket();
 
         protected virtual void AfterDisconnect() { }
 
-        private void StartWorkerThread()
-        {
-            workerThreadEnded = false;
-
-            workerThread = new Thread(new ThreadStart(ProcessWorkerThreadInternally));
-            workerThread.Name = this.GetType().ToString() + "_WorkerThread";
-            workerThread.Start();
-        }
-
-        protected void ProcessWorkerThreadInternally()
+        protected override void ProcessWorkerThreadInternally()
         {
             try
             {
@@ -102,7 +97,7 @@ namespace ARDrone.Control.Network
             return e.ErrorCode == 10004 && workerThreadEnded;
         }
 
-        private void CreateSocketAndEndpoint()
+        public void CreateSocketAndEndpoint()
         {
             endpoint = CreateEndpoint(RemoteIpAddress, Port);
             CreateSocket();
@@ -131,15 +126,8 @@ namespace ARDrone.Control.Network
             if (Error != null)
                 Error.Invoke(this, new NetworkWorkerErrorEventArgs(e));
 
-            try
-            {
-                DisconnectFromSocket();
-
-            }
-            catch (Exception) { }
-
             workerThreadEnded = true;
-            connected = false;
+            Connected = false;
         }
 
         private void StopWorkerThread()
@@ -148,21 +136,20 @@ namespace ARDrone.Control.Network
             WaitForWorkerThreadToEnd();
         }
 
-        private void WaitForWorkerThreadToEnd()
-        {
-            workerThread.Join(workerThreadCloseTimeout);
-            workerThread.Abort();
-            workerThread = null;
-        }
-
-        protected abstract void SendMessage(int message);
-        protected abstract void SendMessage(String message);
-        protected abstract void SendMessage(byte[] message);
+        public abstract void SendMessage(int message);
+        public abstract void SendMessage(String message);
+        public abstract void SendMessage(byte[] message);
 
         private String GetLocalIpAddress()
         {
             // TODO implement
             return "192.168.1.2";
+        }
+
+        private void InvokeConnectionStateChange()
+        {
+            if (ConnectionStateChanged != null)
+                ConnectionStateChanged.Invoke(this, new ConnectionStateChangedEventArgs(connected));
         }
 
         protected String LocalIpAddress
@@ -202,6 +189,14 @@ namespace ARDrone.Control.Network
             get
             {
                 return connected;
+            }
+            set
+            {
+                if (connected != value)
+                {
+                    connected = value;
+                    InvokeConnectionStateChange();
+                }
             }
         }
     }

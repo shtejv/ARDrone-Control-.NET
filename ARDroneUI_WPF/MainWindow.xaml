@@ -144,6 +144,7 @@
             </Grid>
             <DockPanel DockPanel.Dock="Top" LastChildFill="True" Margin="5">
                 <Button Name="buttonConnect" Content="Startup"  Width="75" Height="23" Canvas.Left="113" Canvas.Top="28" DockPanel.Dock="Left" Click="buttonConnect_Click" />
+                <Button Name="buttonReadConfig" Content="Read config"  Width="75" Height="23" Canvas.Left="113" Canvas.Top="28" DockPanel.Dock="Left" Click="buttonShowConfig_Click" Margin="2,0,0,0" />
                 <Button Name="buttonShutdown" Content="Shutdown" Width="75" Height="23" Canvas.Left="113" Canvas.Top="57" DockPanel.Dock="Right" Click="buttonShutdown_Click" />
                 <Label Name="labelCamera" Content="No picture" HorizontalAlignment="Center" Foreground="Goldenrod" FontFamily="Microsoft Sans Serif" FontSize="12" />
             </DockPanel>

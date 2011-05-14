@@ -6,38 +6,73 @@ using System.Text;
 
 namespace ARDrone.Control.Network
 {
-    public abstract class TcpWorker : NetworkWorker
+    public abstract class TcpWorker : KeepAliveNetworkWorker
     {
         protected TcpClient client;
+        protected NetworkStream stream;
+
+        public TcpWorker(String remoteIpAddress, int port, int timeoutValue)
+            : base(remoteIpAddress, port, timeoutValue)
+        { }
 
         protected override void CreateSocket()
         {
             client = CreateTcpSocket(LocalIpAddress, Port, TimeoutValue);
+
         }
 
         protected TcpClient CreateTcpSocket(string ip, int port, int timeoutValue)
         {
-            TcpClient client = null;
+            IPEndPoint endpoint = new IPEndPoint(IPAddress.Parse(ip), port);
+            TcpClient client = new TcpClient();
 
-            try
-            {
-                IPEndPoint endpoint = new IPEndPoint(IPAddress.Parse(ip), port);
-                client = new TcpClient(endpoint);
+            client.Client.SendTimeout = timeoutValue;
+            client.Client.ReceiveTimeout = timeoutValue;
 
-                client.Client.SendTimeout = timeoutValue;
-                client.Client.ReceiveTimeout = timeoutValue;
-            }
-            catch { throw; }
+            client.LingerState = new LingerOption(false, 0);
+            client.ExclusiveAddressUse = false;
 
             return client;
         }
 
-        protected override void SendMessage(int message)
+        public void ConnectClientAndCreateStream()
+        {
+            client.Connect(endpoint);
+            stream = client.GetStream();
+        }
+
+        public override void DisconnectFromSocket()
+        {
+            try
+            {
+                if (client != null)
+                {
+                    client.Client.Disconnect(false);
+
+                    if (stream != null)
+                        stream.Close();
+
+                    client.Close();
+                }
+            }
+            catch { }
+
+            stream = null;
+            client = null;
+        }
+
+        public override void SendMessage(int message)
         {
             SendMessage(BitConverter.GetBytes(message));
         }
 
-        protected override void SendMessage(byte[] message)
+        public override void SendMessage(String message)
+        {
+            byte[] buffer = Encoding.ASCII.GetBytes(message);
+            SendMessage(buffer);
+        }
+
+        public override void SendMessage(byte[] message)
         {
             try
             {

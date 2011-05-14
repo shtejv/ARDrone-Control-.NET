@@ -6,8 +6,28 @@ using System.Windows.Media;
 
 namespace ARDrone.Control.Events
 {
+    public delegate void DroneConnectionStateChangedEventHandler(object sender, ConnectionStateChangedEventArgs e);
     public delegate void DroneErrorEventHandler(object sender, DroneErrorEventArgs e);
     public delegate void DroneImageCompleteEventHandler(object sender, DroneImageCompleteEventArgs e);
+    public delegate void NetworkWorkerConnectionSateChangedEventHandler(object sender,  ConnectionStateChangedEventArgs e);
+
+    public class ConnectionStateChangedEventArgs : EventArgs
+    {
+        bool connected;
+
+        public ConnectionStateChangedEventArgs(bool connected)
+        {
+            this.connected = connected;
+        }
+
+        public bool Connected
+        {
+            get
+            {
+                return connected;
+            }
+        }
+    }
 
     public class DroneErrorEventArgs : EventArgs
     {
@@ -39,11 +59,19 @@ namespace ARDrone.Control.Events
 
     public class DroneImageCompleteEventArgs : EventArgs
     {
-        internal ImageSource ImageSource { get; set; }
+        private ImageSource imageSource;
 
-        internal DroneImageCompleteEventArgs(ImageSource imageSource)
+        public DroneImageCompleteEventArgs(ImageSource imageSource)
         {
-            this.ImageSource = imageSource;
+            this.imageSource = imageSource;
+        }
+
+        public ImageSource ImageSource
+        {
+            get
+            {
+                return imageSource;
+            }
         }
     }
 }

@@ -15,7 +15,7 @@ using ARDrone.Input.InputControls;
 
 namespace ARDrone.Input.InputConfigs
 {
-    class AxisDitheredInputConfig : InputConfig
+    public class AxisDitheredInputConfig : InputConfig
     {
         Dictionary<String, String> axisMappingNames = new Dictionary<String, String>();
         List<String> controlsNotRecongnized = new List<String>();
@@ -53,7 +53,7 @@ namespace ARDrone.Input.InputConfigs
             states.Add(ButtonBasedInputControl.SpecialActionButtonField, new DeviceInputConfigState("Special Action", InputConfigState.Position.RightColumn, 7, InputControl.ControlType.BooleanValue));
         }
 
-        private String GetMappingNameValue(String mappingName)
+        public String GetMappingNameValue(String mappingName)
         {
             foreach (KeyValuePair<String, String> entry in axisMappingNames)
             {

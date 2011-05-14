@@ -30,6 +30,7 @@ using ARDrone.Input;
 using ARDrone.Input.Utility;
 using ARDrone.Control.Commands;
 using ARDrone.Control.Data;
+using ARDrone.Control.Events;
 
 namespace ARDrone.UI
 {
@@ -63,7 +64,7 @@ namespace ARDrone.UI
             InitializeTimers();
             InitializeInputManager();
 
-            droneControl = new DroneControl();
+            InitializeDroneControl();
 
             InitializeAviationControls();
             InitializeHudInterface();
@@ -102,7 +103,16 @@ namespace ARDrone.UI
             inputManager = new ARDrone.Input.InputManager(Utility.GetWindowHandle(this));
             inputManager.SwitchInputMode(Input.InputManager.InputMode.ControlInput);
 
-            inputManager.NewInputState += new NewInputStateHandler(inputManager_NewInputState);
+            inputManager.NewInputState += inputManager_NewInputState;
+            inputManager.NewInputDevice += inputManager_NewInputDevice;
+            inputManager.InputDeviceLost += inputManager_InputDeviceLost;
+        }
+
+        private void InitializeDroneControl()
+        {
+            droneControl = new DroneControl();
+            droneControl.Error += droneControl_Error_Async;
+            droneControl.ConnectionStateChanged += droneControl_ConnectionStateChanged_Async;
         }
 
         public void InitializeAviationControls()
@@ -266,6 +276,8 @@ namespace ARDrone.UI
             if (!droneControl.IsConnected) { buttonConnect.IsEnabled = true; } else { buttonConnect.IsEnabled = false; }
             if (droneControl.IsConnected) { buttonShutdown.IsEnabled = true; } else { buttonShutdown.IsEnabled = false; }
 
+            if (droneControl.IsConnected) { buttonReadConfig.IsEnabled = true; } else { buttonReadConfig.IsEnabled = false; }
+
             if (droneControl.CanTakeoff || droneControl.CanLand) { buttonCommandTakeoff.IsEnabled = true; } else { buttonCommandTakeoff.IsEnabled = false; }
             if (droneControl.CanEnterHoverMode || droneControl.CanLeaveHoverMode) { buttonCommandHover.IsEnabled = true; } else { buttonCommandHover.IsEnabled = false; }
             if (droneControl.CanCallEmergency) { buttonCommandEmergency.IsEnabled = true; } else { buttonCommandEmergency.IsEnabled = false; }
@@ -288,8 +300,6 @@ namespace ARDrone.UI
 
         private void UpdateStatus()
         {
-            UpdateInteractiveElements();
-
             if (!droneControl.IsConnected)
             {
                 labelCamera.Content = "No picture";
@@ -299,6 +309,8 @@ namespace ARDrone.UI
                 labelStatusAltitude.Content = "N/A";
 
                 labelStatusFrameRate.Content = "No video";
+
+                imageVideo.Source = null;
             }
             else
             {
@@ -337,8 +349,6 @@ namespace ARDrone.UI
                 hudInterface.SetFlightVariables(data.Phi, data.Theta, data.Psi);
                 hudInterface.SetAltitude(data.Altitude);
                 hudInterface.SetBatteryLevel(data.BatteryLevel);
-
-                Console.WriteLine(data.vX);
             }
         }
 
@@ -516,7 +526,7 @@ namespace ARDrone.UI
             return fileName;
         }
 
-        private void OpenConfigDialog()
+        private void OpenInputConfigDialog()
         {
             inputManager.SwitchInputMode(Input.InputManager.InputMode.NoInput);
 
@@ -524,6 +534,49 @@ namespace ARDrone.UI
             configInput.ShowDialog();
 
             inputManager.SwitchInputMode(Input.InputManager.InputMode.ControlInput);
+        }
+
+        private void OpenDroneConfigDialog()
+        {
+            if (!droneControl.IsConnected)
+                return;
+
+            DroneConfigurationOutput configOutput = new DroneConfigurationOutput(droneControl.InternalDroneConfiguration);
+            configOutput.ShowDialog();
+        }
+
+        private void HandleError(DroneErrorEventArgs args)
+        {
+            String errorText = SerializeException(args.CausingException);
+            MessageBox.Show(errorText);
+        }
+
+        private String SerializeException(Exception e)
+        {
+            String errorMessage = e.Message;
+            String exceptionTypeText = e.GetType().ToString();
+            String stackTrace = e.StackTrace == null ? "No stack trace given" : e.StackTrace.ToString();
+
+            String errorText = "An exception '" + exceptionTypeText + "' occured:\n" + errorMessage;
+            errorText += "\n\nStack trace:\n" + stackTrace;
+
+            if (e.InnerException != null)
+            {
+                errorText += "\n\n";
+                errorText += SerializeException(e.InnerException);
+            }
+
+            return errorText;
+        }
+
+        private void HandleConnectionStateChange(ConnectionStateChangedEventArgs args)
+        {
+            UpdateInteractiveElements();
+
+            if (args.Connected)
+                UpdateUISync("Connected to the drone");
+            else
+                UpdateUISync("Disconnected from the drone");
         }
 
         private bool CanCaptureVideo
@@ -535,6 +588,70 @@ namespace ARDrone.UI
         }
 
         // Event handlers
+
+        private void droneControl_Error_Async(object sender, DroneErrorEventArgs e)
+        {
+            Dispatcher.BeginInvoke(new DroneErrorEventHandler(droneControl_Error_Sync), sender, e);
+        }
+
+        private void droneControl_Error_Sync(object sender, DroneErrorEventArgs e)
+        {
+            HandleError(e);
+        }
+
+        private void droneControl_ConnectionStateChanged_Async(object sender, ConnectionStateChangedEventArgs e)
+        {
+            Dispatcher.BeginInvoke(new DroneConnectionStateChangedEventHandler(droneControl_ConnectionStateChanged_Sync), sender, e);
+        }
+
+        private void droneControl_ConnectionStateChanged_Sync(object sender, ConnectionStateChangedEventArgs e)
+        {
+            HandleConnectionStateChange(e);
+        }
+
+        private void inputManager_NewInputDevice(object sender, NewInputDeviceEventArgs e)
+        {
+            UpdateUIAsync("New input device: " + e.DeviceName);
+        }
+
+        private void inputManager_InputDeviceLost(object sender, InputDeviceLostEventArgs e)
+        {
+            UpdateUIAsync("Lost input device: " + e.DeviceName);
+        }
+
+        private void inputManager_NewInputState(object sender, NewInputStateEventArgs e)
+        {
+            SendDroneCommands(e.CurrentInputState);
+            Dispatcher.BeginInvoke(new NewInputStateHandler(inputManagerSync_NewInputState), this, e);
+        }
+
+        private void inputManagerSync_NewInputState(object sender, NewInputStateEventArgs e)
+        {
+            UpdateDroneState(e.CurrentInputState);
+        }
+
+        private void videoRecorder_CompressionComplete(object sender, EventArgs e)
+        {
+            Dispatcher.BeginInvoke(new EventHandler(videoRecoderSync_CompressionComplete), this, e);
+        }
+
+        private void videoRecoderSync_CompressionComplete(object sender, EventArgs e)
+        {
+            MessageBox.Show(this, "Successfully compressed video!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+            UpdateInteractiveElements();
+        }
+
+        private void videoRecorder_CompressionError(object sender, ErrorEventArgs e)
+        {
+            Dispatcher.BeginInvoke(new ErrorEventHandler(videoRecoderSync_CompressionError), this, e);
+        }
+
+        private void videoRecoderSync_CompressionError(object sender, ErrorEventArgs e)
+        {
+            MessageBox.Show(this, e.GetException().Message, "Success", MessageBoxButton.OK, MessageBoxImage.Error);
+            UpdateInteractiveElements();
+        }
+
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
@@ -555,6 +672,11 @@ namespace ARDrone.UI
         private void buttonShutdown_Click(object sender, RoutedEventArgs e)
         {
             Disconnect();
+        }
+
+        private void buttonShowConfig_Click(object sender, RoutedEventArgs e)
+        {
+            OpenDroneConfigDialog();
         }
 
         private void buttonCommandChangeCamera_Click(object sender, RoutedEventArgs e)
@@ -613,7 +735,7 @@ namespace ARDrone.UI
 
         private void buttonInputSettings_Click(object sender, RoutedEventArgs e)
         {
-            OpenConfigDialog();
+            OpenInputConfigDialog();
         }
 
         private void timerStatusUpdate_Tick(object sender, EventArgs e)
@@ -629,39 +751,6 @@ namespace ARDrone.UI
         private void timerVideoUpdate_Tick(object sender, EventArgs e)
         {
             SetNewVideoImage();
-        } 
-
-        private void inputManager_NewInputState(object sender, NewInputStateEventArgs e)
-        {
-            SendDroneCommands(e.CurrentInputState);
-            Dispatcher.BeginInvoke(new NewInputStateHandler(inputManagerSync_NewInputState), this, e);
-        }
-
-        private void inputManagerSync_NewInputState(object sender, NewInputStateEventArgs e)
-        {
-            UpdateDroneState(e.CurrentInputState);
-        }
-
-        private void videoRecorder_CompressionComplete(object sender, EventArgs e)
-        {
-            Dispatcher.BeginInvoke(new EventHandler(videoRecoderSync_CompressionComplete), this, e);
-        }
-
-        private void videoRecoderSync_CompressionComplete(object sender, EventArgs e)
-        {
-            MessageBox.Show(this, "Successfully compressed video!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
-            UpdateInteractiveElements();
-        }
-
-        private void videoRecorder_CompressionError(object sender, ErrorEventArgs e)
-        {
-            Dispatcher.BeginInvoke(new ErrorEventHandler(videoRecoderSync_CompressionError), this, e);
-        }
-
-        private void videoRecoderSync_CompressionError(object sender, ErrorEventArgs e)
-        {
-            MessageBox.Show(this, e.GetException().Message, "Success", MessageBoxButton.OK, MessageBoxImage.Error);
-            UpdateInteractiveElements();
         }
     }
 }

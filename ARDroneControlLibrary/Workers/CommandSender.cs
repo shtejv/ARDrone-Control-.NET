@@ -9,7 +9,7 @@ using ARDrone.Control.Commands;
 
 namespace ARDrone.Control.Workers
 {
-    class CommandSender : UdpWorker
+    public class CommandSender : UdpWorker
     {
         private const int initialSequenceNumber = 0;
 
@@ -19,12 +19,13 @@ namespace ARDrone.Control.Workers
         private uint currentSequenceNumber;
         private List<String> commandsToSend;
 
-        public CommandSender()
+        public CommandSender(String remoteIpAddress, int port, int timeoutValue)
+            : base(remoteIpAddress, port, timeoutValue)
         {
             ResetVariables();
         }
 
-        protected void ResetVariables()
+        protected override void ResetVariables()
         {
             commandsToSend = new List<String>();
             currentSequenceNumber = initialSequenceNumber;
@@ -44,6 +45,7 @@ namespace ARDrone.Control.Workers
             if (!IsInitialized())
                 Initialize();
 
+            SendQueuedCommand(new SetControlModeCommand(DroneControlMode.LogControlMode));
             SetDefaultCamera();
 
             do
@@ -112,7 +114,8 @@ namespace ARDrone.Control.Workers
             int maxRetryCount = 10;
             for (int i = 0; i < maxRetryCount; i++)
             {
-                SendUnqueuedCommand(new SetControlModeCommand(DroneControlMode.ControlMode));
+                SendUnqueuedCommand(new SetControlModeCommand(DroneControlMode.LogControlMode));
+                SendUnqueuedCommand(new SetControlModeCommand(DroneControlMode.IdleMode));
                 if (IsCommandModeEnabled())
                 {
                     break;
@@ -131,6 +134,13 @@ namespace ARDrone.Control.Workers
         {
             command.SequenceNumber = GetSequenceNumberForCommand();
             commandsToSend.Add(command.CreateCommand());
+
+            if (command is SetConfigurationCommand)
+            {
+                SetControlModeCommand controlModeCommand = new SetControlModeCommand(DroneControlMode.LogControlMode);
+                controlModeCommand.SequenceNumber = GetSequenceNumberForCommand();
+                commandsToSend.Add(controlModeCommand.CreateCommand());
+            }
         }
 
         private void SendUnqueuedCommand(Command command)
