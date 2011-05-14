@@ -1,4 +1,14 @@
-﻿using System;
+﻿/* ARDrone Control .NET - An application for flying the Parrot AR drone in Windows.
+ * Copyright (C) 2010, 2011 Thomas Endres, Emad Ibrahim
+ * 
+ * This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation; either version 3 of the License, or (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License along with this program; if not, see <http://www.gnu.org/licenses/>.
+ */
+
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Text;
@@ -25,7 +35,7 @@ namespace ARDrone.UI
             String[][] values = GetValuesFromInternalConfiguration(droneConfiguration);
 
             listViewItems.View = CreateGridViewColumns(headers);
-            listViewItems.DataContext = ConvertToRows(values);
+            listViewItems.DataContext = ConvertStringListToRows(values);
         }
 
         private String[][] GetValuesFromInternalConfiguration(InternalDroneConfiguration droneConfiguration)
@@ -78,19 +88,19 @@ namespace ARDrone.UI
                 GridViewColumn gridViewColumn = new GridViewColumn();
                 gridViewColumn.Header = header;
                 gridViewColumn.Width = Double.NaN;
-                gridViewColumn.CellTemplateSelector = new CustomRowDataTemplateSelector();
+                gridViewColumn.CellTemplateSelector = new RowDataTemplateSelector();
                 gridView.Columns.Add(gridViewColumn);
             }
 
             return gridView;
         }
 
-        private object ConvertToRows(String[][] values)
+        private object ConvertStringListToRows(String[][] values)
         {
-            var results = new List<CustomRow>();
+            var results = new List<DataGridRow>();
             foreach (String[] rowValues in values)
             {
-                var row = new CustomRow();
+                var row = new DataGridRow();
                 foreach (String rowValue in rowValues)
                 {
                     row.Add(rowValue);
@@ -101,12 +111,12 @@ namespace ARDrone.UI
             return results;
         }
 
-        internal class CustomRow
+        internal class DataGridRow
         {
             private int index = 0;
             private ArrayList internalList;
 
-            public CustomRow()
+            public DataGridRow()
             {
                 internalList = new ArrayList();
             }
@@ -115,11 +125,6 @@ namespace ARDrone.UI
             {
                 get
                 {
-                    if (index < 0)
-                        index = 0;
-                    if (index >= internalList.Count)
-                        index = 0;
-
                     return internalList[index++];
                 }
             }
@@ -128,11 +133,6 @@ namespace ARDrone.UI
             {
                 get
                 {
-                    if (index < 0)
-                        index = 0;
-                    if (index >= internalList.Count)
-                        index = 0;
-
                     return internalList[index];
                 }
             }
@@ -143,7 +143,7 @@ namespace ARDrone.UI
             }
         }
 
-        public class CustomRowDataTemplateSelector : DataTemplateSelector
+        public class RowDataTemplateSelector : DataTemplateSelector
         {
             public override DataTemplate SelectTemplate(object item, DependencyObject container)
             {
@@ -151,7 +151,7 @@ namespace ARDrone.UI
 
                 if (element != null && item != null)
                 {
-                    var row = item as CustomRow;
+                    var row = item as DataGridRow;
                     if (row != null)
                     {
                         var cell = row.Current;

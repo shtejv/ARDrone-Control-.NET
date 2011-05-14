@@ -1,6 +1,4 @@
-﻿#region Copyright Notice
-
-//Copyright © 2007-2011, PARROT SA, all rights reserved. 
+﻿//Copyright © 2007-2011, PARROT SA, all rights reserved. 
 
 //DISCLAIMER 
 //The APIs is provided by PARROT and contributors "AS IS" and any express or implied warranties, including, but not limited to, the implied warranties of merchantability 
@@ -23,8 +21,6 @@
 //    - Redistributions of source code must retain the above copyright notice, this list of conditions, the disclaimer and the original author of the source code.
 //    - Neither the name of the PixVillage Team, nor the names of its contributors may be used to endorse or promote products derived from this software without 
 //      specific prior written permission.
-
-#endregion
 
 using System;
 using System.Collections;

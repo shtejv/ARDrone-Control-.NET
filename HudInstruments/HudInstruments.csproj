@@ -50,6 +50,7 @@
     <Compile Include="Elements\HeadingElement.cs" />
     <Compile Include="Elements\HudElement.cs" />
     <Compile Include="Elements\LineBasedElement.cs" />
+    <Compile Include="Elements\SpeedElement.cs" />
     <Compile Include="Elements\TargetElement.cs" />
     <Compile Include="HudInterface.cs" />
     <Compile Include="HudConfig.cs" />

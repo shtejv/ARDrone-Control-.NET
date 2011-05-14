@@ -131,6 +131,7 @@ namespace ARDrone.UI
                 showBaseLine: true,
                 showHeading: true,
                 showAltitude: true,
+                showSpeed: true,
                 showBattery: true,
                 cameraFieldOfViewAngle: droneControl.FrontCameraFieldOfViewDegrees);
 
@@ -171,7 +172,7 @@ namespace ARDrone.UI
 
         private void ChangeCamera()
         {
-            Command switchCameraCommand = new SwitchCameraCommand(DroneVideoMode.NextMode);
+            Command switchCameraCommand = new SwitchCameraCommand(DroneCameraMode.NextMode);
 
             if (!droneControl.IsCommandPossible(switchCameraCommand) || videoRecorder.IsVideoCaptureRunning)
                 return;
@@ -282,7 +283,7 @@ namespace ARDrone.UI
             if (droneControl.CanEnterHoverMode || droneControl.CanLeaveHoverMode) { buttonCommandHover.IsEnabled = true; } else { buttonCommandHover.IsEnabled = false; }
             if (droneControl.CanCallEmergency) { buttonCommandEmergency.IsEnabled = true; } else { buttonCommandEmergency.IsEnabled = false; }
             if (droneControl.CanSendFlatTrim) { buttonCommandFlatTrim.IsEnabled = true; } else { buttonCommandFlatTrim.IsEnabled = false; }
-            if (droneControl.IsCommandPossible(new SwitchCameraCommand(DroneVideoMode.NextMode)) && !videoRecorder.IsVideoCaptureRunning && !videoRecorder.IsCompressionRunning) { buttonCommandChangeCamera.IsEnabled = true; } else { buttonCommandChangeCamera.IsEnabled = false; }
+            if (droneControl.IsCommandPossible(new SwitchCameraCommand(DroneCameraMode.NextMode)) && !videoRecorder.IsVideoCaptureRunning && !videoRecorder.IsCompressionRunning) { buttonCommandChangeCamera.IsEnabled = true; } else { buttonCommandChangeCamera.IsEnabled = false; }
 
             if (!droneControl.IsFlying) { buttonCommandTakeoff.Content = "Take off"; } else { buttonCommandTakeoff.Content = "Land"; }
             if (!droneControl.IsHovering) { buttonCommandHover.Content = "Start hover"; } else { buttonCommandHover.Content = "Stop hover"; }
@@ -317,16 +318,7 @@ namespace ARDrone.UI
                 DroneData data = droneControl.NavigationData;
                 int frameRate = GetCurrentFrameRate();
 
-                if (droneControl.CurrentCameraType == DroneVideoMode.FrontCamera)
-                {
-                    labelCamera.Content = "Front camera";
-                    labelStatusCamera.Content = "Front";
-                }
-                else
-                {
-                    labelCamera.Content = "Bottom camera";
-                    labelStatusCamera.Content = "Bottom";
-                }
+                ChangeCameraStatus();
 
                 labelStatusBattery.Content = data.BatteryLevel.ToString() + "%";
                 labelStatusAltitude.Content = data.Altitude.ToString();
@@ -340,6 +332,30 @@ namespace ARDrone.UI
             labelStatusHovering.Content = droneControl.IsHovering.ToString();
         }
 
+        private void ChangeCameraStatus()
+        {
+            if (droneControl.CurrentCameraType == DroneCameraMode.FrontCamera)
+            {
+                labelCamera.Content = "Front camera";
+                labelStatusCamera.Content = "Front";
+            }
+            else if (droneControl.CurrentCameraType == DroneCameraMode.PictureInPictureFront)
+            {
+                labelCamera.Content = "Front camera (PiP)";
+                labelStatusCamera.Content = "Front (PiP)";
+            }
+            else if (droneControl.CurrentCameraType == DroneCameraMode.BottomCamera)
+            {
+                labelCamera.Content = "Bottom camera";
+                labelStatusCamera.Content = "Bottom";
+            }
+            else if (droneControl.CurrentCameraType == DroneCameraMode.PictureInPictureBottom)
+            {
+                labelCamera.Content = "Bottom camera (PiP)";
+                labelStatusCamera.Content = "Bottom (PiP)";
+            }
+        }
+
         private void UpdateHudStatus()
         {
             if (droneControl.IsConnected)
@@ -348,6 +364,7 @@ namespace ARDrone.UI
 
                 hudInterface.SetFlightVariables(data.Phi, data.Theta, data.Psi);
                 hudInterface.SetAltitude(data.Altitude);
+                hudInterface.SetOverallSpeed(data.VX, data.VY, data.VZ);
                 hudInterface.SetBatteryLevel(data.BatteryLevel);
             }
         }
@@ -470,7 +487,7 @@ namespace ARDrone.UI
             if (videoFilePath == null) { return; }
 
             System.Drawing.Size size;
-            if (droneControl.CurrentCameraType == DroneVideoMode.FrontCamera)
+            if (droneControl.CurrentCameraType == DroneCameraMode.FrontCamera)
             {
                 size = droneControl.FrontCameraPictureSize;
             }
@@ -545,6 +562,16 @@ namespace ARDrone.UI
             configOutput.ShowDialog();
         }
 
+        private void HandleConnectionStateChange(ConnectionStateChangedEventArgs args)
+        {
+            UpdateInteractiveElements();
+
+            if (args.Connected)
+                UpdateUISync("Connected to the drone");
+            else
+                UpdateUISync("Disconnected from the drone");
+        }
+
         private void HandleError(DroneErrorEventArgs args)
         {
             String errorText = SerializeException(args.CausingException);
@@ -567,16 +594,6 @@ namespace ARDrone.UI
             }
 
             return errorText;
-        }
-
-        private void HandleConnectionStateChange(ConnectionStateChangedEventArgs args)
-        {
-            UpdateInteractiveElements();
-
-            if (args.Connected)
-                UpdateUISync("Connected to the drone");
-            else
-                UpdateUISync("Disconnected from the drone");
         }
 
         private bool CanCaptureVideo

@@ -1,5 +1,5 @@
 ﻿/* ARDrone Control .NET - An application for flying the Parrot AR drone in Windows.
- * Copyright (C) 2010 Thomas Endres, Stephen Hobley, Julien Vinel
+ * Copyright (C) 2010, 2011 Thomas Endres
  * 
  * This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation; either version 3 of the License, or (at your option) any later version.
  * 
@@ -7,6 +7,7 @@
  * 
  * You should have received a copy of the GNU General Public License along with this program; if not, see <http://www.gnu.org/licenses/>.
  */
+
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -22,6 +23,9 @@ using ARDrone.Input;
 using ARDrone.Input.Utility;
 using Emgu.CV;
 using Emgu.CV.Structure;
+using ARDrone.Control.Data;
+using ARDrone.Control.Commands;
+using ARDrone.Control.Events;
 
 namespace ARDroneUI_Detection_Forms
 {
@@ -30,16 +34,10 @@ namespace ARDroneUI_Detection_Forms
         private delegate void OutputEventHandler(String output);
 
         private InputManager inputManager = null;
-        private ARDroneControl arDroneControl = null;
+        private DroneControl droneControl = null;
 
         private SignDetector signDetector = null;
         private CourseAdvisor courseAdvisor = null;
-
-        int frameCountSinceLastCapture = 0;
-        DateTime lastFrameRateCaptureTime;
-        int averageFrameRate = 0;
-
-        String snapshotFilePath = string.Empty;
 
         private int minValue = 12;
         private int maxValue = 160;
@@ -54,7 +52,7 @@ namespace ARDroneUI_Detection_Forms
             InitializeComponent();
             InitializeInputManager();
 
-            arDroneControl = new ARDroneControl();
+            InitializeDroneControl();
 
             InitDetection();
         }
@@ -70,10 +68,20 @@ namespace ARDroneUI_Detection_Forms
             AddInputListeners();
         }
 
+        private void InitializeDroneControl()
+        {
+            DroneConfig droneConfig = new DroneConfig();
+            droneConfig.DefaultCameraMode = DroneCameraMode.BottomCamera;
+
+            droneControl = new DroneControl(droneConfig);
+            droneControl.Error += droneControl_Error_Async;
+            droneControl.ConnectionStateChanged += droneControl_ConnectionStateChanged_Async;
+        }
+
         public void InitDetection()
         {
             signDetector = new SignDetector();
-            courseAdvisor = new CourseAdvisor(arDroneControl.BottomCameraPictureSize, arDroneControl.BottomCameraFieldOfViewDegrees);
+            courseAdvisor = new CourseAdvisor(droneControl.BottomCameraPictureSize, droneControl.BottomCameraFieldOfViewDegrees);
             course = new CourseList();
 
             InitDetectionSliders();
@@ -106,104 +114,101 @@ namespace ARDroneUI_Detection_Forms
 
         private void Connect()
         {
-            if (!arDroneControl.CanConnect) { return; }
+            if (droneControl.IsConnected) { return; }
 
-            if (arDroneControl.Connect())
-            {
-                arDroneControl.ChangeCamera(); // Bottom camera
-                UpdateUISync("Connected to Drone");
-            }
-            else
-            {
-                UpdateUISync("Error initializing drone");
-            }
-
-            timerVideoUpdate.Start();
-            lastFrameRateCaptureTime = DateTime.Now;
+            droneControl.Connect();
+            UpdateUISync("Connecting to the drone");
         }
 
         private void Disconnect()
         {
-            if (!arDroneControl.CanDisconnect) { return; }
+            if (!droneControl.IsConnected) { return; }
 
             timerVideoUpdate.Stop();
 
-            if (arDroneControl.Shutdown())
-            {
-                UpdateUIAsync("Shutdown Drone");
-            }
-            else
-            {
-                UpdateUIAsync("Error shutting down Drone");
-            }
-        }
-
-        private void ChangeCamera()
-        {
-            if (!arDroneControl.CanChangeCamera) { return; }
-
-            arDroneControl.ChangeCamera();
-            UpdateUIAsync("Changing camera");
+            droneControl.Disconnect();
+            UpdateUISync("Disconnecting from the drone");
         }
 
         private void Takeoff()
         {
-            if (!arDroneControl.CanTakeoff) { return; }
+            Command takeOffCommand = new FlightModeCommand(DroneFlightMode.TakeOff);
 
-            arDroneControl.Takeoff();
+            if (!droneControl.IsCommandPossible(takeOffCommand))
+                return;
+
+            droneControl.SendCommand(takeOffCommand);
             UpdateUIAsync("Taking off");
         }
 
         private void Land()
         {
-            if (!arDroneControl.CanLand) { return; }
+            Command landCommand = new FlightModeCommand(DroneFlightMode.Land);
 
-            arDroneControl.Land();
+            if (!droneControl.IsCommandPossible(landCommand))
+                return;
+
+            droneControl.SendCommand(landCommand);
             UpdateUIAsync("Landing");
         }
 
         private void Emergency()
         {
-            if (!arDroneControl.CanCallEmergency) { return; }
+            Command emergencyCommand = new FlightModeCommand(DroneFlightMode.Emergency);
 
-            arDroneControl.Emergency();
-            UpdateUIAsync("Emergency button hit");
+            if (!droneControl.IsCommandPossible(emergencyCommand))
+                return;
+
+            droneControl.SendCommand(emergencyCommand);
+            UpdateUIAsync("Sending emergency signal");
         }
 
         private void FlatTrim()
         {
-            if (!arDroneControl.CanSendFlatTrim) { return; }
+            Command resetCommand = new FlightModeCommand(DroneFlightMode.Reset);
+            Command flatTrimCommand = new FlatTrimCommand();
 
-            arDroneControl.FlatTrim();
+            if (!droneControl.IsCommandPossible(resetCommand) || !droneControl.IsCommandPossible(flatTrimCommand))
+                return;
+
+            droneControl.SendCommand(resetCommand);
+            droneControl.SendCommand(flatTrimCommand);
             UpdateUIAsync("Sending flat trim");
         }
 
         private void EnterHoverMode()
         {
-            if (!arDroneControl.CanEnterHoverMode) { return; }
+            Command enterHoverModeCommand = new HoverModeCommand(DroneHoverMode.Hover);
 
-            arDroneControl.EnterHoverMode();
+            if (!droneControl.IsCommandPossible(enterHoverModeCommand))
+                return;
+
+            droneControl.SendCommand(enterHoverModeCommand);
             UpdateUIAsync("Entering hover mode");
         }
 
         private void LeaveHoverMode()
         {
-            if (!arDroneControl.CanLeaveHoverMode) { return; }
+            Command leaveHoverModeCommand = new HoverModeCommand(DroneHoverMode.StopHovering);
 
-            arDroneControl.LeaveHoverMode();
+            if (!droneControl.IsCommandPossible(leaveHoverModeCommand))
+                return;
+
+            droneControl.SendCommand(leaveHoverModeCommand);
             UpdateUIAsync("Leaving hover mode");
         }
 
         private void Navigate(float roll, float pitch, float yaw, float gaz)
         {
-            if (!arDroneControl.CanFlyFreely) { return; }
+            FlightMoveCommand flightMoveCommand = new FlightMoveCommand(roll, pitch, yaw, gaz);
 
-            arDroneControl.SetFlightData(roll, pitch, gaz, yaw);
+            if (droneControl.IsCommandPossible(flightMoveCommand))
+                droneControl.SendCommand(flightMoveCommand);
         }
 
         private void TakeScreenshot()
         {
-            ARDroneControl.DroneData data = arDroneControl.GetCurrentDroneData();
+            DroneData data = droneControl.NavigationData;
             pictureBoxMask.Image.Save(@"D:\bla.png");
         }
 
@@ -221,23 +226,23 @@ namespace ARDroneUI_Detection_Forms
 
         private void UpdateInteractiveElements()
         {
-            inputManager.SetFlags(arDroneControl.IsConnected, arDroneControl.IsEmergency, arDroneControl.IsFlying, arDroneControl.IsHovering);
+            inputManager.SetFlags(droneControl.IsConnected, droneControl.IsEmergency, droneControl.IsFlying, droneControl.IsHovering);
 
-            if (arDroneControl.CanConnect) { buttonConnect.Enabled = true; } else { buttonConnect.Enabled = false; }
-            if (arDroneControl.CanDisconnect) { buttonShutdown.Enabled = true; } else { buttonShutdown.Enabled = false; }
+            if (!droneControl.IsConnected) { buttonConnect.Enabled = true; } else { buttonConnect.Enabled = false; }
+            if (droneControl.IsConnected) { buttonShutdown.Enabled = true; } else { buttonShutdown.Enabled = false; }
 
-            if (arDroneControl.CanTakeoff || arDroneControl.CanLand) { buttonCommandTakeoff.Enabled = true; } else { buttonCommandTakeoff.Enabled = false; }
-            if (arDroneControl.CanEnterHoverMode || arDroneControl.CanLeaveHoverMode) { buttonCommandHover.Enabled = true; } else { buttonCommandHover.Enabled = false; }
-            if (arDroneControl.CanCallEmergency) { buttonCommandEmergency.Enabled = true; } else { buttonCommandEmergency.Enabled = false; }
-            if (arDroneControl.CanSendFlatTrim) { buttonCommandFlatTrim.Enabled = true; } else { buttonCommandFlatTrim.Enabled = false; }
+            if (droneControl.CanTakeoff || droneControl.CanLand) { buttonCommandTakeoff.Enabled = true; } else { buttonCommandTakeoff.Enabled = false; }
+            if (droneControl.CanEnterHoverMode || droneControl.CanLeaveHoverMode) { buttonCommandHover.Enabled = true; } else { buttonCommandHover.Enabled = false; }
+            if (droneControl.CanCallEmergency) { buttonCommandEmergency.Enabled = true; } else { buttonCommandEmergency.Enabled = false; }
+            if (droneControl.CanSendFlatTrim) { buttonCommandFlatTrim.Enabled = true; } else { buttonCommandFlatTrim.Enabled = false; }
 
-            if (!arDroneControl.IsFlying) { buttonCommandTakeoff.Text = "Take off"; } else { buttonCommandTakeoff.Text = "Land"; }
-            if (!arDroneControl.IsHovering) { buttonCommandHover.Text = "Start hover"; } else { buttonCommandHover.Text = "Stop hover"; }
+            if (!droneControl.IsFlying) { buttonCommandTakeoff.Text = "Take off"; } else { buttonCommandTakeoff.Text = "Land"; }
+            if (!droneControl.IsHovering) { buttonCommandHover.Text = "Start hover"; } else { buttonCommandHover.Text = "Stop hover"; }
         }
 
         private void UpdateStatus()
         {
-            if (!arDroneControl.IsConnected)
+            if (!droneControl.IsConnected)
             {
                 labelCamera.Text = "No picture";
 
@@ -246,27 +251,17 @@ namespace ARDroneUI_Detection_Forms
             }
             else
             {
-                ARDroneControl.DroneData data = new ARDroneControl.DroneData();
-                data = arDroneControl.GetCurrentDroneData();
-                int frameRate = GetCurrentFrameRate();
+                DroneData data = droneControl.NavigationData;
 
-                if (arDroneControl.CurrentCameraType == ARDroneControl.CameraType.FrontCamera)
-                {
-                    labelCamera.Text = "Front camera";
-                }
-                else
-                {
-                    labelCamera.Text = "Bottom camera";
-                }
-
+                labelCamera.Text = "Bottom camera";
                 labelStatusPitch.Text = String.Format("{0:+0.000;-0.000;+0.000}", data.Theta);
                 labelStatusRoll.Text = String.Format("{0:+0.000;-0.000;+0.000}", data.Phi);
                 labelStatusBattery.Text = data.BatteryLevel + "%";
             }
 
-            labelStatusConnected.Text = arDroneControl.IsConnected.ToString();
-            labelStatusFlying.Text = arDroneControl.IsFlying.ToString();
-            labelStatusHovering.Text = arDroneControl.IsHovering.ToString();
+            labelStatusConnected.Text = droneControl.IsConnected.ToString();
+            labelStatusFlying.Text = droneControl.IsFlying.ToString();
+            labelStatusHovering.Text = droneControl.IsHovering.ToString();
         }
 
         private void UpdateInputState(InputState inputState)
@@ -274,31 +269,16 @@ namespace ARDroneUI_Detection_Forms
             labelStatusSpecialAction.Text = inputState.SpecialAction.ToString();
         }
 
-        private int GetCurrentFrameRate()
-        {
-            int timePassed = (int)(DateTime.Now - lastFrameRateCaptureTime).TotalMilliseconds;
-            int frameRate = frameCountSinceLastCapture * 1000 / timePassed;
-            averageFrameRate = (averageFrameRate + frameRate) / 2;
-
-            lastFrameRateCaptureTime = DateTime.Now;
-            frameCountSinceLastCapture = 0;
-
-            return averageFrameRate;
-        }
-
         private void SendDroneCommands(InputState inputState)
         {
-            if (inputState.CameraSwap)
-                ChangeCamera();
-
-            if (inputState.TakeOff && arDroneControl.CanTakeoff)
+            if (inputState.TakeOff && droneControl.CanTakeoff)
                 Takeoff();
-            else if (inputState.Land && arDroneControl.CanLand)
+            else if (inputState.Land && droneControl.CanLand)
                 Land();
 
-            if (inputState.Hover && arDroneControl.CanEnterHoverMode)
+            if (inputState.Hover && droneControl.CanEnterHoverMode)
                 EnterHoverMode();
-            else if (inputState.Hover && arDroneControl.CanLeaveHoverMode)
+            else if (inputState.Hover && droneControl.CanLeaveHoverMode)
                 LeaveHoverMode();
 
             if (inputState.Emergency)
@@ -357,9 +337,9 @@ namespace ARDroneUI_Detection_Forms
 
         private void UpdateVideoImage()
         {
-            if (arDroneControl.IsConnected)
+            if (droneControl.IsConnected)
             {
-                System.Drawing.Bitmap newImage = (System.Drawing.Bitmap)arDroneControl.GetDisplayedImage();
+                Bitmap newImage = (System.Drawing.Bitmap)droneControl.BitmapImage;
 
                 PerformStopSignDetection(newImage);
                 UpdateVisualImage(newImage);
@@ -403,7 +383,7 @@ namespace ARDroneUI_Detection_Forms
 
         private CourseAdvisor.Direction DetermineAdvisedCourse(List<SignDetector.SignResult> results)
         {
-            ARDroneControl.DroneData droneData = arDroneControl.GetCurrentDroneData();
+            DroneData droneData = droneControl.NavigationData;
             return courseAdvisor.GetNavigationAdvice(results, droneData.Phi, droneData.Theta);
         }
 
@@ -416,21 +396,85 @@ namespace ARDroneUI_Detection_Forms
         {
             if (image != null)
             {
-                frameCountSinceLastCapture++;
                 pictureBoxVideo.Image = image;
             }
         }
 
-
-        private bool CanCaptureVideo
+        private void HandleConnectionStateChange(ConnectionStateChangedEventArgs args)
         {
-            get
+            UpdateInteractiveElements();
+
+            if (args.Connected)
             {
-                return arDroneControl.CanChangeCamera;
+                timerVideoUpdate.Start();
+                UpdateUISync("Connected to the drone");
+            }
+            else
+            {
+                UpdateUISync("Disconnected from the drone");
             }
         }
 
+
+
+        private void HandleError(DroneErrorEventArgs args)
+        {
+            String errorText = SerializeException(args.CausingException);
+            MessageBox.Show(errorText);
+        }
+
+        private String SerializeException(Exception e)
+        {
+            String errorMessage = e.Message;
+            String exceptionTypeText = e.GetType().ToString();
+            String stackTrace = e.StackTrace == null ? "No stack trace given" : e.StackTrace.ToString();
+
+            String errorText = "An exception '" + exceptionTypeText + "' occured:\n" + errorMessage;
+            errorText += "\n\nStack trace:\n" + stackTrace;
+
+            if (e.InnerException != null)
+            {
+                errorText += "\n\n";
+                errorText += SerializeException(e.InnerException);
+            }
+
+            return errorText;
+        }
+
         // Event handlers
+
+        private void droneControl_Error_Async(object sender, DroneErrorEventArgs e)
+        {
+            this.BeginInvoke(new DroneErrorEventHandler(droneControl_Error_Sync), sender, e);
+        }
+
+        private void droneControl_Error_Sync(object sender, DroneErrorEventArgs e)
+        {
+            HandleError(e);
+        }
+
+        private void droneControl_ConnectionStateChanged_Async(object sender, ConnectionStateChangedEventArgs e)
+        {
+            this.BeginInvoke(new DroneConnectionStateChangedEventHandler(droneControl_ConnectionStateChanged_Sync), sender, e);
+        }
+
+        private void droneControl_ConnectionStateChanged_Sync(object sender, ConnectionStateChangedEventArgs e)
+        {
+            HandleConnectionStateChange(e);
+        }
+
+        private void inputManager_NewInputState(object sender, NewInputStateEventArgs e)
+        {
+            SendDroneCommands(e.CurrentInputState);
+            UpdateDroneState(e.CurrentInputState);
+
+            this.BeginInvoke(new NewInputStateHandler(inputManagerSync_NewInputState), this, e);
+        }
+
+        private void inputManagerSync_NewInputState(object sender, NewInputStateEventArgs e)
+        {
+            UpdateInputState(e.CurrentInputState);
+        }
 
         private void MainForm_Load(object sender, EventArgs e)
         {
@@ -460,7 +504,7 @@ namespace ARDroneUI_Detection_Forms
 
         private void buttonCommandTakeoff_Click(object sender, EventArgs e)
         {
-            if (!arDroneControl.IsFlying)
+            if (!droneControl.IsFlying)
             {
                 Takeoff();
             }
@@ -472,7 +516,7 @@ namespace ARDroneUI_Detection_Forms
 
         private void buttonCommandHover_Click(object sender, EventArgs e)
         {
-            if (!arDroneControl.IsHovering)
+            if (!droneControl.IsHovering)
             {
                 EnterHoverMode();
             }
@@ -500,19 +544,6 @@ namespace ARDroneUI_Detection_Forms
         private void timerVideoUpdate_Tick(object sender, EventArgs e)
         {
             UpdateVideoImage();
-        }
-
-        private void inputManager_NewInputState(object sender, NewInputStateEventArgs e)
-        {
-            SendDroneCommands(e.CurrentInputState);
-            UpdateDroneState(e.CurrentInputState);
-
-            this.BeginInvoke(new NewInputStateHandler(inputManagerSync_NewInputState), this, e);
-        }
-
-        private void inputManagerSync_NewInputState(object sender, NewInputStateEventArgs e)
-        {
-            UpdateInputState(e.CurrentInputState);
         }
     }
 }

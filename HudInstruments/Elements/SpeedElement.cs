@@ -15,24 +15,24 @@ using System.Text;
 
 namespace ARDrone.Hud.Elements
 {
-    public class AltitudeElement : LineBasedElement
+    public class SpeedElement : LineBasedElement
     {
-        public AltitudeElement(HudConstants constants)
+        public SpeedElement(HudConstants constants)
             : base(constants)
         { }
 
         protected override void GetBaseVariables(Bitmap bitmap, HudState currentState)
         {
-            currentValue = currentState.Altitude;
+            currentValue = currentState.OverrallSpeed;
         }
 
         protected override void DrawArrow(Graphics graphics)
         {
-            int startPositionX = currentWidth - GetTextSize(graphics).Width - lineLength - 8;
+            int startPositionX = GetTextSize(graphics).Width + lineLength + 8;
 
             Point point1 = new Point(startPositionX, currentHeight / 2);
-            Point point2 = new Point(point1.X - lineLength, point1.Y - 3);
-            Point point3 = new Point(point1.X - lineLength, point1.Y + 3);
+            Point point2 = new Point(point1.X + lineLength, point1.Y - 3);
+            Point point3 = new Point(point1.X + lineLength, point1.Y + 3);
 
             graphics.DrawLine(hudPen, point1, point2);
             graphics.DrawLine(hudPen, point1, point3);
@@ -40,11 +40,11 @@ namespace ARDrone.Hud.Elements
 
         protected override void DrawIndicatorLine(Graphics graphics, double relativePosition)
         {
-            int startPositionX = currentWidth - GetTextSize(graphics).Width - 4;
+            int startPositionX = GetTextSize(graphics).Width + 4;
             int markerPositionY = GetMarkerPosition(relativePosition);
 
             Point point1 = new Point(startPositionX, markerPositionY);
-            Point point2 = new Point(startPositionX - lineLength, markerPositionY);
+            Point point2 = new Point(startPositionX + lineLength, markerPositionY);
             graphics.DrawLine(hudPen, point1, point2);
         }
 
@@ -55,7 +55,7 @@ namespace ARDrone.Hud.Elements
             String directionText = String.Format("{0:0.00}", value / 1000);
 
             SizeF size = graphics.MeasureString(directionText, hudFont);
-            Point fontPoint = new Point(currentWidth - (int)size.Width - 2, markerPositionY - (int)size.Height / 2);
+            Point fontPoint = new Point(2, markerPositionY - (int)size.Height / 2);
 
             graphics.DrawString(directionText, hudFont, hudBrush, fontPoint);
         }
