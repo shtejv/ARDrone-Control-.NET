@@ -145,20 +145,5 @@ namespace ARDrone.Input
                 else { return "KB"; }
             }
         }
-
-        // TODO remove
-        public Dictionary<String, String> AxisMappingNames
-        {
-            get
-            {
-                Dictionary<String, String> axisMappingNames = new Dictionary<String, String>();
-
-                axisMappingNames.Add(Axis.Axis_X.ToString(), "X axis");
-                axisMappingNames.Add(Axis.Axis_Y.ToString(), "Y axis");
-                axisMappingNames.Add(Axis.Axis_Z.ToString(), "Z axis");
-
-                return axisMappingNames;
-            }
-        }
     }
 }

@@ -18,31 +18,31 @@ namespace ARDrone.Input.InputConfigs
 {
     public class AxisDitheredInputConfig : InputConfig
     {
-        Dictionary<String, String> axisMappingNames = new Dictionary<String, String>();
+        List<String> axisNames = new List<String>();
         List<String> controlsNotRecongnized = new List<String>();
 
-        public AxisDitheredInputConfig(Dictionary<String, String> axisMappingNames)
+        public AxisDitheredInputConfig(List<String> axisMappingNames)
             : base()
         {
             PrepareAxisControlValues(axisMappingNames);
             SetStates();
         }
 
-        private void PrepareAxisControlValues(Dictionary<String, String> axisMappingNames)
+        private void PrepareAxisControlValues(List<String> axisNames)
         {
-            this.axisMappingNames = new Dictionary<String, String>(axisMappingNames);
+            this.axisNames = new List<String>(axisNames);
 
-            foreach (KeyValuePair<String, String> entry in axisMappingNames)
-                controlsNotRecongnized.Add(entry.Key);
+            foreach (String entry in axisNames)
+                controlsNotRecongnized.Add(entry);
         }
 
         private void SetStates()
         {
             states.Add("leftHeader", new InputConfigHeader("Axes", InputConfigState.Position.LeftColumn, 0));
-            states.Add(ButtonBasedInputControl.RollAxisField, new DeviceAndSelectionConfigState("Roll", InputConfigState.Position.LeftColumn, 1, InputControl.ControlType.ContinuousValue, axisMappingNames, controlsNotRecongnized));
-            states.Add(ButtonBasedInputControl.PitchAxisField, new DeviceAndSelectionConfigState("Pitch", InputConfigState.Position.LeftColumn, 2, InputControl.ControlType.ContinuousValue, axisMappingNames, controlsNotRecongnized));
-            states.Add(ButtonBasedInputControl.YawAxisField, new DeviceAndSelectionConfigState("Yaw", InputConfigState.Position.LeftColumn, 3, InputControl.ControlType.ContinuousValue, axisMappingNames, controlsNotRecongnized));
-            states.Add(ButtonBasedInputControl.GazAxisField, new DeviceAndSelectionConfigState("Gaz", InputConfigState.Position.LeftColumn, 4, InputControl.ControlType.ContinuousValue, axisMappingNames, controlsNotRecongnized));
+            states.Add(ButtonBasedInputControl.RollAxisField, new DeviceAndSelectionConfigState("Roll", InputConfigState.Position.LeftColumn, 1, InputControl.ControlType.ContinuousValue, axisNames, controlsNotRecongnized));
+            states.Add(ButtonBasedInputControl.PitchAxisField, new DeviceAndSelectionConfigState("Pitch", InputConfigState.Position.LeftColumn, 2, InputControl.ControlType.ContinuousValue, axisNames, controlsNotRecongnized));
+            states.Add(ButtonBasedInputControl.YawAxisField, new DeviceAndSelectionConfigState("Yaw", InputConfigState.Position.LeftColumn, 3, InputControl.ControlType.ContinuousValue, axisNames, controlsNotRecongnized));
+            states.Add(ButtonBasedInputControl.GazAxisField, new DeviceAndSelectionConfigState("Gaz", InputConfigState.Position.LeftColumn, 4, InputControl.ControlType.ContinuousValue, axisNames, controlsNotRecongnized));
 
             states.Add("rightHeader", new InputConfigHeader("Buttons", InputConfigState.Position.RightColumn, 0));
             states.Add(ButtonBasedInputControl.CameraSwapButtonField, new DeviceInputConfigState("Change Camera", InputConfigState.Position.RightColumn, 1, InputControl.ControlType.BooleanValue));
@@ -52,16 +52,6 @@ namespace ARDrone.Input.InputConfigs
             states.Add(ButtonBasedInputControl.EmergencyButtonField, new DeviceInputConfigState("Emergency", InputConfigState.Position.RightColumn, 5, InputControl.ControlType.BooleanValue));
             states.Add(ButtonBasedInputControl.FlatTrimButtonField, new DeviceInputConfigState("Flat Trim", InputConfigState.Position.RightColumn, 6, InputControl.ControlType.BooleanValue));
             states.Add(ButtonBasedInputControl.SpecialActionButtonField, new DeviceInputConfigState("Special Action", InputConfigState.Position.RightColumn, 7, InputControl.ControlType.BooleanValue));
-        }
-
-        public String GetMappingNameValue(String mappingName)
-        {
-            foreach (KeyValuePair<String, String> entry in axisMappingNames)
-            {
-                if (entry.Value == mappingName)
-                    return entry.Key;
-            }
-            return null;
         }
     }
 }

@@ -110,9 +110,13 @@ namespace ARDrone.Input
             bool land = IsFlightButtonPressed(ButtonMapping.LandButton, buttonsPressed);
             bool hover = IsFlightButtonPressed(ButtonMapping.HoverButton, buttonsPressed);
             bool emergency = IsFlightButtonPressed(ButtonMapping.EmergencyButton, buttonsPressed);
+
             bool flatTrim = IsFlightButtonPressed(ButtonMapping.FlatTrimButton, buttonsPressed);
 
             bool specialAction = IsPermanentButtonPressed(ButtonMapping.SpecialActionButton, buttonsPressed);
+
+            // TODO test
+            SetButtonsPressedBefore(buttonsPressed);
 
             if (roll != lastInputState.Roll || pitch != lastInputState.Pitch || yaw != lastInputState.Yaw || gaz != lastInputState.Gaz || cameraSwap != lastInputState.CameraSwap || takeOff != lastInputState.TakeOff ||
                 land != lastInputState.Land || hover != lastInputState.Hover || emergency != lastInputState.Emergency || flatTrim != lastInputState.FlatTrim ||

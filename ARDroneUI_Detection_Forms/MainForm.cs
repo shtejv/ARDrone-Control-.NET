@@ -13,19 +13,20 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
-using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using System.Threading;
+
+using Emgu.CV;
+using Emgu.CV.Structure;
+
 using ARDrone.Control;
+using ARDrone.Control.Commands;
+using ARDrone.Control.Data;
+using ARDrone.Control.Events;
 using ARDrone.Detection;
 using ARDrone.Input;
 using ARDrone.Input.Utility;
-using Emgu.CV;
-using Emgu.CV.Structure;
-using ARDrone.Control.Data;
-using ARDrone.Control.Commands;
-using ARDrone.Control.Events;
 
 namespace ARDroneUI_Detection_Forms
 {
@@ -339,20 +340,35 @@ namespace ARDroneUI_Detection_Forms
         {
             if (droneControl.IsConnected)
             {
-                Bitmap newImage = (System.Drawing.Bitmap)droneControl.BitmapImage;
+                Bitmap newImage = CopyBitmap((Bitmap)droneControl.BitmapImage);
 
                 PerformStopSignDetection(newImage);
                 UpdateVisualImage(newImage);
             }
         }
 
-        private void PerformStopSignDetection(System.Drawing.Bitmap image)
+        private Bitmap CopyBitmap(Bitmap image)
+        {
+            int width = image.Width;
+            int height = image.Height;
+            Rectangle rectangleToCopy = new Rectangle(0, 0, width, height);
+
+            Bitmap newImage = new Bitmap(width, height);
+            using (Graphics g = Graphics.FromImage(newImage))
+            {
+                g.DrawImage(image, rectangleToCopy, rectangleToCopy, GraphicsUnit.Pixel);
+            }
+
+            return newImage;
+        }
+
+        private void PerformStopSignDetection(Bitmap image)
         {
             List<SignDetector.SignResult> results = DetermineAndMarkStopSignsInVideoSignal(image);
             DetermineAndMarkAdvisedCourse(results);
         }
 
-        private List<SignDetector.SignResult> DetermineAndMarkStopSignsInVideoSignal(System.Drawing.Bitmap image)
+        private List<SignDetector.SignResult> DetermineAndMarkStopSignsInVideoSignal(Bitmap image)
         {
             List<SignDetector.SignResult> results = new List<SignDetector.SignResult>();
             if (image != null)
@@ -364,7 +380,7 @@ namespace ARDroneUI_Detection_Forms
 
                 for (int i = 0; i < results.Count; i++)
                 {
-                    image = (System.Drawing.Bitmap)DrawingUtilities.DrawRectangleToImage(image, results[i].Rectangle, System.Drawing.Color.White);
+                    image = (Bitmap)DrawingUtilities.DrawRectangleToImage(image, results[i].Rectangle, Color.White);
                 }
 
                 pictureBoxMask.Image = maskedImage.Bitmap;
@@ -392,7 +408,7 @@ namespace ARDroneUI_Detection_Forms
             directionControl.SetArrowData(direction.DeltaX, direction.DeltaY);
         }
 
-        private void UpdateVisualImage(System.Drawing.Bitmap image)
+        private void UpdateVisualImage(Bitmap image)
         {
             if (image != null)
             {

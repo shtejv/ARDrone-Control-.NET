@@ -137,14 +137,14 @@ namespace ARDrone.Input.InputConfigs
     public class DeviceAndSelectionConfigState : ControlInputConfigState
     {
         private InputControl.ControlType inputValueType;
-        private Dictionary<String, String> selectionToControlMap;
+        private List<String> axisNames;
         private List<String> controlsNotRecognized;
 
-        public DeviceAndSelectionConfigState(String name, Position layoutPosition, int rowNumber, InputControl.ControlType inputValueType, Dictionary<String, String> selectionToControlMap, List<String> controlsNotRecognized)
+        public DeviceAndSelectionConfigState(String name, Position layoutPosition, int rowNumber, InputControl.ControlType inputValueType, List<String> axisNames, List<String> controlsNotRecognized)
             : base(name, layoutPosition, rowNumber)
         {
             this.inputValueType = inputValueType;
-            this.selectionToControlMap = new Dictionary<String, String>(selectionToControlMap);
+            this.axisNames = new List<String>(axisNames);
             this.controlsNotRecognized = new List<String>(controlsNotRecognized);
         }
 
@@ -169,11 +169,11 @@ namespace ARDrone.Input.InputConfigs
             }
         }
 
-        public Dictionary<String, String> SelectionValues
+        public List<String> AxisNames
         {
             get
             {
-                return new Dictionary<String, String>(selectionToControlMap);
+                return new List<String>(axisNames);
             }
         }
 

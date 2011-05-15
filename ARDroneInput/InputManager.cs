@@ -114,8 +114,8 @@ namespace ARDrone.Input
         {
             List<GenericInput> newDevices = new List<GenericInput>();
 
-            newDevices.AddRange(KeyboardInput.GetNewInputDevices(windowHandle, inputDevices));
-            newDevices.AddRange(JoystickInput.GetNewInputDevices(windowHandle, inputDevices));
+            //newDevices.AddRange(KeyboardInput.GetNewInputDevices(windowHandle, inputDevices));
+            //newDevices.AddRange(JoystickInput.GetNewInputDevices(windowHandle, inputDevices));
             newDevices.AddRange(WiiMoteInput.GetNewInputDevices(windowHandle, inputDevices));
             //newDevices.AddRange(SpeechInput.GetNewInputDevices(windowHandle, inputDevices));
 
@@ -160,6 +160,11 @@ namespace ARDrone.Input
         private void InitInputDevice(GenericInput input)
         {
             input.InitDevice();
+            if (currentInputMode == InputMode.ControlInput)
+                input.StartControlInput();
+            else if (currentInputMode == InputMode.RawInput)
+                input.StartRawInput();
+
             InvokeNewInputDeviceEvent(input);
         }
 

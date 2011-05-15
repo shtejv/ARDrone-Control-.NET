@@ -26,6 +26,7 @@ using ARDrone.Input.Utility;
 using ARDrone.Input.InputConfigs;
 using ARDrone.Input.InputControls;
 using ARDrone.Input.InputMappings;
+using System.Threading;
 
 namespace ARDrone.UI
 {
@@ -36,7 +37,7 @@ namespace ARDrone.UI
         private ARDrone.Input.InputManager inputManager = null;
 
         List<ConfigurableInput> devices = null;
-        
+
         private ConfigurableInput selectedDevice = null;
         private bool isSelectedDevicePresent = false;
 
@@ -45,6 +46,11 @@ namespace ARDrone.UI
         private String tempContinuousInput = "";
 
         private String lastInputValue = null;
+
+        private bool dropDownOpened = false;
+        private bool dropDownAllowed = true;
+
+        private DispatcherTimer timerTest;
 
         public ConfigInput()
         {
@@ -153,7 +159,7 @@ namespace ARDrone.UI
             else
             {
                 RemoveDeviceFromDeviceList(deviceId);
-            }            
+            }
         }
 
         private void RemoveDeviceFromDeviceList(String deviceId)
@@ -225,7 +231,7 @@ namespace ARDrone.UI
                 RemoveDeviceFromDeviceList(selectedDevice.DeviceInstanceId);
             }
         }
-        
+
         private void UpdateCurrentDeviceDescription()
         {
             labelDevicePresentInfo.Content = isSelectedDevicePresent ? "" : "The device is not connected!";
@@ -298,12 +304,9 @@ namespace ARDrone.UI
             Grid.SetRow(textBox, state.RowNumber);
 
             gridCommands.Children.Add(textBox);
-
-            textBox.GotFocus += new RoutedEventHandler(inputBoxControl_GotFocus);
-            textBox.LostFocus += new RoutedEventHandler(inputBoxControl_LostFocus);
-            textBox.KeyUp += new KeyEventHandler(inputBoxControl_KeyUp);
+            AddEventHandlersToControl(textBox);
         }
-        
+
         private void CreateInputValueComboBoxConfigState(String name, ControlInputConfigState state)
         {
             DeviceAndSelectionConfigState selectionState = (DeviceAndSelectionConfigState)state;
@@ -314,21 +317,56 @@ namespace ARDrone.UI
             Grid.SetColumn(comboBox, state.LayoutPosition == InputConfigState.Position.LeftColumn ? 1 : 3);
             Grid.SetRow(comboBox, state.RowNumber);
 
-            foreach (KeyValuePair<String, String> entry in selectionState.SelectionValues)
+            foreach (String entry in selectionState.AxisNames)
             {
                 ComboBoxItem item = new ComboBoxItem();
-                item.Name = entry.Key;
-                item.Content = entry.Value;
+                item.Name = entry;
+                item.Content = entry;
                 comboBox.Items.Add(item);
             }
 
             gridCommands.Children.Add(comboBox);
+            AddEventHandlersToControl(comboBox);
+        }
 
-            comboBox.SelectionChanged += new SelectionChangedEventHandler(comboBoxControl_SelectionChanged);
-            comboBox.DropDownOpened += new EventHandler(inputBoxControl_DropDownOpened);
-            comboBox.DropDownClosed += new EventHandler(inputBoxControl_DropDownClosed);
-            comboBox.GotFocus += new RoutedEventHandler(inputBoxControl_GotFocus);
-            comboBox.LostFocus += new RoutedEventHandler(inputBoxControl_LostFocus);
+        private void AddEventHandlersToControl(System.Windows.Controls.Control control)
+        {
+            if (control is TextBox)
+            {
+                TextBox textBox = (TextBox)control;
+                textBox.GotFocus += new RoutedEventHandler(inputBoxControl_GotFocus);
+                textBox.LostFocus += new RoutedEventHandler(inputBoxControl_LostFocus);
+                textBox.KeyUp += new KeyEventHandler(inputBoxControl_KeyUp);
+            }
+            else if (control is ComboBox)
+            {
+                ComboBox comboBox = (ComboBox)control;
+                comboBox.SelectionChanged += new SelectionChangedEventHandler(comboBoxControl_SelectionChanged);
+                comboBox.DropDownOpened += new EventHandler(inputBoxControl_DropDownOpened);
+                comboBox.DropDownClosed += new EventHandler(inputBoxControl_DropDownClosed);
+                comboBox.GotFocus += new RoutedEventHandler(inputBoxControl_GotFocus);
+                comboBox.LostFocus += new RoutedEventHandler(inputBoxControl_LostFocus);
+            }
+        }
+
+        private void RemoveEventHandlersFromControl(System.Windows.Controls.Control control)
+        {
+            if (control is TextBox)
+            {
+                TextBox textBox = (TextBox)control;
+                textBox.GotFocus -= new RoutedEventHandler(inputBoxControl_GotFocus);
+                textBox.LostFocus -= new RoutedEventHandler(inputBoxControl_LostFocus);
+                textBox.KeyUp -= new KeyEventHandler(inputBoxControl_KeyUp);
+            }
+            else if (control is ComboBox)
+            {
+                ComboBox comboBox = (ComboBox)control;
+                comboBox.SelectionChanged -= new SelectionChangedEventHandler(comboBoxControl_SelectionChanged);
+                comboBox.DropDownOpened -= new EventHandler(inputBoxControl_DropDownOpened);
+                comboBox.DropDownClosed -= new EventHandler(inputBoxControl_DropDownClosed);
+                comboBox.GotFocus -= new RoutedEventHandler(inputBoxControl_GotFocus);
+                comboBox.LostFocus -= new RoutedEventHandler(inputBoxControl_LostFocus);
+            }
         }
 
         private void CreateLabelForValueConfigState(String name, ControlInputConfigState state)
@@ -363,7 +401,13 @@ namespace ARDrone.UI
         {
             Dictionary<String, String> mappings = mapping.Controls.Mappings;
             foreach (KeyValuePair<String, String> entry in mappings)
-                SetControlText(GetControlByControlName(entry.Key), entry.Value);
+            {
+                System.Windows.Controls.Control control = GetControlByControlName(entry.Key);
+
+                RemoveEventHandlersFromControl(control);
+                SetControlText(control, entry.Value);
+                AddEventHandlersToControl(control);
+            }
 
             CheckForDoubleInput();
         }
@@ -379,51 +423,38 @@ namespace ARDrone.UI
 
                 String inputField = selectedControl;
 
-                // TODO not text for combo box
                 String inputValue = GetControlText(GetControlByControlName(selectedControl));
+                UpdateMapping(mapping, inputField, inputValue);
 
-                if (config is AxisDitheredInputConfig)
-                {
-                    inputValue = ((AxisDitheredInputConfig)config).GetMappingNameValue(inputValue);
-                    UpdateMapping(mapping, inputField, inputValue, false);
-                }
-                else
-                {
-                    UpdateMapping(mapping, inputField, inputValue, true);
-                }
-   
                 selectedControlModified = false;
             }
         }
 
-        private void UpdateMapping(InputMapping mapping, String inputField, String inputValue, bool setControlText)
+        private void UpdateMapping(InputMapping mapping, String inputField, String inputValue)
         {
             String currentValue = GetInputMappingValue(mapping, inputField);
 
             if (!selectedControlModified)
             {
-                Console.WriteLine("--> No changes");
+                Console.WriteLine("--> " + inputField + ": No changes");
 
-                if (setControlText)
-                    SetControlText(GetControlByControlName(selectedControl), currentValue);
+                SetControlText(GetControlByControlName(selectedControl), currentValue);
             }
             else if (currentValue != inputValue)
             {
-                Console.WriteLine("--> Setting value to '" + inputValue + "'");
+                Console.WriteLine("--> " + inputField + ": Setting value to '" + inputValue + "'");
 
                 mapping.SetControlProperty(inputField, inputValue);
-                
-                if (setControlText)
-                    SetControlText(GetControlByControlName(selectedControl), inputValue);
+
+                SetControlText(GetControlByControlName(selectedControl), inputValue);
             }
             else if (SelectedInputConfigState.DisabledOnInput)
             {
-                Console.WriteLine("--> Setting value to ''");
+                Console.WriteLine("--> " + inputField + ": Setting value to ''");
 
                 mapping.SetControlProperty(inputField, "");
 
-                if (setControlText)
-                    SetControlText(GetControlByControlName(selectedControl), "");
+                SetControlText(GetControlByControlName(selectedControl), "");
             }
         }
 
@@ -444,10 +475,10 @@ namespace ARDrone.UI
             for (int i = 0; i < gridCommands.Children.Count; i++)
             {
                 UIElement element = gridCommands.Children[i];
-                
+
                 if (!(element is Label))
                 {
-                    String controlText = GetControlText((System.Windows.Controls.Control) element);
+                    String controlText = GetControlText((System.Windows.Controls.Control)element);
 
                     if (IsBooleanInputControl((System.Windows.Controls.Control)element))
                         inputValues.Add(controlText);
@@ -612,15 +643,12 @@ namespace ARDrone.UI
 
         private void FocusInputElement(System.Windows.Controls.Control control)
         {
-            if (control != null)
+            if (control != null && !dropDownOpened)
             {
                 selectedControl = GetElementNameFromControlName(control);
 
-                if (!(control is ComboBox) || !((ComboBox)control).IsDropDownOpen)
-                {
-                    inputManager.SwitchInputMode(Input.InputManager.InputMode.RawInput, selectedDevice.DeviceInstanceId);
-                    StyleFocussedControl(control);
-                }
+                inputManager.SwitchInputMode(Input.InputManager.InputMode.RawInput, selectedDevice.DeviceInstanceId);
+                StyleFocussedControl(control);
             }
         }
 
@@ -635,6 +663,8 @@ namespace ARDrone.UI
 
         private void StyleFocussedControl(System.Windows.Controls.Control control)
         {
+            RemoveEventHandlersFromControl(control);
+
             if (!SelectedInputConfigState.DisabledOnInput)
             {
                 SetControlReadOnly(control, false);
@@ -645,6 +675,8 @@ namespace ARDrone.UI
                 SetControlText(control, "-- Assigning a value --");
                 control.Foreground = new SolidColorBrush(Colors.LightGray);
             }
+
+            AddEventHandlersToControl(control);
         }
 
         private void ChangeInputElementSelection(ComboBox comboBox)
@@ -683,14 +715,44 @@ namespace ARDrone.UI
             SetControlReadOnly(control, true);
         }
 
+        public delegate void ShitDelegate(ComboBox control);
+
+        private void InvokeInputBoxGotFocus(System.Windows.Controls.Control control)
+        {
+            if (dropDownOpened)
+                return;
+
+            dropDownAllowed = false;
+            FocusInputElement(control);
+        }
+
+        private void InvokeInputBoxLostFocus(System.Windows.Controls.Control control)
+        {
+            if (dropDownOpened)
+                return;
+
+            UnfocusInputElement(control);
+            dropDownAllowed = true;
+        }
+
         private void InvokeComboBoxDropDownOpened(ComboBox comboBox)
         {
+            dropDownOpened = true;
             comboBox.Foreground = new SolidColorBrush(Colors.Black);
         }
 
         private void InvokeComboBoxDropDownClosed()
         {
+            dropDownOpened = false;
             buttonSubmit.Focus();
+        }
+
+        private void InvokeComboBoxSelectionChanged(ComboBox comboBox)
+        {
+            if (!dropDownOpened)
+                return;
+
+            ChangeInputElementSelection(comboBox);
         }
 
         private void SetInputControlChanged()
@@ -731,7 +793,7 @@ namespace ARDrone.UI
             {
                 UIElement element = gridCommands.Children[i];
                 if (element is System.Windows.Controls.Control && ((System.Windows.Controls.Control)element).Name == inputBoxPrefix + name)
-                    return (System.Windows.Controls.Control) element;
+                    return (System.Windows.Controls.Control)element;
             }
 
             throw new Exception("There is no control named '" + name + "'");
@@ -763,7 +825,9 @@ namespace ARDrone.UI
             if (control is TextBox)
                 ((TextBox)control).Text = value;
             else if (control is ComboBox)
+            {
                 ((ComboBox)control).Text = value;
+            }
             else
                 throw new Exception("The given control must be a text box or a combo box");
         }
@@ -804,12 +868,12 @@ namespace ARDrone.UI
 
         private void inputBoxControl_GotFocus(object sender, RoutedEventArgs e)
         {
-            FocusInputElement((System.Windows.Controls.Control)sender);
+            InvokeInputBoxGotFocus((System.Windows.Controls.Control)sender);
         }
 
         private void inputBoxControl_LostFocus(object sender, RoutedEventArgs e)
         {
-            UnfocusInputElement((System.Windows.Controls.Control)sender);
+            InvokeInputBoxLostFocus((System.Windows.Controls.Control)sender);
         }
 
         void inputBoxControl_KeyUp(object sender, KeyEventArgs e)
@@ -819,7 +883,7 @@ namespace ARDrone.UI
 
         void comboBoxControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            ChangeInputElementSelection((ComboBox)e.OriginalSource);
+            InvokeComboBoxSelectionChanged((ComboBox)e.OriginalSource);
         }
 
         void inputBoxControl_DropDownOpened(object sender, EventArgs e)

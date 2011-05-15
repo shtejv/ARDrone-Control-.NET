@@ -174,8 +174,8 @@ namespace ARDrone.Input
             axisValues[Axis.Axis_Y.ToString()] = state.AccelState.Values.Y;
             axisValues[Axis.Axis_Z.ToString()] = state.AccelState.Values.Z;
 
-            axisValues[Axis.Axis_Nunchuk_X.ToString()] = state.NunchukState.Joystick.X;
-            axisValues[Axis.Axis_Nunchuk_Y.ToString()] = state.NunchukState.Joystick.Y;
+            axisValues[Axis.Axis_Nunchuk_X.ToString()] =  -state.NunchukState.Joystick.X * 2.0f;
+            axisValues[Axis.Axis_Nunchuk_Y.ToString()] = -state.NunchukState.Joystick.Y * 2.0f;
 
             axisValues[Axis.Axis_BalanceBoard_X.ToString()] = (state.BalanceBoardState.CenterOfGravity.X + 4.0f) / 20.0f;
             axisValues[Axis.Axis_BalanceBoard_Y.ToString()] = -(state.BalanceBoardState.CenterOfGravity.Y - 4.5f) / 10.0f;
@@ -189,6 +189,10 @@ namespace ARDrone.Input
             if (state.ButtonState.Minus) { buttonsPressed.Add(Button.Button_Minus.ToString()); }
             if (state.ButtonState.Plus) { buttonsPressed.Add(Button.Button_Plus.ToString()); }
             if (state.ButtonState.Home) { buttonsPressed.Add(Button.Button_Home.ToString()); }
+            if (state.ButtonState.Up)  { buttonsPressed.Add(Button.Button_Up.ToString()); }
+            if (state.ButtonState.Down)  { buttonsPressed.Add(Button.Button_Down.ToString()); }
+            if (state.ButtonState.Left)  { buttonsPressed.Add(Button.Button_Left.ToString()); }
+            if (state.ButtonState.Right) { buttonsPressed.Add(Button.Button_Right.ToString()); }
 
             if (state.NunchukState.C ) { buttonsPressed.Add(Button.Button_Nunchuk_C.ToString()); }
 
@@ -254,21 +258,21 @@ namespace ARDrone.Input
             }
         }
 
-        public Dictionary<String, String> AxisMappingNames
+        public List<String> AxisMappingNames
         {
             get
             {
-                Dictionary<String, String> axisMappingNames = new Dictionary<String, String>();
+                List<String> axisMappingNames = new List<String>();
 
-                axisMappingNames.Add(Axis.Axis_X.ToString(), "X axis");
-                axisMappingNames.Add(Axis.Axis_Y.ToString(), "Y axis");
-                axisMappingNames.Add(Axis.Axis_Z.ToString(), "Z axis");
+                axisMappingNames.Add(Axis.Axis_X.ToString());
+                axisMappingNames.Add(Axis.Axis_Y.ToString());
+                axisMappingNames.Add(Axis.Axis_Z.ToString());
 
-                axisMappingNames.Add(Axis.Axis_Nunchuk_X.ToString(), "Nunchuk X axis");
-                axisMappingNames.Add(Axis.Axis_Nunchuk_Y.ToString(), "Nunchuk Y axis");
+                axisMappingNames.Add(Axis.Axis_Nunchuk_X.ToString());
+                axisMappingNames.Add(Axis.Axis_Nunchuk_Y.ToString());
 
-                axisMappingNames.Add(Axis.Axis_BalanceBoard_X.ToString(), "Balance board X axis");
-                axisMappingNames.Add(Axis.Axis_BalanceBoard_Y.ToString(), "Balance board Y axis");
+                axisMappingNames.Add(Axis.Axis_BalanceBoard_X.ToString());
+                axisMappingNames.Add(Axis.Axis_BalanceBoard_Y.ToString());
 
                 return axisMappingNames;
             }
