@@ -36,20 +36,24 @@ namespace ARDrone.UI
 {
     public partial class MainWindow : Window
     {
+        private readonly TimeSpan booleanInputTimeout = new TimeSpan(0, 0, 0, 0, 250);
+
         private delegate void OutputEventHandler(String output);
 
         private DispatcherTimer timerStatusUpdate;
         private DispatcherTimer timerVideoUpdate;
         private DispatcherTimer timerHudStatusUpdate;
 
-        private VideoRecorder videoRecorder = null;
-        private SnapshotRecorder snapshotRecorder = null;
+        private VideoRecorder videoRecorder;
+        private SnapshotRecorder snapshotRecorder;
 
-        private InstrumentsManager instrumentsManager = null;
-        private HudInterface hudInterface = null;
+        private InstrumentsManager instrumentsManager;
+        private HudInterface hudInterface;
 
-        ARDrone.Input.InputManager inputManager = null;
-        private DroneControl droneControl = null;
+        private ARDrone.Input.InputManager inputManager;
+        private Dictionary<String, DateTime> booleanInputFadeout;
+
+        private DroneControl droneControl;
 
         int frameCountSinceLastCapture = 0;
         DateTime lastFrameRateCaptureTime;
@@ -132,6 +136,8 @@ namespace ARDrone.UI
             inputManager.NewInputState += inputManager_NewInputState;
             inputManager.NewInputDevice += inputManager_NewInputDevice;
             inputManager.InputDeviceLost += inputManager_InputDeviceLost;
+
+            booleanInputFadeout = new Dictionary<String, DateTime>();
         }
 
         public void InitializeAviationControls()
@@ -359,6 +365,8 @@ namespace ARDrone.UI
             labelStatusConnected.Content = droneControl.IsConnected.ToString();
             labelStatusFlying.Content = droneControl.IsFlying.ToString();
             labelStatusHovering.Content = droneControl.IsHovering.ToString();
+
+            UpdateCurrentBooleanInputState();
         }
 
         private void ChangeCameraStatus()
@@ -417,13 +425,87 @@ namespace ARDrone.UI
             labelInputYaw.Content = String.Format("{0:+0.000;-0.000;+0.000}", -inputState.Yaw);
             labelInputGaz.Content = String.Format("{0:+0.000;-0.000;+0.000}", -inputState.Gaz);
 
-            checkBoxInputTakeoff.IsChecked = inputState.TakeOff;
-            checkBoxInputLand.IsChecked = inputState.Land;
-            checkBoxInputHover.IsChecked = inputState.Hover;
-            checkBoxInputEmergency.IsChecked = inputState.Emergency;
-            checkBoxInputFlatTrim.IsChecked = inputState.FlatTrim;
-            checkBoxInputChangeCamera.IsChecked = inputState.CameraSwap;
-            checkBoxInputSpecialAction.IsChecked = inputState.SpecialAction;
+            UpdateCurrentBooleanInputState(inputState);
+        }
+
+        private void UpdateCurrentBooleanInputState()
+        {
+            RemoveOldBooleanInputStates();
+
+            labelCurrentBooleanInput.Content = GetCurrentBooleanInputStates();
+        }
+
+        private void UpdateCurrentBooleanInputState(InputState inputState)
+        {
+            RemoveOldBooleanInputStates();
+            AddNewBooleanInputStates(inputState);
+
+            labelCurrentBooleanInput.Content = GetCurrentBooleanInputStates();
+        }
+
+        private void AddNewBooleanInputStates(InputState inputState)
+        {
+            if (inputState.TakeOff)
+                AddNewBooleanInputState("TakeOff");
+            if (inputState.Land)
+                AddNewBooleanInputState("Land");
+            if (inputState.Emergency)
+                AddNewBooleanInputState("Emergency");
+            if (inputState.FlatTrim)
+                AddNewBooleanInputState("FlatTrim");
+            if (inputState.Hover)
+                AddNewBooleanInputState("Hover");
+            if (inputState.CameraSwap)
+                AddNewBooleanInputState("Camera");
+            if (inputState.SpecialAction)
+                AddNewBooleanInputState("Special");
+        }
+
+        private void AddNewBooleanInputState(String command)
+        {
+            DateTime expirationDate = DateTime.Now + booleanInputTimeout;
+            if (booleanInputFadeout.ContainsKey(command))
+                booleanInputFadeout[command] = expirationDate;
+            else
+                booleanInputFadeout.Add(command, expirationDate);
+        }
+
+        private void RemoveOldBooleanInputStates()
+        {
+            List<String> keysToDelete = new List<String>();
+            foreach (KeyValuePair<String, DateTime> keyValuePair in booleanInputFadeout)
+            {
+                String command = keyValuePair.Key;
+                DateTime expirationDate = keyValuePair.Value;
+
+                if (expirationDate < DateTime.Now)
+                    keysToDelete.Add(command);
+            }
+
+            foreach (String key in keysToDelete)
+                booleanInputFadeout.Remove(key);
+        }
+
+        private String GetCurrentBooleanInputStates()
+        {
+            String commandText = "";
+
+            List<String> commands = new List<String>();
+            foreach (KeyValuePair<String, DateTime> keyValuePair in booleanInputFadeout)
+                commands.Add(keyValuePair.Key);
+
+            for (int i = 0; i < commands.Count; i++)
+            {
+                commandText += commands[i];
+
+                if (i != commands.Count - 1)
+                    commandText += ", ";
+            }
+
+            if (commandText == "")
+                commandText = "No buttons";
+
+            return commandText;
         }
 
         private void SendDroneCommands(InputState inputState)

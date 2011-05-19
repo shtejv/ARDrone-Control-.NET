@@ -47,9 +47,6 @@
                                 <RowDefinition Height="Auto" />
                                 <RowDefinition Height="Auto" />
                                 <RowDefinition Height="Auto" />
-                                <RowDefinition Height="Auto" />
-                                <RowDefinition Height="Auto" />
-                                <RowDefinition Height="Auto" />
                             </Grid.RowDefinitions>
 
                             <Label Content="Roll" HorizontalAlignment="Left" Grid.Row="0" Grid.Column="0" Style="{StaticResource styleContentDescription}" Margin="20,5,0,0" />
@@ -60,13 +57,7 @@
                             <Label Name="labelInputYaw" Content="+0.000" Grid.Row="2" Grid.Column="1" Style="{StaticResource styleContentDescription}" />
                             <Label Content="Gaz" HorizontalAlignment="Left" Grid.Row="3" Grid.Column="0" Style="{StaticResource styleContentDescription}" Margin="20,0,0,0" />
                             <Label Name="labelInputGaz" Content="+0.000" Grid.Row="3" Grid.Column="1" Style="{StaticResource styleContentDescription}" />
-                            <CheckBox Name="checkBoxInputTakeoff" Content="Take off" Grid.Row="4" Grid.Column="0" Style="{StaticResource styleInputCheckBox}" />
-                            <CheckBox Name="checkBoxInputLand" Content="Land" Height="16" Grid.Row="4" Grid.Column="1" Style="{StaticResource styleInputCheckBox}" />
-                            <CheckBox Name="checkBoxInputEmergency" Content="Emergency" Grid.Row="5" Grid.Column="0" Style="{StaticResource styleInputCheckBox}" />
-                            <CheckBox Name="checkBoxInputFlatTrim" Content="Flat trim" Grid.Row="5" Grid.Column="1" Style="{StaticResource styleInputCheckBox}" />
-                            <CheckBox Name="checkBoxInputHover" Content="Hover" Grid.Row="6" Grid.Column="0" Style="{StaticResource styleInputCheckBox}" />
-                            <CheckBox Name="checkBoxInputChangeCamera" Content="Camera" Grid.Row="6" Grid.Column="1" Style="{StaticResource styleInputCheckBox}" />
-                            <CheckBox Name="checkBoxInputSpecialAction" Content="Sp. action" Grid.Row="7" Grid.Column="0" Style="{StaticResource styleInputCheckBox}" Margin="7,4,3,10" />
+                            <Label Name="labelCurrentBooleanInput" Content="No button" Grid.Row="8" Grid.Column="0" Grid.ColumnSpan="2" Margin="10,10,10,10" FontSize="14" FontWeight="Bold" />
                         </Grid>
                     </GroupBox>
                     <GroupBox Header="Status">
