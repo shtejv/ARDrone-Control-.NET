@@ -117,7 +117,7 @@ namespace ARDroneUI_Detection_Forms
         {
             if (droneControl.IsConnected) { return; }
 
-            droneControl.Connect();
+            droneControl.ConnectToDrone();
             UpdateUISync("Connecting to the drone");
         }
 
@@ -416,7 +416,7 @@ namespace ARDroneUI_Detection_Forms
             }
         }
 
-        private void HandleConnectionStateChange(ConnectionStateChangedEventArgs args)
+        private void HandleConnectionStateChange(DroneConnectionStateChangedEventArgs args)
         {
             UpdateInteractiveElements();
 
@@ -469,12 +469,12 @@ namespace ARDroneUI_Detection_Forms
             HandleError(e);
         }
 
-        private void droneControl_ConnectionStateChanged_Async(object sender, ConnectionStateChangedEventArgs e)
+        private void droneControl_ConnectionStateChanged_Async(object sender, DroneConnectionStateChangedEventArgs e)
         {
             this.BeginInvoke(new DroneConnectionStateChangedEventHandler(droneControl_ConnectionStateChanged_Sync), sender, e);
         }
 
-        private void droneControl_ConnectionStateChanged_Sync(object sender, ConnectionStateChangedEventArgs e)
+        private void droneControl_ConnectionStateChanged_Sync(object sender, DroneConnectionStateChangedEventArgs e)
         {
             HandleConnectionStateChange(e);
         }

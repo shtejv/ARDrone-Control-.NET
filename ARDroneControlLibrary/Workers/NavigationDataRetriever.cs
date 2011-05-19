@@ -36,8 +36,8 @@ namespace ARDrone.Control.Workers
         private bool initialized = false;
         private bool commandModeEnabled = false;
 
-        public NavigationDataRetriever(String remoteIpAddress, int port, int timeoutValue)
-            : base(remoteIpAddress, port, timeoutValue)
+        public NavigationDataRetriever(NetworkConnector networkConnector, String remoteIpAddress, int port, int timeoutValue)
+            : base(networkConnector, remoteIpAddress, port, timeoutValue)
         {
             ResetVariables();
         }

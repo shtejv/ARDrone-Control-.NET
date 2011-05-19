@@ -13,6 +13,8 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
 
+using ARDrone.Control.Workers;
+
 namespace ARDrone.Control.Network
 {
     public abstract class KeepAliveNetworkWorker : NetworkWorker
@@ -21,8 +23,8 @@ namespace ARDrone.Control.Network
 
         private Stopwatch keepAliveStopwatch;
 
-        public KeepAliveNetworkWorker(String remoteIpAddress, int port, int timeoutValue)
-            : base(remoteIpAddress, port, timeoutValue)
+        public KeepAliveNetworkWorker(NetworkConnector networkConnector, String remoteIpAddress, int port, int timeoutValue)
+            : base(networkConnector, remoteIpAddress, port, timeoutValue)
         {
             keepAliveStopwatch = new Stopwatch();
         }

@@ -16,26 +16,69 @@ using System.Windows.Media;
 
 namespace ARDrone.Control.Events
 {
-    public delegate void DroneConnectionStateChangedEventHandler(object sender, ConnectionStateChangedEventArgs e);
+    public delegate void DroneConnectionStateChangedEventHandler(object sender, DroneConnectionStateChangedEventArgs e);
     public delegate void DroneErrorEventHandler(object sender, DroneErrorEventArgs e);
     public delegate void DroneImageCompleteEventHandler(object sender, DroneImageCompleteEventArgs e);
-    public delegate void NetworkWorkerConnectionSateChangedEventHandler(object sender,  ConnectionStateChangedEventArgs e);
+    public delegate void DroneNetworkConnectionStateChangedEventHandler(object sender, DroneNetworkConnectionStateChangedEventArgs e);
+    public delegate void DroneConnectionSateChangedEventHandler(object sender,  DroneConnectionStateChangedEventArgs e);
 
-    public class ConnectionStateChangedEventArgs : EventArgs
+    public enum DroneNetworkConnectionState
+    {
+        NotConnected,
+        ScanningForNewNetworks,
+        TryingToConnect,
+        ConnectedToNetwork,
+        PingSuccesful,
+    }
+
+    public class DroneNetworkConnectionStateChangedEventArgs : EventArgs
+    {
+        private String currentInterfaceName;
+        private DroneNetworkConnectionState state;
+        private int currentPingRetries;
+        private int maxPingRetries;
+
+        public DroneNetworkConnectionStateChangedEventArgs(String currentInterfaceName, DroneNetworkConnectionState state, int currentPingRetries, int maxPingRetries)
+        {
+            this.currentInterfaceName = currentInterfaceName;
+            this.state = state;
+            this.currentPingRetries = currentPingRetries;
+            this.maxPingRetries = maxPingRetries;
+        }
+
+        public String CurrentInterfaceName
+        {
+            get { return currentInterfaceName; }
+        }
+
+        public DroneNetworkConnectionState State
+        {
+            get { return state; }
+        }
+
+        public int CurrentPingRetries
+        {
+            get { return currentPingRetries; }
+        }
+
+        public int MaxPingRetries
+        {
+            get { return maxPingRetries; }
+        }
+    }
+
+    public class DroneConnectionStateChangedEventArgs : EventArgs
     {
         bool connected;
 
-        public ConnectionStateChangedEventArgs(bool connected)
+        public DroneConnectionStateChangedEventArgs(bool connected)
         {
             this.connected = connected;
         }
 
         public bool Connected
         {
-            get
-            {
-                return connected;
-            }
+            get { return connected; }
         }
     }
 
@@ -52,18 +95,12 @@ namespace ARDrone.Control.Events
 
         public Type CausedBy
         {
-            get
-            {
-                return causedBy;
-            }
+            get { return causedBy; }
         }
 
         public Exception CausingException
         {
-            get
-            {
-                return exception;
-            }
+            get { return exception; }
         }
     }
 
@@ -78,10 +115,7 @@ namespace ARDrone.Control.Events
 
         public ImageSource ImageSource
         {
-            get
-            {
-                return imageSource;
-            }
+            get { return imageSource; }
         }
     }
 }

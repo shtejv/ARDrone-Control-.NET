@@ -1,0 +1,35 @@
+﻿<!--
+    ARDrone Control .NET - An application for flying the Parrot AR drone in Windows.
+    Copyright (C) 2010, 2011 Thomas Endres
+ 
+    This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation; either version 3 of the License, or (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License along with this program; if not, see <http://www.gnu.org/licenses/>.
+-->
+    
+<Window x:Class="ARDrone.UI.SplashScreen"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="SplashScreen" Height="368" Width="363" WindowStyle="None" WindowStartupLocation="CenterScreen" ResizeMode="NoResize" Loaded="Window_Loaded" BorderBrush="Black" BorderThickness="2">
+    <Grid VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="28" />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+
+        <Image Grid.Row="0" Name="imageSplash" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Source="/ARDrone.UI;component/Images/SplashScreen.png" />
+        <Label Grid.Row="1" VerticalAlignment="Bottom" HorizontalAlignment="Stretch" Name="labelProgress" Content="Starting...">
+            <Label.Background>
+                <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                    <GradientStop Color="White" Offset="0.221" />
+                    <GradientStop Color="#63000000" Offset="1" />
+                </LinearGradientBrush>
+            </Label.Background>
+        </Label>
+    </Grid>
+</Window>

@@ -109,7 +109,7 @@ namespace AviationInstruments
                 }
                 catch (InvalidOperationException)
                 { }
-                catch (Exception e)
+                catch (Exception)
                 {
                     this.stopManage();
                 }

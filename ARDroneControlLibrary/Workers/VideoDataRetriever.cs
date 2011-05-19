@@ -35,8 +35,8 @@ namespace ARDrone.Control.Workers
         private Bitmap currentBitmap;
         private ImageSource currentImage;
 
-        public VideoDataRetriever(String remoteIpAddress, int port, int timeoutValue)
-            : base(remoteIpAddress, port, timeoutValue)
+        public VideoDataRetriever(NetworkConnector networkConnector, String remoteIpAddress, int port, int timeoutValue)
+            : base(networkConnector, remoteIpAddress, port, timeoutValue)
         {
             bitmapUtils = new BitmapUtils();
 

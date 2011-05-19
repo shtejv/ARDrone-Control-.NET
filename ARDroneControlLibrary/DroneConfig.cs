@@ -20,6 +20,7 @@ namespace ARDrone.Control
     public class DroneConfig
     {
         private String droneIpAddress;
+        private String droneNetworkIdentifierStart;
 
         private int videoPort;
         private int navigationPort;
@@ -35,6 +36,7 @@ namespace ARDrone.Control
         public DroneConfig()
         {
             droneIpAddress = "192.168.1.1";
+            droneNetworkIdentifierStart = "ardrone_";
 
             videoPort = 5555;
             navigationPort = 5554;
@@ -43,6 +45,11 @@ namespace ARDrone.Control
 
             timeoutValue = 1000;
             defaultCameraMode = DroneCameraMode.FrontCamera;
+        }
+
+        public void Initialize()
+        {
+            droneConfigInitialized = true;
         }
 
         private void CheckForDroneConfigState()
@@ -55,6 +62,12 @@ namespace ARDrone.Control
         {
             get { return droneIpAddress; }
             set { CheckForDroneConfigState(); droneIpAddress = value; }
+        }
+
+        public String DroneNetworkIdentifierStart
+        {
+            get { return droneNetworkIdentifierStart; }
+            set { CheckForDroneConfigState(); droneNetworkIdentifierStart = value; }
         }
 
         public int VideoPort

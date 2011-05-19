@@ -71,7 +71,7 @@ namespace Drone.Minimal.UI
 
         private void buttonConnect_Click(object sender, EventArgs e)
         {
-            droneControl.Connect();
+            droneControl.ConnectToDrone();
         }
 
         private void buttonDisconnect_Click(object sender, EventArgs e)

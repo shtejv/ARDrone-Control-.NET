@@ -27,8 +27,8 @@ namespace ARDrone.Control.Workers
         private InternalDroneConfiguration currentConfiguration;
         private byte[] currentByteBuffer;
 
-        public ControlInfoRetriever(String remoteIpAddress, int port, int timeoutValue)
-            : base(remoteIpAddress, port, timeoutValue)
+        public ControlInfoRetriever(NetworkConnector networkConnector, String remoteIpAddress, int port, int timeoutValue)
+            : base(networkConnector, remoteIpAddress, port, timeoutValue)
         {
             ResetVariables();
         }

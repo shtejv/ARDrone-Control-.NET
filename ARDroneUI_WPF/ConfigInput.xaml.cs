@@ -48,9 +48,6 @@ namespace ARDrone.UI
         private String lastInputValue = null;
 
         private bool dropDownOpened = false;
-        private bool dropDownAllowed = true;
-
-        private DispatcherTimer timerTest;
 
         public ConfigInput()
         {
@@ -722,7 +719,6 @@ namespace ARDrone.UI
             if (dropDownOpened)
                 return;
 
-            dropDownAllowed = false;
             FocusInputElement(control);
         }
 
@@ -732,7 +728,6 @@ namespace ARDrone.UI
                 return;
 
             UnfocusInputElement(control);
-            dropDownAllowed = true;
         }
 
         private void InvokeComboBoxDropDownOpened(ComboBox comboBox)

@@ -15,7 +15,7 @@ using System.Text;
 
 namespace ARDrone.Control.Events
 {
-    public delegate void NetworkWorkerErrorEventHandler(object sender, NetworkWorkerErrorEventArgs e);
+    public delegate void ErrorEventHandler(object sender, NetworkWorkerErrorEventArgs e);
     public delegate void NetworkSanityCheckCompleteEventHandler(object sender, NetworkSanityCheckEventArgs e);
 
 

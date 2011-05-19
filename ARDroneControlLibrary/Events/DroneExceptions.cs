@@ -21,4 +21,29 @@ namespace ARDrone.Control.Events
             : base(message, innerException)
         { }
     }
+
+    public class NetworkConnectionException : Exception
+    {
+        private Dictionary<String, String> failures;
+
+        public NetworkConnectionException(String message)
+            : base(message)
+        {
+            this.failures = null;
+        }
+
+        public NetworkConnectionException(String message, Dictionary<String, String> failures)
+            : base(message)
+        {
+            this.failures = new Dictionary<String, String>(failures);
+        }
+
+        public Dictionary<String, String> Failures
+        {
+            get
+            {
+                return failures;
+            }
+        }
+    }
 }

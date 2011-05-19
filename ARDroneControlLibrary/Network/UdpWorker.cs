@@ -14,19 +14,21 @@ using System.Net;
 using System.Net.Sockets;
 using System.Text;
 
+using ARDrone.Control.Workers;
+
 namespace ARDrone.Control.Network
 {
     public abstract class UdpWorker : KeepAliveNetworkWorker
     {
         protected UdpClient client;
 
-        public UdpWorker(String remoteIpAddress, int port, int timeoutValue)
-            : base(remoteIpAddress, port, timeoutValue)
+        public UdpWorker(NetworkConnector networkConnector, String remoteIpAddress, int port, int timeoutValue)
+            : base(networkConnector, remoteIpAddress, port, timeoutValue)
         { }
 
         protected override void CreateSocket()
         {
-            client = CreateUdpSocket(LocalIpAddress, Port, TimeoutValue);
+            client = CreateUdpSocket(GetLocalIpAddress(), Port, TimeoutValue);
         }
 
         public override void DisconnectFromSocket()

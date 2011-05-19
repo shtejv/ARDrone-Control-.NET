@@ -14,6 +14,8 @@ using System.Net;
 using System.Net.Sockets;
 using System.Text;
 
+using ARDrone.Control.Workers;
+
 namespace ARDrone.Control.Network
 {
     public abstract class TcpWorker : KeepAliveNetworkWorker
@@ -21,13 +23,13 @@ namespace ARDrone.Control.Network
         protected TcpClient client;
         protected NetworkStream stream;
 
-        public TcpWorker(String remoteIpAddress, int port, int timeoutValue)
-            : base(remoteIpAddress, port, timeoutValue)
+        public TcpWorker(NetworkConnector networkConnector, String remoteIpAddress, int port, int timeoutValue)
+            : base(networkConnector, remoteIpAddress, port, timeoutValue)
         { }
 
         protected override void CreateSocket()
         {
-            client = CreateTcpSocket(LocalIpAddress, Port, TimeoutValue);
+            client = CreateTcpSocket(GetLocalIpAddress(), Port, TimeoutValue);
 
         }
 

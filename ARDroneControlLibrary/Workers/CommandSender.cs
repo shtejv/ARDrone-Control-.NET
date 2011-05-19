@@ -31,8 +31,8 @@ namespace ARDrone.Control.Workers
 
         private DroneCameraMode defaultCameraMode;
 
-        public CommandSender(String remoteIpAddress, int port, int timeoutValue, DroneCameraMode defaultCameraMode)
-            : base(remoteIpAddress, port, timeoutValue)
+        public CommandSender(NetworkConnector networkConnector, String remoteIpAddress, int port, int timeoutValue, DroneCameraMode defaultCameraMode)
+            : base(networkConnector, remoteIpAddress, port, timeoutValue)
         {
             this.defaultCameraMode = defaultCameraMode;
 

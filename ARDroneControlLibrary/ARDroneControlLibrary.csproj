@@ -70,6 +70,9 @@
     <Compile Include="Utils\BitmapUtils.cs" />
     <Compile Include="Utils\NetworkUtils.cs" />
     <Compile Include="Utils\VideoUtils.cs" />
+    <Compile Include="Wifi\WifiInterop.cs" />
+    <Compile Include="Wifi\WlanApi.cs" />
+    <Compile Include="Workers\NetworkConnector.cs" />
     <Compile Include="Workers\CommandSender.cs" />
     <Compile Include="Workers\ControlInfoRetriever.cs" />
     <Compile Include="Workers\NavigationDataRetriever.cs" />

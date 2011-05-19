@@ -16,12 +16,14 @@ using System.Text;
 using System.Threading;
 
 using ARDrone.Control.Events;
+using ARDrone.Control.Workers;
 
 namespace ARDrone.Control.Network
 {
     public abstract class NetworkWorker : BackgroundWorker
     {
         // Networking
+        private NetworkConnector networkConnector;
         protected IPEndPoint endpoint;
 
         // Local variables
@@ -31,16 +33,18 @@ namespace ARDrone.Control.Network
         private int timeoutValue;
 
         // Event handlers
-        public event NetworkWorkerErrorEventHandler Error;
-        public event NetworkWorkerConnectionSateChangedEventHandler ConnectionStateChanged;
+        public event ErrorEventHandler Error;
+        public event DroneConnectionSateChangedEventHandler ConnectionStateChanged;
+        public event DroneConnectionSateChangedEventHandler NetworkConnectionStateChanged;
 
-        public NetworkWorker(String remoteIpAddress, int port, int timeoutValue)
+        public NetworkWorker(NetworkConnector networkConnector, String remoteIpAddress, int port, int timeoutValue)
         {
-            SetVariables(remoteIpAddress, port, timeoutValue);
+            SetVariables(networkConnector, remoteIpAddress, port, timeoutValue);
         }
 
-        private void SetVariables(String remoteIpAddress, int port, int timeoutValue)
+        private void SetVariables(NetworkConnector networkConnector, String remoteIpAddress, int port, int timeoutValue)
         {
+            this.networkConnector = networkConnector;
             this.remoteIpAddress = remoteIpAddress;
             this.port = port;
             this.timeoutValue = timeoutValue;
@@ -150,24 +154,24 @@ namespace ARDrone.Control.Network
         public abstract void SendMessage(String message);
         public abstract void SendMessage(byte[] message);
 
-        private String GetLocalIpAddress()
-        {
-            // TODO implement
-            return "192.168.1.2";
-        }
-
         private void InvokeConnectionStateChange()
         {
             if (ConnectionStateChanged != null)
-                ConnectionStateChanged.Invoke(this, new ConnectionStateChangedEventArgs(connected));
+                ConnectionStateChanged.Invoke(this, new DroneConnectionStateChangedEventArgs(connected));
         }
 
-        protected String LocalIpAddress
+        private void InvokeNetworkConnectionStateChange(DroneConnectionStateChangedEventArgs e)
         {
-            get
-            {
-                return GetLocalIpAddress();
-            }
+            if (NetworkConnectionStateChanged != null)
+                NetworkConnectionStateChanged.Invoke(this, e);
+        }
+
+        protected String GetLocalIpAddress()
+        {
+            if (!networkConnector.IsConnectedToDroneNetwork)
+                throw new Exception("The drone is not yet connected to the drone network");
+
+            return networkConnector.GetLocalIpAddress();
         }
 
         protected String RemoteIpAddress

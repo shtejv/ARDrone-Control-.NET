@@ -60,27 +60,53 @@ namespace ARDrone.UI
 
         public MainWindow()
         {
-            InitializeComponent();
-            InitializeTimers();
-            InitializeInputManager();
-
             InitializeDroneControl();
 
-            InitializeAviationControls();
-            InitializeHudInterface();
-
-            videoRecorder = new VideoRecorder();
-            snapshotRecorder = new SnapshotRecorder();
-
-            videoRecorder.CompressionComplete += new EventHandler(videoRecorder_CompressionComplete);
-            videoRecorder.CompressionError += new ErrorEventHandler(videoRecorder_CompressionError);
+            if (ShowSplashScreen())
+            {
+                InitializeComponent();
+                InitializeOtherComponents();
+            }
+            else
+            {
+                this.Close();
+            }
         }
 
         public void Dispose()
         {
-            inputManager.Dispose();
-            videoRecorder.Dispose();
-            instrumentsManager.stopManage();
+            if (inputManager != null)
+                inputManager.Dispose();
+            if (videoRecorder != null)
+                videoRecorder.Dispose();
+            if (instrumentsManager != null)
+                instrumentsManager.stopManage();
+        }
+
+        private void InitializeDroneControl()
+        {
+            droneControl = new DroneControl();
+            droneControl.Error += droneControl_Error_Async;
+            droneControl.ConnectionStateChanged += droneControl_ConnectionStateChanged_Async;
+        }
+
+        private bool ShowSplashScreen()
+        {
+            SplashScreen splashScreen = new SplashScreen(droneControl);
+            splashScreen.ShowDialog();
+
+            return splashScreen.ConnectionSuccessful;
+        }
+
+        private void InitializeOtherComponents()
+        {
+            InitializeTimers();
+            InitializeInputManager();
+
+            InitializeAviationControls();
+            InitializeHudInterface();
+
+            InitializeRecorders();
         }
 
         public void InitializeTimers()
@@ -108,13 +134,6 @@ namespace ARDrone.UI
             inputManager.InputDeviceLost += inputManager_InputDeviceLost;
         }
 
-        private void InitializeDroneControl()
-        {
-            droneControl = new DroneControl();
-            droneControl.Error += droneControl_Error_Async;
-            droneControl.ConnectionStateChanged += droneControl_ConnectionStateChanged_Async;
-        }
-
         public void InitializeAviationControls()
         {
             instrumentsManager = new InstrumentsManager(droneControl);
@@ -138,6 +157,15 @@ namespace ARDrone.UI
             hudInterface = new HudInterface(hudConfig);
         }
 
+        private void InitializeRecorders()
+        {
+            videoRecorder = new VideoRecorder();
+            snapshotRecorder = new SnapshotRecorder();
+
+            videoRecorder.CompressionComplete += new EventHandler(videoRecorder_CompressionComplete);
+            videoRecorder.CompressionError += new System.IO.ErrorEventHandler(videoRecorder_CompressionError);
+        }
+
         public void Init()
         {
             timerStatusUpdate.Start();
@@ -148,7 +176,7 @@ namespace ARDrone.UI
 
         private void Connect()
         {
-            droneControl.Connect();
+            droneControl.ConnectToDrone();
             UpdateUISync("Connecting to the drone");
 
             timerHudStatusUpdate.Start();
@@ -161,7 +189,8 @@ namespace ARDrone.UI
         {
             timerHudStatusUpdate.Stop();
             timerVideoUpdate.Stop();
-            if (videoRecorder.IsVideoCaptureRunning)
+
+            if (videoRecorder != null && videoRecorder.IsVideoCaptureRunning)
             {
                 videoRecorder.EndVideo();
             }
@@ -562,7 +591,7 @@ namespace ARDrone.UI
             configOutput.ShowDialog();
         }
 
-        private void HandleConnectionStateChange(ConnectionStateChangedEventArgs args)
+        private void HandleConnectionStateChange(DroneConnectionStateChangedEventArgs args)
         {
             UpdateInteractiveElements();
 
@@ -575,7 +604,7 @@ namespace ARDrone.UI
         private void HandleError(DroneErrorEventArgs args)
         {
             String errorText = SerializeException(args.CausingException);
-            MessageBox.Show(errorText);
+            MessageBox.Show(errorText, "An error occured", MessageBoxButton.OK, MessageBoxImage.Error);
         }
 
         private String SerializeException(Exception e)
@@ -616,12 +645,12 @@ namespace ARDrone.UI
             HandleError(e);
         }
 
-        private void droneControl_ConnectionStateChanged_Async(object sender, ConnectionStateChangedEventArgs e)
+        private void droneControl_ConnectionStateChanged_Async(object sender, DroneConnectionStateChangedEventArgs e)
         {
             Dispatcher.BeginInvoke(new DroneConnectionStateChangedEventHandler(droneControl_ConnectionStateChanged_Sync), sender, e);
         }
 
-        private void droneControl_ConnectionStateChanged_Sync(object sender, ConnectionStateChangedEventArgs e)
+        private void droneControl_ConnectionStateChanged_Sync(object sender, DroneConnectionStateChangedEventArgs e)
         {
             HandleConnectionStateChange(e);
         }
@@ -660,7 +689,7 @@ namespace ARDrone.UI
 
         private void videoRecorder_CompressionError(object sender, ErrorEventArgs e)
         {
-            Dispatcher.BeginInvoke(new ErrorEventHandler(videoRecoderSync_CompressionError), this, e);
+            Dispatcher.BeginInvoke(new System.IO.ErrorEventHandler(videoRecoderSync_CompressionError), this, e);
         }
 
         private void videoRecoderSync_CompressionError(object sender, ErrorEventArgs e)
