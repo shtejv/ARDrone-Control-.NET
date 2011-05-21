@@ -13,6 +13,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
+using ARDrone.Control.Data;
+
 namespace ARDrone.Control.Commands
 {
     public class SetConfigurationCommand : Command
@@ -27,7 +29,7 @@ namespace ARDrone.Control.Commands
             this.configurationValue = configurationValue;
         }
 
-        public override String CreateCommand()
+        public override String CreateCommand(SupportedFirmwareVersion firmwareVersion)
         {
             CheckSequenceNumber();
             return String.Format("AT*CONFIG={0},\"{1}\",\"{2}\"\r", sequenceNumber, configurationKey, configurationValue);

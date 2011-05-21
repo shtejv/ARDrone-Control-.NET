@@ -13,6 +13,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
+using ARDrone.Control.Data;
+
 namespace ARDrone.Control.Commands
 {
     public enum CommandStatusPrerequisite
@@ -59,7 +61,7 @@ namespace ARDrone.Control.Commands
                 throw new InvalidOperationException("The command must be sequenced before it can be sent");
         }
 
-        public abstract String CreateCommand();
+        public abstract String CreateCommand(SupportedFirmwareVersion firmwareVersion);
 
         public uint SequenceNumber
         {

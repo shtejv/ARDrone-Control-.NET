@@ -19,9 +19,11 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Threading;
 
+using ARDrone.Control.Data;
 using ARDrone.Control.Events;
 using ARDrone.Control.Network;
 using ARDrone.Control.Utils;
+
 
 namespace ARDrone.Control.Workers
 {
@@ -35,9 +37,13 @@ namespace ARDrone.Control.Workers
         private Bitmap currentBitmap;
         private ImageSource currentImage;
 
-        public VideoDataRetriever(NetworkConnector networkConnector, String remoteIpAddress, int port, int timeoutValue)
+        private SupportedFirmwareVersion firmwareVersion;
+
+        public VideoDataRetriever(NetworkConnector networkConnector, String remoteIpAddress, int port, int timeoutValue, SupportedFirmwareVersion firmwareVersion)
             : base(networkConnector, remoteIpAddress, port, timeoutValue)
         {
+            this.firmwareVersion = firmwareVersion;
+
             bitmapUtils = new BitmapUtils();
 
             ResetVariables();

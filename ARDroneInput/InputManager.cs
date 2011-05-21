@@ -17,7 +17,7 @@ using Microsoft.DirectX.DirectInput;
 using System.IO;
 using System.Xml.Serialization;
 using WiimoteLib;
-using ARDrone.Input.Utility;
+using ARDrone.Input.Utils;
 
 namespace ARDrone.Input
 {
@@ -117,7 +117,7 @@ namespace ARDrone.Input
             newDevices.AddRange(KeyboardInput.GetNewInputDevices(windowHandle, inputDevices));
             newDevices.AddRange(JoystickInput.GetNewInputDevices(windowHandle, inputDevices));
             newDevices.AddRange(WiiMoteInput.GetNewInputDevices(windowHandle, inputDevices));
-            newDevices.AddRange(SpeechInput.GetNewInputDevices(windowHandle, inputDevices));
+            //newDevices.AddRange(SpeechInput.GetNewInputDevices(windowHandle, inputDevices));
 
             foreach (GenericInput inputDevice in newDevices)
             {

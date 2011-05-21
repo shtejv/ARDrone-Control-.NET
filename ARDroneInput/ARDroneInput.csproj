@@ -71,20 +71,25 @@
     <Compile Include="InputMappings\SpeechBasedInputMapping.cs" />
     <Compile Include="Timing\TimeBasedCommand.cs" />
     <Compile Include="Speech\SpeechRecognition.cs" />
-    <Compile Include="Utility\Events.cs" />
+    <Compile Include="Utils\Events.cs" />
     <Compile Include="GenericInput.cs" />
     <Compile Include="InputManager.cs" />
     <Compile Include="InputMappings\ValidatedInputMapping.cs" />
     <Compile Include="InputControls\InputControl.cs" />
     <Compile Include="InputMappings\InputMapping.cs" />
-    <Compile Include="Utility\InputFactory.cs" />
-    <Compile Include="Utility\InputState.cs" />
+    <Compile Include="Utils\InputFactory.cs" />
+    <Compile Include="Utils\InputState.cs" />
     <Compile Include="JoystickInput.cs" />
     <Compile Include="KeyboardInput.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SpeechInput.cs" />
-    <Compile Include="Utility\DictionarySerializer.cs" />
     <Compile Include="WiiMoteInput.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\ARDroneBasics\ARDroneBasics.csproj">
+      <Project>{30FB7E9C-2668-4303-BF0D-1618DD30B8E5}</Project>
+      <Name>ARDroneBasics</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -21,6 +21,8 @@ using System.Net.NetworkInformation;
 using System.Net;
 using System.Threading;
 
+using ARDrone.Control.Utils;
+
 namespace ARDrone.Control.Workers
 {
     public class NetworkConnector : BackgroundWorker
@@ -32,13 +34,13 @@ namespace ARDrone.Control.Workers
         private const int notificationCodeScanSuccessful = 7;
         private const int notificationCodeScanErroneous = 8;
 
-        private Timer waitForConnectionTimer;
-
-        private String droneNetworkIdentifierStart;
-        private String droneIpAddress;
+        // Network objects
 
         private WlanClient client;
         private Ping pingSender;
+        private NetworkUtils networkUtils;
+
+        // Current state
 
         private DroneNetworkConnectionState currentState;
 
@@ -46,24 +48,37 @@ namespace ARDrone.Control.Workers
         private WlanClient.WlanInterface currentWifiInterface;
         private int currentPingRetries;
 
+        // Other variables
+
+        private Timer waitForConnectionTimer;
+
+        private String droneNetworkIdentifierStart;
+        private String standardOwnIpAddress;
+        private String droneIpAddress;
+
         private Dictionary<String, String> failureReasons;
+
+        private SupportedFirmwareVersion firmwareVersion;
 
         // Event handlers
         public event ErrorEventHandler Error;
         public event DroneNetworkConnectionStateChangedEventHandler ConnectionStateChanged;
 
 
-        public NetworkConnector(String droneNetworkIdentifierStart, String droneIpAddress)
+        public NetworkConnector(String droneNetworkIdentifierStart, String standardOwnIpAddress, String droneIpAddress, SupportedFirmwareVersion firmwareVersion)
         {
             Initialize();
 
             this.droneNetworkIdentifierStart = droneNetworkIdentifierStart;
+            this.standardOwnIpAddress = standardOwnIpAddress;
             this.droneIpAddress = droneIpAddress;
+            this.firmwareVersion = firmwareVersion;
         }
 
         private void Initialize()
         {
             client = new WlanClient();
+            networkUtils = new NetworkUtils();
             InitializePingSender();
         }
 
@@ -132,7 +147,7 @@ namespace ARDrone.Control.Workers
             if (currentWifiInterface != null)
             {
                 currentWifiInterface.WlanNotification -= wlanInterface_WlanNotification;
-                //currentWifiInterface.WlanConnectionNotification -= wlanInterface_WlanConnectionNotification;
+                currentWifiInterface.WlanConnectionNotification -= wlanInterface_WlanConnectionNotification;
             }
         }
 
@@ -160,7 +175,7 @@ namespace ARDrone.Control.Workers
         private void AddEventHandlersToNewWifiConnection()
         {
             currentWifiInterface.WlanNotification += wlanInterface_WlanNotification;
-
+            currentWifiInterface.WlanConnectionNotification += wlanInterface_WlanConnectionNotification;
         }
 
         private void ProcessWifiNotificatioEvent(Wlan.WlanNotificationData notificationData)
@@ -249,7 +264,6 @@ namespace ARDrone.Control.Workers
                 return false;
             }
 
-            currentWifiInterface.WlanConnectionNotification += wlanInterface_WlanConnectionNotification;
             currentWifiInterface.Connect(Wlan.WlanConnectionMode.DiscoveryUnsecure, network.Value.dot11BssType, network.Value.dot11Ssid, 0);
 
             return true;
@@ -392,42 +406,17 @@ namespace ARDrone.Control.Workers
             }
         }
 
-        public String GetLocalIpAddress()
+        public String GetOwnIpAddress()
         {
             if (currentWifiInterface == null)
-                return null;
-
-            String interfaceIdSearchedFor = currentWifiInterface.InterfaceGuid.ToString().ToUpper();
-
-            NetworkInterface[] networkInterfaces = NetworkInterface.GetAllNetworkInterfaces();
-
-            foreach (NetworkInterface networkInterface in networkInterfaces)
             {
-                String interfaceId = networkInterface.Id.Replace("{", "").Replace("}", "").ToUpper();
-                if (interfaceId == interfaceIdSearchedFor)
-                {
-                    UnicastIPAddressInformationCollection unicastAddresses = networkInterface.GetIPProperties().UnicastAddresses;
-
-                    foreach (UnicastIPAddressInformation unicastAddress in unicastAddresses)
-                    {
-                        try
-                        {
-                            if (!unicastAddress.Address.IsIPv6LinkLocal &&
-                                !unicastAddress.Address.IsIPv6Multicast &&
-                                !unicastAddress.Address.IsIPv6SiteLocal &&
-                                !unicastAddress.Address.IsIPv6Teredo)
-                            {
-                                String address = unicastAddress.Address.ToString();
-                                return address;
-                            }
-                        }
-                        catch (Exception)
-                        { }
-                    }
-                }
+                return standardOwnIpAddress;
             }
-
-            return null;
+            else
+            {
+                String interfaceIdSearchedFor = currentWifiInterface.InterfaceGuid.ToString().ToUpper();
+                return networkUtils.GetIpAddressForInterfaceId(interfaceIdSearchedFor);
+            }
         }
 
         private String CurrentDroneNetworkSsid

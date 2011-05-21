@@ -13,7 +13,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Xml.Serialization;
-using ARDrone.Input.Utility;
+using ARDrone.Input.Utils;
 using ARDrone.Input.InputMappings;
 
 namespace ARDrone.Input

@@ -27,9 +27,13 @@ namespace ARDrone.Control.Workers
         private InternalDroneConfiguration currentConfiguration;
         private byte[] currentByteBuffer;
 
-        public ControlInfoRetriever(NetworkConnector networkConnector, String remoteIpAddress, int port, int timeoutValue)
+        private SupportedFirmwareVersion firmwareVersion;
+
+        public ControlInfoRetriever(NetworkConnector networkConnector, String remoteIpAddress, int port, int timeoutValue, SupportedFirmwareVersion firmwareVersion)
             : base(networkConnector, remoteIpAddress, port, timeoutValue)
         {
+            this.firmwareVersion = firmwareVersion;
+
             ResetVariables();
         }
 

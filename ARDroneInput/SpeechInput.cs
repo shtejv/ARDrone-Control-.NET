@@ -13,7 +13,7 @@ using System.Collections.Generic;
 using System.Text;
 using ARDrone.Input.InputMappings;
 using ARDrone.Input.Speech;
-using ARDrone.Input.Utility;
+using ARDrone.Input.Utils;
 using ARDrone.Input.Timing;
 
 namespace ARDrone.Input

@@ -27,7 +27,7 @@ using ARDrone.Control;
 using ARDrone.Capture;
 using ARDrone.Hud;
 using ARDrone.Input;
-using ARDrone.Input.Utility;
+using ARDrone.Input.Utils;
 using ARDrone.Control.Commands;
 using ARDrone.Control.Data;
 using ARDrone.Control.Events;
@@ -54,6 +54,10 @@ namespace ARDrone.UI
         private Dictionary<String, DateTime> booleanInputFadeout;
 
         private DroneControl droneControl;
+
+        private DroneConfig currentDroneConfig; 
+        private HudConfig currentHudConfig; 
+
 
         int frameCountSinceLastCapture = 0;
         DateTime lastFrameRateCaptureTime;
@@ -89,9 +93,15 @@ namespace ARDrone.UI
 
         private void InitializeDroneControl()
         {
-            droneControl = new DroneControl();
-            droneControl.Error += droneControl_Error_Async;
-            droneControl.ConnectionStateChanged += droneControl_ConnectionStateChanged_Async;
+            currentDroneConfig = new DroneConfig();
+            currentDroneConfig.Load();
+
+            InitializeDroneControl(currentDroneConfig);
+        }
+
+        private void InitializeDroneControl(DroneConfig droneConfig)
+        {
+            droneControl = new DroneControl(droneConfig);
         }
 
         private bool ShowSplashScreen()
@@ -104,6 +114,8 @@ namespace ARDrone.UI
 
         private void InitializeOtherComponents()
         {
+            InitializeDroneControlEventHandlers();
+
             InitializeTimers();
             InitializeInputManager();
 
@@ -113,7 +125,13 @@ namespace ARDrone.UI
             InitializeRecorders();
         }
 
-        public void InitializeTimers()
+        private void InitializeDroneControlEventHandlers()
+        {
+            droneControl.Error += droneControl_Error_Async;
+            droneControl.ConnectionStateChanged += droneControl_ConnectionStateChanged_Async;
+        }
+
+        private void InitializeTimers()
         {
             timerStatusUpdate = new DispatcherTimer();
             timerStatusUpdate.Interval = new TimeSpan(0, 0, 1);
@@ -128,7 +146,7 @@ namespace ARDrone.UI
             timerVideoUpdate.Tick += new EventHandler(timerVideoUpdate_Tick);
         }
 
-        public void InitializeInputManager()
+        private void InitializeInputManager()
         {
             inputManager = new ARDrone.Input.InputManager(Utility.GetWindowHandle(this));
             inputManager.SwitchInputMode(Input.InputManager.InputMode.ControlInput);
@@ -140,7 +158,7 @@ namespace ARDrone.UI
             booleanInputFadeout = new Dictionary<String, DateTime>();
         }
 
-        public void InitializeAviationControls()
+        private void InitializeAviationControls()
         {
             instrumentsManager = new InstrumentsManager(droneControl);
             instrumentsManager.addInstrument(this.attitudeControl);
@@ -151,16 +169,17 @@ namespace ARDrone.UI
 
         private void InitializeHudInterface()
         {
-            HudConfig hudConfig = new HudConfig(
-                showTarget: true,
-                showBaseLine: true,
-                showHeading: true,
-                showAltitude: true,
-                showSpeed: true,
-                showBattery: true,
-                cameraFieldOfViewAngle: droneControl.FrontCameraFieldOfViewDegrees);
+            currentHudConfig = new HudConfig();
+            currentHudConfig.Load();
 
-            hudInterface = new HudInterface(hudConfig);
+            InitializeHudInterface(currentHudConfig);
+        }
+
+        private void InitializeHudInterface(HudConfig hudConfig)
+        {
+            HudConstants hudConstants = new HudConstants(droneControl.FrontCameraFieldOfViewDegrees);
+
+            hudInterface = new HudInterface(hudConfig, hudConstants);
         }
 
         private void InitializeRecorders()
@@ -309,10 +328,8 @@ namespace ARDrone.UI
         {
             inputManager.SetFlags(droneControl.IsConnected, droneControl.IsEmergency, droneControl.IsFlying, droneControl.IsHovering);
 
-            if (!droneControl.IsConnected) { buttonConnect.IsEnabled = true; } else { buttonConnect.IsEnabled = false; }
+            if (!droneControl.IsConnected && !droneControl.IsConnecting) { buttonConnect.IsEnabled = true; } else { buttonConnect.IsEnabled = false; }
             if (droneControl.IsConnected) { buttonShutdown.IsEnabled = true; } else { buttonShutdown.IsEnabled = false; }
-
-            if (droneControl.IsConnected) { buttonReadConfig.IsEnabled = true; } else { buttonReadConfig.IsEnabled = false; }
 
             if (droneControl.CanTakeoff || droneControl.CanLand) { buttonCommandTakeoff.IsEnabled = true; } else { buttonCommandTakeoff.IsEnabled = false; }
             if (droneControl.CanEnterHoverMode || droneControl.CanLeaveHoverMode) { buttonCommandHover.IsEnabled = true; } else { buttonCommandHover.IsEnabled = false; }
@@ -328,7 +345,10 @@ namespace ARDrone.UI
             if (CanCaptureVideo && !videoRecorder.IsVideoCaptureRunning && !videoRecorder.IsCompressionRunning) { buttonVideoStart.IsEnabled = true; } else { buttonVideoStart.IsEnabled = false; }
             if (CanCaptureVideo && videoRecorder.IsVideoCaptureRunning && !videoRecorder.IsCompressionRunning) { buttonVideoEnd.IsEnabled = true; } else { buttonVideoEnd.IsEnabled = false; }
 
-            
+            if (droneControl.IsConnected && !droneControl.IsFlying) { buttonShowConfig.IsEnabled = true; } else { buttonShowConfig.IsEnabled = false; }
+            if (!droneControl.IsConnected && !droneControl.IsConnecting) { buttonGeneralSettings.IsEnabled = true; } else { buttonGeneralSettings.IsEnabled = false; }
+            if (!droneControl.IsConnected && !droneControl.IsConnecting) { buttonInputSettings.IsEnabled = true; } else { buttonInputSettings.IsEnabled = false; }
+
             if      (videoRecorder.IsCompressionRunning)  { labelVideoStatus.Content = "Compressing"; }
             else if (videoRecorder.IsVideoCaptureRunning) { labelVideoStatus.Content = "Recording"; }
             else    { labelVideoStatus.Content = "Idling ..."; }
@@ -568,10 +588,16 @@ namespace ARDrone.UI
 
                 ImageSource imageSource = droneControl.ImageSourceImage;
 
-                if (imageSource != null)
+                if (imageSource != null &&
+                    (droneControl.CurrentCameraType == DroneCameraMode.FrontCamera ||
+                     droneControl.CurrentCameraType == DroneCameraMode.PictureInPictureFront))
                 {
                     ImageSource resultingSource = hudInterface.DrawHud((BitmapSource)imageSource);
                     imageVideo.Source = resultingSource;
+                }
+                else
+                {
+                    imageVideo.Source = imageSource;
                 }
             }
         }
@@ -656,12 +682,46 @@ namespace ARDrone.UI
 
         private void OpenInputConfigDialog()
         {
+            if (droneControl.IsConnected)
+                return;
+
             inputManager.SwitchInputMode(Input.InputManager.InputMode.NoInput);
 
-            ConfigInput configInput = new ConfigInput(inputManager);
+            InputConfigDialog configInput = new InputConfigDialog(inputManager);
             configInput.ShowDialog();
 
             inputManager.SwitchInputMode(Input.InputManager.InputMode.ControlInput);
+        }
+
+        private void OpenGeneralConfigDialog()
+        {
+            if (droneControl.IsConnected)
+                return;
+
+            GeneralConfigWindow configGeneral = new GeneralConfigWindow(currentDroneConfig, currentHudConfig);
+            configGeneral.ShowDialog();
+
+            if (configGeneral.ConfigChanged)
+            {
+                SaveDroneAndHudConfigStates(configGeneral.DroneConfig, configGeneral.HudConfig);
+                ReinitializeDroneControlAndHud();
+            }
+        }
+
+        private void SaveDroneAndHudConfigStates(DroneConfig droneConfig, HudConfig hudConfig)
+        {
+            currentDroneConfig = droneConfig;
+            currentHudConfig = hudConfig;
+
+            droneConfig.Save();
+            hudConfig.Save();
+        }
+
+        private void ReinitializeDroneControlAndHud()
+        {
+            InitializeDroneControl(currentDroneConfig);
+            InitializeDroneControlEventHandlers();
+            InitializeHudInterface(currentHudConfig);
         }
 
         private void OpenDroneConfigDialog()
@@ -687,6 +747,8 @@ namespace ARDrone.UI
         {
             String errorText = SerializeException(args.CausingException);
             MessageBox.Show(errorText, "An error occured", MessageBoxButton.OK, MessageBoxImage.Error);
+
+            UpdateInteractiveElements();
         }
 
         private String SerializeException(Exception e)
@@ -802,11 +864,6 @@ namespace ARDrone.UI
             Disconnect();
         }
 
-        private void buttonShowConfig_Click(object sender, RoutedEventArgs e)
-        {
-            OpenDroneConfigDialog();
-        }
-
         private void buttonCommandChangeCamera_Click(object sender, RoutedEventArgs e)
         {
             ChangeCamera();
@@ -864,6 +921,16 @@ namespace ARDrone.UI
         private void buttonInputSettings_Click(object sender, RoutedEventArgs e)
         {
             OpenInputConfigDialog();
+        }
+
+        private void buttonGeneralSettings_Click(object sender, RoutedEventArgs e)
+        {
+            OpenGeneralConfigDialog();
+        }
+
+        private void buttonShowConfig_Click(object sender, RoutedEventArgs e)
+        {
+            OpenDroneConfigDialog();
         }
 
         private void timerStatusUpdate_Tick(object sender, EventArgs e)

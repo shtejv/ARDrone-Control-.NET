@@ -13,6 +13,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
+using ARDrone.Control.Data;
+
 namespace ARDrone.Control.Commands
 {
     public class SetControlModeCommand : Command
@@ -25,7 +27,7 @@ namespace ARDrone.Control.Commands
             this.mode = mode;
         }
 
-        public override String CreateCommand()
+        public override String CreateCommand(SupportedFirmwareVersion firmwareVersion)
         {
             CheckSequenceNumber();
             return String.Format("AT*CTRL={0},{1},0\r", sequenceNumber, (int)mode);

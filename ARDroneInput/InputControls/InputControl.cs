@@ -11,7 +11,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using ARDrone.Input.Utility;
+using ARDrone.Input.Utils;
 
 namespace ARDrone.Input.InputControls
 {

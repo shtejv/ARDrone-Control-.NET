@@ -14,6 +14,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 
+using ARDrone.Control.Data;
 using ARDrone.Control.Events;
 using ARDrone.Control.Network;
 
@@ -26,17 +27,22 @@ namespace ARDrone.Control.Workers
         private CommandSender commandSender;
         private ControlInfoRetriever controlInfoRetriever;
 
+        private SupportedFirmwareVersion firmwareVersion;
+
         public NetworkSanityCheckCompleteEventHandler SanityCheckComplete;
 
         public NetworkSanityChecker(VideoDataRetriever videoDataRetriever,
                                     NavigationDataRetriever navigationDataRetriever,
                                     CommandSender commandSender,
-                                    ControlInfoRetriever controlInfoRetriever)
+                                    ControlInfoRetriever controlInfoRetriever,
+                                    SupportedFirmwareVersion firmwareVersion)
         {
             this.videoDataRetriever = videoDataRetriever;
             this.navigationDataRetriever = navigationDataRetriever;
             this.commandSender = commandSender;
             this.controlInfoRetriever = controlInfoRetriever;
+
+            this.firmwareVersion = firmwareVersion;
         }
 
         public void CheckNetworkSanity()

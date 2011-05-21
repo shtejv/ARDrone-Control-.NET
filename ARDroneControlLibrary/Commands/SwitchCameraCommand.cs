@@ -13,24 +13,40 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
+using ARDrone.Control.Data;
+
 namespace ARDrone.Control.Commands
 {
     public class SwitchCameraCommand : Command
     {
-        private DroneCameraMode videoMode;
+        private DroneCameraMode cameraMode;
 
         public SwitchCameraCommand(DroneCameraMode videoMode)
             : base()
         {
             outcome.Add(CommandStatusOutcome.SwitchCamera);
 
-            this.videoMode = videoMode;
+            this.cameraMode = videoMode;
         }
 
-        public override String CreateCommand()
+        public override String CreateCommand(SupportedFirmwareVersion firmwareVersion)
         {
             CheckSequenceNumber();
-            return String.Format("AT*ZAP={0},{1}\r", sequenceNumber, (int)videoMode);
+
+            switch (firmwareVersion)
+            {
+                case SupportedFirmwareVersion.Firmware_151:
+                    return String.Format("AT*CONFIG={0},\"{1}\",\"{2}\"\r", sequenceNumber, "video:video_channel", (int)cameraMode);
+                    
+                default:
+                    return String.Format("AT*ZAP={0},{1}\r", sequenceNumber, (int)cameraMode);
+            }
+        }
+
+        public DroneCameraMode CameraMode
+        {
+            get
+            { return cameraMode; }
         }
     }
 

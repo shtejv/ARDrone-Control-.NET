@@ -13,6 +13,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
+using ARDrone.Control.Data;
+
 namespace ARDrone.Control.Commands
 {
     public class FlatTrimCommand : Command
@@ -21,8 +23,9 @@ namespace ARDrone.Control.Commands
             : base()
         { }
 
-        public override String CreateCommand()
+        public override String CreateCommand(SupportedFirmwareVersion firmwareVersion)
         {
+            CheckSequenceNumber();
             return String.Format("AT*FTRIM={0}\r", sequenceNumber);
         }
     }

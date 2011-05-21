@@ -10,14 +10,21 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
+using System.IO;
 using System.Text;
+
+using ARDrone.Basics.Serialization;
 
 namespace ARDrone.Hud
 {
+    [Serializable()]
     public class HudConfig
     {
-        private HudConstants constants;
+        private const String serializationFileName = "hudConfig.xml";
+
+        private SerializationUtils serializationUtils;
+
+        private bool showHud;
 
         private bool showTarget;
         private bool showBaseLine;
@@ -26,72 +33,105 @@ namespace ARDrone.Hud
         private bool showSpeed;
         private bool showBattery;
 
-        public HudConfig(bool showTarget, bool showBaseLine, bool showHeading, bool showAltitude, bool showSpeed, bool showBattery, double cameraFieldOfViewAngle)
-        {
-            constants = new HudConstants(cameraFieldOfViewAngle);
+        private bool hudConfigInitialized = false;
 
-            this.showTarget = showTarget;
-            this.showBaseLine = showBaseLine;
-            this.showHeading = showHeading;
-            this.showAltitude = showAltitude;
-            this.showSpeed = showSpeed;
-            this.showBattery = showBattery;
+        public HudConfig()
+        {
+            serializationUtils = new SerializationUtils();
+
+            showHud = true;
+
+            showTarget = true;
+            showBaseLine = true;
+            showHeading = true;
+            showAltitude = true;
+            showSpeed = true;
+            showBattery = true;
+        }
+
+        private void CopySettingsFrom(HudConfig hudConfig)
+        {
+            this.ShowHud = hudConfig.showHud;
+
+            this.ShowTarget = hudConfig.ShowTarget;
+            this.ShowBaseLine = hudConfig.ShowBaseLine;
+            this.ShowHeading = hudConfig.ShowHeading;
+            this.ShowAltitude = hudConfig.ShowAltitude;
+            this.ShowSpeed = hudConfig.ShowSpeed;
+            this.ShowBattery = hudConfig.ShowBattery;
+        }
+
+        public void Initialize()
+        {
+            hudConfigInitialized = true;
+        }
+
+        private void CheckForHudConfigState()
+        {
+            if (hudConfigInitialized)
+                throw new InvalidOperationException("Changing the HUD configuration is not possible after it has been used");
+        }
+
+        public bool ShowHud
+        {
+            get { return showHud; }
+            set { CheckForHudConfigState(); showHud = value; }
         }
 
         public bool ShowTarget
         {
-            get
-            {
-                return showTarget;
-            }
+            get { return showTarget; }
+            set { CheckForHudConfigState(); showTarget = value; }
         }
 
         public bool ShowBaseLine
         {
-            get
-            {
-                return showBaseLine;
-            }
+            get { return showBaseLine; }
+            set { CheckForHudConfigState(); showBaseLine = value; }
         }
 
         public bool ShowHeading
         {
-            get
-            {
-                return showHeading;
-            }
+            get { return showHeading; }
+            set { CheckForHudConfigState(); showHeading = value; }
         }
 
         public bool ShowAltitude
         {
-            get
-            {
-                return showAltitude;
-            }
+            get { return showAltitude; }
+            set { CheckForHudConfigState(); showAltitude = value; }
         }
 
         public bool ShowSpeed
         {
-            get
-            {
-                return showSpeed;
-            }
+            get { return showSpeed; }
+            set { CheckForHudConfigState(); showSpeed = value; }
         }
 
         public bool ShowBattery
         {
-            get
-            {
-                return showBattery;
-            }
+            get { return showBattery; }
+            set { CheckForHudConfigState(); showBattery = value; }
         }
 
-        public HudConstants Constants
+        public void Load()
         {
-            get
+            CheckForHudConfigState();
+
+            HudConfig hudConfig = new HudConfig();
+            try
             {
-                return constants;
+                hudConfig = (HudConfig) serializationUtils.Deserialize(this.GetType(), serializationFileName);
             }
+            catch (Exception)
+            { }
+
+            CopySettingsFrom(hudConfig);
+        }
+
+        public void Save()
+        {
+            serializationUtils.Serialize(this, serializationFileName);
         }
     }
 }

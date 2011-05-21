@@ -12,7 +12,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using ARDrone.Input.InputControls;
-using ARDrone.Input.Utility;
+using ARDrone.Input.Utils;
 
 namespace ARDrone.Input.InputMappings
 {

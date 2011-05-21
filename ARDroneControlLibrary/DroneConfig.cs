@@ -10,15 +10,23 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
+using System.IO;
 using System.Text;
 
 using ARDrone.Control.Commands;
+using ARDrone.Control.Data;
+using ARDrone.Basics.Serialization;
 
 namespace ARDrone.Control
 {
+    [Serializable()]
     public class DroneConfig
     {
+        private const String serializationFileName = "droneConfig.xml";
+
+        private SerializationUtils serializationUtils;
+
+        private String standardOwnIpAddress;      // Only used when no drone network could be found
         private String droneIpAddress;
         private String droneNetworkIdentifierStart;
 
@@ -29,12 +37,19 @@ namespace ARDrone.Control
 
         private int timeoutValue;
 
+        private SupportedFirmwareVersion firmwareVersion;
+
         private DroneCameraMode defaultCameraMode;
 
         private bool droneConfigInitialized = false;
 
         public DroneConfig()
         {
+            serializationUtils = new SerializationUtils();
+
+            droneConfigInitialized = false;
+
+            standardOwnIpAddress = "192.168.1.2";
             droneIpAddress = "192.168.1.1";
             droneNetworkIdentifierStart = "ardrone_";
 
@@ -43,8 +58,24 @@ namespace ARDrone.Control
             commandPort = 5556;
             controlInfoPort = 5559;
 
-            timeoutValue = 1000;
+            firmwareVersion = SupportedFirmwareVersion.Firmware_133;
+
+            timeoutValue = 500;
             defaultCameraMode = DroneCameraMode.FrontCamera;
+        }
+
+        private void CopySettingsFrom(DroneConfig droneConfig)
+        {
+            this.StandardOwnIpAddress = droneConfig.StandardOwnIpAddress;
+            this.DroneIpAddress = droneConfig.DroneIpAddress;
+            this.DroneNetworkIdentifierStart = droneConfig.DroneNetworkIdentifierStart;
+
+            this.VideoPort = droneConfig.VideoPort;
+            this.NavigationPort = droneConfig.NavigationPort;
+            this.CommandPort = droneConfig.CommandPort;
+            this.ControlInfoPort = droneConfig.ControlInfoPort;
+
+            this.FirmwareVersion = droneConfig.FirmwareVersion;
         }
 
         public void Initialize()
@@ -55,7 +86,16 @@ namespace ARDrone.Control
         private void CheckForDroneConfigState()
         {
             if (droneConfigInitialized)
-                throw new InvalidOperationException("Changing the drone configuration after is not possible after it has been used");
+                throw new InvalidOperationException("Changing the drone configuration is not possible after it has been used");
+        }
+
+        /// <summary>
+        /// Only used when no drone network could be found
+        /// </summary>
+        public String StandardOwnIpAddress
+        {
+            get { return standardOwnIpAddress; }
+            set { CheckForDroneConfigState(); standardOwnIpAddress = value; }
         }
 
         public String DroneIpAddress
@@ -100,10 +140,36 @@ namespace ARDrone.Control
             set { CheckForDroneConfigState(); timeoutValue = value; }
         }
 
+        public SupportedFirmwareVersion FirmwareVersion
+        {
+            get { return firmwareVersion; }
+            set { CheckForDroneConfigState(); firmwareVersion = value; }
+        }
+
         public DroneCameraMode DefaultCameraMode
         {
             get { return defaultCameraMode; }
             set { CheckForDroneConfigState(); defaultCameraMode = value; }
+        }
+
+        public void Load()
+        {
+            CheckForDroneConfigState();
+
+            DroneConfig droneConfig = new DroneConfig();
+            try
+            {
+                droneConfig = (DroneConfig)serializationUtils.Deserialize(this.GetType(), serializationFileName);
+            }
+            catch (Exception)
+            { }
+
+            CopySettingsFrom(droneConfig);
+        }
+
+        public void Save()
+        {
+            serializationUtils.Serialize(this, serializationFileName);
         }
     }
 }

@@ -30,7 +30,6 @@ namespace ARDrone.Control.Network
         protected override void CreateSocket()
         {
             client = CreateTcpSocket(GetLocalIpAddress(), Port, TimeoutValue);
-
         }
 
         protected TcpClient CreateTcpSocket(string ip, int port, int timeoutValue)

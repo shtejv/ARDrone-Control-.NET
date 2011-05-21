@@ -168,10 +168,7 @@ namespace ARDrone.Control.Network
 
         protected String GetLocalIpAddress()
         {
-            if (!networkConnector.IsConnectedToDroneNetwork)
-                throw new Exception("The drone is not yet connected to the drone network");
-
-            return networkConnector.GetLocalIpAddress();
+            return networkConnector.GetOwnIpAddress();
         }
 
         protected String RemoteIpAddress

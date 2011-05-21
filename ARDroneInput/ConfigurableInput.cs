@@ -14,15 +14,19 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Xml.Serialization;
+
+using ARDrone.Basics.Serialization;
 using ARDrone.Input.InputConfigs;
 using ARDrone.Input.InputControls;
 using ARDrone.Input.InputMappings;
-using ARDrone.Input.Utility;
+using ARDrone.Input.Utils;
 
 namespace ARDrone.Input
 {
     public abstract class ConfigurableInput : GenericInput
     {
+        private SerializationUtils serializationUtils;
+
         protected InputMapping mapping = null;
         protected InputMapping backupMapping = null;
 
@@ -36,6 +40,8 @@ namespace ARDrone.Input
 
         public void DetermineMapping()
         {
+            serializationUtils = new SerializationUtils();
+
             mapping = GetStandardMapping();
             LoadMapping();
 
@@ -103,13 +109,7 @@ namespace ARDrone.Input
 
         private String GetMappingFilePath()
         {
-            String appDataFolder = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
-            String appFolder = Path.Combine(appDataFolder, "ARDrone.NET", "mappings");
-
-            if (!Directory.Exists(appFolder))
-            {
-                Directory.CreateDirectory(appFolder);
-            }
+            String appFolder = serializationUtils.GetAppFolder("mappings");
 
             String mappingPath = Path.Combine(appFolder, FilePrefix + ".xml");
             return mappingPath;

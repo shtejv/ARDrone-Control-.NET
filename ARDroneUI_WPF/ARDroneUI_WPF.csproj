@@ -72,18 +72,29 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="ConfigInput.xaml.cs">
-      <DependentUpon>ConfigInput.xaml</DependentUpon>
+    <Compile Include="Utils\EnumDisplayer.cs" />
+    <Compile Include="Bindings\GeneralBinding.cs" />
+    <Compile Include="GeneralConfigWindows.xaml.cs">
+      <DependentUpon>GeneralConfigWindows.xaml</DependentUpon>
     </Compile>
+    <Compile Include="InputConfigWindow.xaml.cs">
+      <DependentUpon>InputConfigWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Bindings\GeneralConfigBinding.cs" />
     <Compile Include="SplashScreen.xaml.cs">
       <DependentUpon>SplashScreen.xaml</DependentUpon>
     </Compile>
     <Compile Include="Utility.cs" />
-    <Compile Include="DroneConfigurationOutput.xaml.cs">
-      <DependentUpon>DroneConfigurationOutput.xaml</DependentUpon>
+    <Compile Include="DroneConfigurationOutputWindow.xaml.cs">
+      <DependentUpon>DroneConfigurationOutputWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Utils\CellConverter.cs" />
-    <Page Include="ConfigInput.xaml">
+    <Compile Include="Utils\ErrorProvider.cs" />
+    <Page Include="GeneralConfigWindows.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="InputConfigWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -99,7 +110,7 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Page Include="DroneConfigurationOutput.xaml">
+    <Page Include="DroneConfigurationOutputWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -179,6 +190,9 @@
       <ProductName>Windows Installer 3.1</ProductName>
       <Install>true</Install>
     </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Icon.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

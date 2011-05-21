@@ -26,7 +26,7 @@ using ARDrone.Control.Data;
 using ARDrone.Control.Events;
 using ARDrone.Detection;
 using ARDrone.Input;
-using ARDrone.Input.Utility;
+using ARDrone.Input.Utils;
 
 namespace ARDroneUI_Detection_Forms
 {
@@ -117,7 +117,7 @@ namespace ARDroneUI_Detection_Forms
         {
             if (droneControl.IsConnected) { return; }
 
-            droneControl.ConnectToDrone();
+            droneControl.ConnectToDroneNetworkAndDrone();
             UpdateUISync("Connecting to the drone");
         }
 

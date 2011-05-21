@@ -13,6 +13,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
+using ARDrone.Control.Data;
+
 namespace ARDrone.Control.Commands
 {
     public enum DroneFlightMode
@@ -61,10 +63,11 @@ namespace ARDrone.Control.Commands
             }
         }
 
-        public override String CreateCommand()
+        public override String CreateCommand(SupportedFirmwareVersion firmwareVersion)
         {
-            int flightModeValue = GetFlightModeValue();
+            CheckSequenceNumber();
 
+            int flightModeValue = GetFlightModeValue();
             return String.Format("AT*REF={0},{1}\r", sequenceNumber, flightModeValue);
         }
 

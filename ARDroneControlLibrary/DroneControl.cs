@@ -59,7 +59,7 @@ namespace ARDrone.Control
 
         public bool lastConnectionState;
 
-        private DroneCameraMode currentCameraType = DroneCameraMode.FrontCamera;
+        private DroneCameraMode currentCameraMode = DroneCameraMode.FrontCamera;
 
         // Informational values
 
@@ -92,30 +92,30 @@ namespace ARDrone.Control
 
         private void CreateDroneWorkers()
         {
-            networkConnector = new NetworkConnector(droneConfig.DroneNetworkIdentifierStart, droneConfig.DroneIpAddress);
+            networkConnector = new NetworkConnector(droneConfig.DroneNetworkIdentifierStart, droneConfig.StandardOwnIpAddress, droneConfig.DroneIpAddress, droneConfig.FirmwareVersion);
             networkConnector.ConnectionStateChanged += networkConnector_ConnectionStateChanged;
             networkConnector.Error += networkWorker_Error;
 
-            videoDataRetriever = new VideoDataRetriever(networkConnector, droneConfig.DroneIpAddress, droneConfig.VideoPort, droneConfig.TimeoutValue);
+            videoDataRetriever = new VideoDataRetriever(networkConnector, droneConfig.DroneIpAddress, droneConfig.VideoPort, droneConfig.TimeoutValue, droneConfig.FirmwareVersion);
             videoDataRetriever.ConnectionStateChanged += networkWorker_ConnectionStateChanged;
             videoDataRetriever.Error += networkWorker_Error;
 
-            navigationDataRetriever = new NavigationDataRetriever(networkConnector, droneConfig.DroneIpAddress, droneConfig.NavigationPort, droneConfig.TimeoutValue);
+            navigationDataRetriever = new NavigationDataRetriever(networkConnector, droneConfig.DroneIpAddress, droneConfig.NavigationPort, droneConfig.TimeoutValue, droneConfig.FirmwareVersion);
             navigationDataRetriever.ConnectionStateChanged += networkWorker_ConnectionStateChanged;
             navigationDataRetriever.Error += networkWorker_Error;
 
-            commandSender = new CommandSender(networkConnector, droneConfig.DroneIpAddress, droneConfig.CommandPort, droneConfig.TimeoutValue, droneConfig.DefaultCameraMode);
+            commandSender = new CommandSender(networkConnector, droneConfig.DroneIpAddress, droneConfig.CommandPort, droneConfig.TimeoutValue, droneConfig.FirmwareVersion, droneConfig.DefaultCameraMode);
             commandSender.ConnectionStateChanged += networkWorker_ConnectionStateChanged;
             commandSender.Error += networkWorker_Error;
 
-            controlInfoRetriever = new ControlInfoRetriever(networkConnector, droneConfig.DroneIpAddress, droneConfig.ControlInfoPort, 0);
+            controlInfoRetriever = new ControlInfoRetriever(networkConnector, droneConfig.DroneIpAddress, droneConfig.ControlInfoPort, 0, droneConfig.FirmwareVersion);
             controlInfoRetriever.ConnectionStateChanged += networkWorker_ConnectionStateChanged;
             controlInfoRetriever.Error += networkWorker_Error;
 
             // Interop between the different threads
             commandSender.DataRetriever = navigationDataRetriever;
 
-            networkSanityChecker = new NetworkSanityChecker(videoDataRetriever, navigationDataRetriever, commandSender, controlInfoRetriever);
+            networkSanityChecker = new NetworkSanityChecker(videoDataRetriever, navigationDataRetriever, commandSender, controlInfoRetriever, droneConfig.FirmwareVersion);
             networkSanityChecker.SanityCheckComplete += networkSanityChecker_SanityChecked;
         }
 
@@ -123,8 +123,10 @@ namespace ARDrone.Control
         {
             if (!connecting && !IsConnected)
             {
+                connecting = true;
                 connectToBothNetworkAndDrone = true;
-                ConnectToDroneNetworkAndDrone();
+
+                ConnectNetwork();
             }
         }
 
@@ -132,26 +134,27 @@ namespace ARDrone.Control
         {
             if (!connecting && !IsConnected)
             {
+                connecting = true;
                 connectToBothNetworkAndDrone = false;
-                networkConnector.Connect();
+
+                ConnectNetwork();
             }
+        }
+
+        private void ConnectNetwork()
+        {
+            networkConnector.Connect();
         }
 
         public void ConnectToDrone()
         {
             if (!connecting && !IsConnected)
             {
-                CheckDroneNetworkConnection();
-
+                connecting = true;
                 connectToBothNetworkAndDrone = false;
+
                 RunNetworkSanityCheck();
             }
-        }
-
-        private void CheckDroneNetworkConnection()
-        {
-            if (!networkConnector.IsConnectedToDroneNetwork)
-                throw new Exception("The computer must be connected to the drone network before connecting to the drone. Please execute ConnectToDroneNetwork() before.");
         }
 
         private void RunNetworkSanityCheck()
@@ -173,10 +176,13 @@ namespace ARDrone.Control
 
         private void InvokeNetworkConnectionStateChange(DroneNetworkConnectionStateChangedEventArgs e)
         {
-            if (connectToBothNetworkAndDrone)
-                ConnectToDrone();
-            else
-                connecting = false;
+            if (e.State == DroneNetworkConnectionState.PingSuccesful)
+            {
+                if (connectToBothNetworkAndDrone)
+                    ConnectToDrone();
+                else
+                    connecting = false;
+            }
 
             if (NetworkConnectionStateChanged != null)
                 NetworkConnectionStateChanged.Invoke(this, e);
@@ -259,10 +265,41 @@ namespace ARDrone.Control
 
         public void SendCommand(Command command)
         {
+            UpdateCurrentCamera(command);
+
             if (IsCommandPossible(command) && CheckFlightMoveCommand(command))
             {
                 commandSender.SendQueuedCommand(command);
                 ChangeStatusAccordingToCommand(command);
+            }
+        }
+
+        private void UpdateCurrentCamera(Command command)
+        {
+            if (command is SwitchCameraCommand)
+            {
+                DroneCameraMode cameraMode = ((SwitchCameraCommand)command).CameraMode;
+
+                if (cameraMode == DroneCameraMode.NextMode)
+                {
+                    switch (currentCameraMode)
+                    {
+                        case DroneCameraMode.FrontCamera:
+                            cameraMode = DroneCameraMode.BottomCamera;
+                            break;
+                        case DroneCameraMode.BottomCamera:
+                            cameraMode = DroneCameraMode.PictureInPictureFront;
+                            break;
+                        case DroneCameraMode.PictureInPictureFront:
+                            cameraMode = DroneCameraMode.PictureInPictureBottom;
+                            break;
+                        case DroneCameraMode.PictureInPictureBottom:
+                            cameraMode = DroneCameraMode.FrontCamera;
+                            break;
+                    }
+                }
+
+                currentCameraMode = cameraMode;
             }
         }
 
@@ -366,11 +403,12 @@ namespace ARDrone.Control
 
         // Current drone state
 
+        public bool IsConnecting { get { return connecting; } }
         public bool IsConnected { get { return videoDataRetriever.Connected && navigationDataRetriever.Connected && commandSender.Connected; } }
         public bool IsFlying { get { return flying; } }
         public bool IsHovering { get { return hovering; } }
         public bool IsEmergency { get { return emergency; } }
-        public DroneCameraMode CurrentCameraType { get { return currentCameraType; } }
+        public DroneCameraMode CurrentCameraType { get { return currentCameraMode; } }
 
         // Current drone capabilities
 

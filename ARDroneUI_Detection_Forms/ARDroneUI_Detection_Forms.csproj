@@ -53,6 +53,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DirectionControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="DirectionControl.Designer.cs">
+      <DependentUpon>DirectionControl.cs</DependentUpon>
+    </Compile>
     <Compile Include="MainForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -61,6 +67,9 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="DirectionControl.resx">
+      <DependentUpon>DirectionControl.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="MainForm.resx">
       <DependentUpon>MainForm.cs</DependentUpon>
     </EmbeddedResource>
@@ -97,10 +106,6 @@
     <ProjectReference Include="..\ARDroneInput\ARDroneInput.csproj">
       <Project>{104C0B70-4D35-4090-942A-9223222D0E6C}</Project>
       <Name>ARDroneInput</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\DirectionControl\DirectionControl.csproj">
-      <Project>{625B51D7-FAB2-48F9-86D9-11F82EF9FB96}</Project>
-      <Name>DirectionControl</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

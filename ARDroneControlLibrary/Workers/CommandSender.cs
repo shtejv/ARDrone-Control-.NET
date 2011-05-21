@@ -14,6 +14,7 @@ using System.Diagnostics;
 using System.Text;
 using System.Threading;
 
+using ARDrone.Control.Data;
 using ARDrone.Control.Network;
 using ARDrone.Control.Commands;
 
@@ -29,11 +30,13 @@ namespace ARDrone.Control.Workers
         private uint currentSequenceNumber;
         private List<String> commandsToSend;
 
+        private SupportedFirmwareVersion firmwareVersion;
         private DroneCameraMode defaultCameraMode;
 
-        public CommandSender(NetworkConnector networkConnector, String remoteIpAddress, int port, int timeoutValue, DroneCameraMode defaultCameraMode)
+        public CommandSender(NetworkConnector networkConnector, String remoteIpAddress, int port, int timeoutValue, SupportedFirmwareVersion firmwareVersion, DroneCameraMode defaultCameraMode)
             : base(networkConnector, remoteIpAddress, port, timeoutValue)
         {
+            this.firmwareVersion = firmwareVersion;
             this.defaultCameraMode = defaultCameraMode;
 
             ResetVariables();
@@ -147,20 +150,20 @@ namespace ARDrone.Control.Workers
         public void SendQueuedCommand(Command command)
         {
             command.SequenceNumber = GetSequenceNumberForCommand();
-            commandsToSend.Add(command.CreateCommand());
+            commandsToSend.Add(command.CreateCommand(firmwareVersion));
 
             if (command is SetConfigurationCommand)
             {
                 SetControlModeCommand controlModeCommand = new SetControlModeCommand(DroneControlMode.LogControlMode);
                 controlModeCommand.SequenceNumber = GetSequenceNumberForCommand();
-                commandsToSend.Add(controlModeCommand.CreateCommand());
+                commandsToSend.Add(controlModeCommand.CreateCommand(firmwareVersion));
             }
         }
 
         private void SendUnqueuedCommand(Command command)
         {
             command.SequenceNumber = GetSequenceNumberForCommand();
-            SendMessage(command.CreateCommand());
+            SendMessage(command.CreateCommand(firmwareVersion));
         }
 
         private uint GetSequenceNumberForCommand()

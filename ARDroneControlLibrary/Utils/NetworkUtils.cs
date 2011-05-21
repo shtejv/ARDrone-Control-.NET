@@ -10,13 +10,57 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
+using System.Net.NetworkInformation;
 using System.Text;
+using System.Net;
 
 namespace ARDrone.Control.Utils
 {
     public class NetworkUtils
     {
+        public String GetIpAddressForInterfaceId(String interfaceIdSearchedFor)
+        {
+            NetworkInterface[] networkInterfaces = NetworkInterface.GetAllNetworkInterfaces();
 
+            foreach (NetworkInterface networkInterface in networkInterfaces)
+            {
+                String interfaceId = networkInterface.Id.Replace("{", "").Replace("}", "").ToUpper();
+
+                if (interfaceId == interfaceIdSearchedFor)
+                    return GetIpAddress(networkInterface);
+            }
+
+            return null;
+        }
+
+        public String GetIpAddress(NetworkInterface networkInterface)
+        {
+            if (networkInterface.GetIPProperties() == null || networkInterface.GetIPProperties().UnicastAddresses == null)
+                return null;
+
+            UnicastIPAddressInformationCollection unicastAddresses = networkInterface.GetIPProperties().UnicastAddresses;
+
+            foreach (UnicastIPAddressInformation unicastAddress in unicastAddresses)
+            {
+                try
+                {
+                    if (!IsIPv6Address(unicastAddress.Address))
+                    {
+                        String address = unicastAddress.Address.ToString();
+                        return address;
+                    }
+                }
+                catch (Exception)
+                { }
+            }
+
+            return null;
+        }
+
+        public bool IsIPv6Address(IPAddress address)
+        {
+            return (address.IsIPv6LinkLocal || address.IsIPv6Multicast ||
+                    address.IsIPv6SiteLocal || address.IsIPv6Teredo);
+        }
     }
 }

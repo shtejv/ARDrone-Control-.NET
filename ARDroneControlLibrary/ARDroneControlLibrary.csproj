@@ -50,10 +50,12 @@
     <Compile Include="Commands\Command.cs" />
     <Compile Include="Commands\FlightMoveCommand.cs" />
     <Compile Include="Commands\HoverModeCommand.cs" />
+    <Compile Include="Commands\PlayLedAnimationCommand.cs" />
     <Compile Include="Commands\SetConfigurationCommand.cs" />
     <Compile Include="Commands\SetControlModeCommand.cs" />
     <Compile Include="Commands\SwitchCameraCommand.cs" />
     <Compile Include="Commands\WatchDogCommand.cs" />
+    <Compile Include="Data\Firmware.cs" />
     <Compile Include="Data\InternalDroneConfiguration.cs" />
     <Compile Include="Data\NavigationData.cs" />
     <Compile Include="DroneConfig.cs" />
@@ -79,7 +81,12 @@
     <Compile Include="Workers\NetworkSanityChecker.cs" />
     <Compile Include="Workers\VideoDataRetriever.cs" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="..\ARDroneBasics\ARDroneBasics.csproj">
+      <Project>{30FB7E9C-2668-4303-BF0D-1618DD30B8E5}</Project>
+      <Name>ARDroneBasics</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

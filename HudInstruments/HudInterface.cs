@@ -24,32 +24,35 @@ namespace ARDrone.Hud
         protected DrawingUtils drawingUtils;
         private List<HudElement> hudElements;
 
+        private bool showHud;
         private HudState currentState;
 
-        public HudInterface(HudConfig hudConfig)
+        public HudInterface(HudConfig hudConfig, HudConstants constants)
         {
             drawingUtils = new DrawingUtils();
             currentState = new HudState();
 
-            ConfigureHud(hudConfig);
+            ConfigureHud(hudConfig, constants);
         }
 
-        private void ConfigureHud(HudConfig hudConfig)
+        private void ConfigureHud(HudConfig hudConfig, HudConstants constants)
         {
+            showHud = hudConfig.ShowHud;
+
             hudElements = new List<HudElement>();
 
             if (hudConfig.ShowTarget)
-                hudElements.Add(new TargetElement(hudConfig.Constants));
+                hudElements.Add(new TargetElement(constants));
             if (hudConfig.ShowBaseLine)
-                hudElements.Add(new BaseLineElement(hudConfig.Constants));
+                hudElements.Add(new BaseLineElement(constants));
             if (hudConfig.ShowHeading)
-                hudElements.Add(new HeadingElement(hudConfig.Constants));
+                hudElements.Add(new HeadingElement(constants));
             if (hudConfig.ShowAltitude)
-                hudElements.Add(new AltitudeElement(hudConfig.Constants));
+                hudElements.Add(new AltitudeElement(constants));
             if (hudConfig.ShowSpeed)
-                hudElements.Add(new SpeedElement(hudConfig.Constants));
+                hudElements.Add(new SpeedElement(constants));
             if (hudConfig.ShowBattery)
-                hudElements.Add(new BatteryElement(hudConfig.Constants));
+                hudElements.Add(new BatteryElement(constants));
         }
 
         public void SetFlightVariables(double roll, double pitch, double yaw)
@@ -81,6 +84,9 @@ namespace ARDrone.Hud
 
         public BitmapSource DrawHud(BitmapSource cameraImage)
         {
+            if (!showHud)
+                return cameraImage;
+
             Bitmap currentBitmap = drawingUtils.BitmapFromSource(cameraImage);
             foreach (HudElement element in hudElements)
             {

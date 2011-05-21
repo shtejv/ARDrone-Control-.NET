@@ -13,6 +13,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
+using ARDrone.Control.Data;
+
 namespace ARDrone.Control.Commands
 {
     public enum DroneHoverMode
@@ -52,8 +54,9 @@ namespace ARDrone.Control.Commands
             }
         }
 
-        public override String CreateCommand()
+        public override String CreateCommand(SupportedFirmwareVersion firmwareVersion)
         {
+            CheckSequenceNumber();
             return String.Format("AT*PCMD={0},{1},{2},{3},{4},{5}\r", sequenceNumber, (mode == DroneHoverMode.Hover) ? 0 : 1, 0, 0, 0, 0);
         }
     }

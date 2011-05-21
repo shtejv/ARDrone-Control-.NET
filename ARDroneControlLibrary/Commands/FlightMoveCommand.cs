@@ -13,6 +13,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
+using ARDrone.Control.Data;
+
 namespace ARDrone.Control.Commands
 {
     public class FlightMoveCommand : Command
@@ -39,8 +41,9 @@ namespace ARDrone.Control.Commands
             prerequisites.Add(CommandStatusPrerequisite.NotHovering);
         }
 
-        public override string CreateCommand()
+        public override String CreateCommand(SupportedFirmwareVersion firmwareVersion)
         {
+            CheckSequenceNumber();
             return String.Format("AT*PCMD={0},{1},{2},{3},{4},{5}\r", sequenceNumber, 1, NormalizeValue(roll), NormalizeValue(pitch), NormalizeValue(gaz), NormalizeValue(yaw));
         }
 

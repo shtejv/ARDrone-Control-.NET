@@ -61,6 +61,12 @@
     <Compile Include="Utils\MathUtils.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\ARDroneBasics\ARDroneBasics.csproj">
+      <Project>{30FB7E9C-2668-4303-BF0D-1618DD30B8E5}</Project>
+      <Name>ARDroneBasics</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

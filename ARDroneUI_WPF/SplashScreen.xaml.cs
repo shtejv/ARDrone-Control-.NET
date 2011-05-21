@@ -47,16 +47,27 @@ namespace ARDrone.UI
 
         private void ProcessStartUp()
         {
-            InitializeDroneControl();
+            AddDroneEventHandlers();
             InitializeTimers();
 
             ConnectToDroneNetwork();
         }
 
-        private void InitializeDroneControl()
+        private void Dispose()
+        {
+            RemoveDroneEventHandlers();
+        }
+
+        private void AddDroneEventHandlers()
         {
             droneControl.Error += droneControl_Error_Async;
             droneControl.NetworkConnectionStateChanged += droneControl_NetworkConnectionStateChanged_Async;
+        }
+
+        private void RemoveDroneEventHandlers()
+        {
+            droneControl.Error -= droneControl_Error_Async;
+            droneControl.NetworkConnectionStateChanged -= droneControl_NetworkConnectionStateChanged_Async;
         }
 
         private void InitializeTimers()
@@ -77,7 +88,6 @@ namespace ARDrone.UI
 
             if (e.State == DroneNetworkConnectionState.PingSuccesful)
             {
-                connectionSuccessful = true;
                 WaitToStartApplication();
             }
         }
@@ -99,9 +109,17 @@ namespace ARDrone.UI
         private void HandleError(DroneErrorEventArgs args)
         {
             String errorText = SerializeException((NetworkConnectionException) args.CausingException);
-            MessageBox.Show(errorText, "An error occured", MessageBoxButton.OK, MessageBoxImage.Error);
+            errorText += "\nStart anyway?";
 
-            CloseDialog();
+            MessageBoxResult result = MessageBox.Show(errorText, "An error occured", MessageBoxButton.YesNo, MessageBoxImage.Error);
+            if (result == MessageBoxResult.Yes)
+            {
+                StartMainApplication();
+            }
+            else
+            {
+                CloseDialog();
+            }
         }
 
         private String SerializeException(NetworkConnectionException e)
@@ -130,6 +148,7 @@ namespace ARDrone.UI
 
         private void StartMainApplication()
         {
+            connectionSuccessful = true;
             timerStartMainProgram.Stop();
 
             CloseDialog();
@@ -137,6 +156,7 @@ namespace ARDrone.UI
 
         private void CloseDialog()
         {
+            Dispose();
             this.Close();
         }
 
