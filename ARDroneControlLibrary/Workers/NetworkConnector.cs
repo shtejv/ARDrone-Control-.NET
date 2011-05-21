@@ -377,7 +377,7 @@ namespace ARDrone.Control.Workers
         {
             UpdateConnectionStatuOnError();
 
-            InvokeError(new NetworkConnectionException("No network SSID containing '" + droneNetworkIdentifierStart + "' could be found", failureReasons));
+            InvokeError(new NetworkConnectionException("Could not connect to the drone network", failureReasons));
         }
 
         private void UpdateConnectionStatuOnError()
