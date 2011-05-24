@@ -153,8 +153,13 @@ namespace ARDrone.Control
                 connecting = true;
                 connectToBothNetworkAndDrone = false;
 
-                RunNetworkSanityCheck();
+                ConnectDrone();
             }
+        }
+
+        private void ConnectDrone()
+        {
+            RunNetworkSanityCheck();
         }
 
         private void RunNetworkSanityCheck()
@@ -179,7 +184,7 @@ namespace ARDrone.Control
             if (e.State == DroneNetworkConnectionState.PingSuccesful)
             {
                 if (connectToBothNetworkAndDrone)
-                    ConnectToDrone();
+                    ConnectDrone();
                 else
                     connecting = false;
             }

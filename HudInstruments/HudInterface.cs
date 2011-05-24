@@ -94,7 +94,10 @@ namespace ARDrone.Hud
                 currentBitmap = element.DrawToImage(currentBitmap, currentState);
             }
 
-            return drawingUtils.BitmapToSource(currentBitmap);
+            BitmapSource resultingSource = drawingUtils.BitmapToSource(currentBitmap);
+            currentBitmap.Dispose();
+
+            return resultingSource;
         }
     }
 }

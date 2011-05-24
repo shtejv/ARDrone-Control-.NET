@@ -43,9 +43,16 @@ namespace ARDrone.Input
                 gameControllerList.MoveNext();
                 DeviceInstance deviceInstance = (DeviceInstance)gameControllerList.Current;
 
-                Device device = new Device(deviceInstance.InstanceGuid);
 
-                if (device.DeviceInformation.ProductGuid != new Guid("0306057e-0000-0000-0000-504944564944") &&       // Wiimotes are excluded
+                Device device = null;
+                try
+                {
+                    device = new Device(deviceInstance.InstanceGuid);
+                }
+                catch (Exception)
+                { }                   
+
+                if (device != null && device.DeviceInformation.ProductGuid != new Guid("0306057e-0000-0000-0000-504944564944") &&       // Wiimotes are excluded
                     !CheckIfDirectInputDeviceExists(device, currentDevices))
                 {
                     AcquireDirectInputDevice(windowHandle, device, DeviceDataFormat.Joystick);

@@ -171,7 +171,7 @@ namespace ARDrone.Input
             Dictionary<String, float> axisValues = new Dictionary<String, float>();
 
             axisValues[Axis.Axis_X.ToString()] = state.AccelState.Values.X;
-            axisValues[Axis.Axis_Y.ToString()] = state.AccelState.Values.Y;
+            axisValues[Axis.Axis_Y.ToString()] = -state.AccelState.Values.Y;
             axisValues[Axis.Axis_Z.ToString()] = state.AccelState.Values.Z;
 
             axisValues[Axis.Axis_Nunchuk_X.ToString()] =  -state.NunchukState.Joystick.X * 2.0f;

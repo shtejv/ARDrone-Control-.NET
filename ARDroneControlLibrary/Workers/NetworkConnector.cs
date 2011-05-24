@@ -29,6 +29,8 @@ namespace ARDrone.Control.Workers
     {
         private const int connectionTimeout = 10000;
         private const int pingTimeout = 3000;
+
+        private const int maxScanRetries = 3;
         private const int maxPingRetries = 3;
 
         private const int notificationCodeScanSuccessful = 7;
@@ -45,6 +47,8 @@ namespace ARDrone.Control.Workers
         private DroneNetworkConnectionState currentState;
 
         private int currentlyScannedNetworkInterfaceNumber;
+        private int currentScanRetries;
+
         private WlanClient.WlanInterface currentWifiInterface;
         private int currentPingRetries;
 
@@ -119,6 +123,7 @@ namespace ARDrone.Control.Workers
             currentState = DroneNetworkConnectionState.NotConnected;
 
             currentPingRetries = 0;
+            currentScanRetries = 0;
             currentlyScannedNetworkInterfaceNumber = -1;
 
             currentWifiInterface = null;
@@ -166,10 +171,20 @@ namespace ARDrone.Control.Workers
 
         private void ScanCurrentNetworkInterface()
         {
-            currentState = DroneNetworkConnectionState.ScanningForNewNetworks;
-            UpdateConnectionStatus();
+            if (currentScanRetries < maxScanRetries)
+            {
+                currentScanRetries++;
 
-            currentWifiInterface.Scan();
+                currentState = DroneNetworkConnectionState.ScanningForNewNetworks;
+                UpdateConnectionStatus();
+
+                currentWifiInterface.Scan();
+            }
+            else
+            {
+                AddFailureReasonForCurrentInterface("The network scan could not be completed");
+                ScanNextNetworkInterface();
+            }
         }
 
         private void AddEventHandlersToNewWifiConnection()
@@ -191,8 +206,7 @@ namespace ARDrone.Control.Workers
             }
             else if (notificationData.notificationCode == notificationCodeScanErroneous)
             {
-                AddFailureReasonForCurrentInterface("The network scan could not be completed");
-                ScanNextNetworkInterface();
+                ScanCurrentNetworkInterface();
             }
         }
 

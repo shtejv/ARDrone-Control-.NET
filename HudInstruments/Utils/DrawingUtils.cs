@@ -20,6 +20,9 @@ namespace ARDrone.Hud.Utils
 {
     public class DrawingUtils
     {
+        [System.Runtime.InteropServices.DllImport("gdi32.dll")]
+        private static extern bool DeleteObject(IntPtr obj);
+
         public System.Drawing.Bitmap BitmapFromSource(BitmapSource bitmapsource)
         {
             Bitmap bitmap;
@@ -35,10 +38,19 @@ namespace ARDrone.Hud.Utils
 
         public BitmapSource BitmapToSource(Bitmap bitmap)
         {
-            IntPtr bitmapPointer = bitmap.GetHbitmap();
-            BitmapSizeOptions sizeOptions = BitmapSizeOptions.FromEmptyOptions();
-            BitmapSource destination = System.Windows.Interop.Imaging.CreateBitmapSourceFromHBitmap(bitmapPointer, IntPtr.Zero, Int32Rect.Empty, sizeOptions);
-            destination.Freeze();
+            BitmapSource destination;
+            try
+            {
+                IntPtr bitmapPointer = bitmap.GetHbitmap();
+                BitmapSizeOptions sizeOptions = BitmapSizeOptions.FromEmptyOptions();
+                destination = System.Windows.Interop.Imaging.CreateBitmapSourceFromHBitmap(bitmapPointer, IntPtr.Zero, Int32Rect.Empty, sizeOptions);
+                destination.Freeze();
+                DeleteObject(bitmapPointer);
+            }
+            catch (Exception)
+            {
+                destination = null;
+            }
 
             return destination;
         } 
