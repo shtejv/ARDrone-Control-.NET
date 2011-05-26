@@ -342,24 +342,34 @@ namespace ARDroneUI_Detection_Forms
             {
                 Bitmap newImage = CopyBitmap((Bitmap)droneControl.BitmapImage);
 
-                PerformStopSignDetection(newImage);
-                UpdateVisualImage(newImage);
+                if (newImage != null)
+                {
+                    PerformStopSignDetection(newImage);
+                    UpdateVisualImage(newImage);
+                }
             }
         }
 
         private Bitmap CopyBitmap(Bitmap image)
         {
-            int width = image.Width;
-            int height = image.Height;
-            Rectangle rectangleToCopy = new Rectangle(0, 0, width, height);
-
-            Bitmap newImage = new Bitmap(width, height);
-            using (Graphics g = Graphics.FromImage(newImage))
+            try
             {
-                g.DrawImage(image, rectangleToCopy, rectangleToCopy, GraphicsUnit.Pixel);
-            }
+                int width = image.Width;
+                int height = image.Height;
+                Rectangle rectangleToCopy = new Rectangle(0, 0, width, height);
 
-            return newImage;
+                Bitmap newImage = new Bitmap(width, height);
+                using (Graphics g = Graphics.FromImage(newImage))
+                {
+                    g.DrawImage(image, rectangleToCopy, rectangleToCopy, GraphicsUnit.Pixel);
+                }
+
+                return newImage;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
         }
 
         private void PerformStopSignDetection(Bitmap image)

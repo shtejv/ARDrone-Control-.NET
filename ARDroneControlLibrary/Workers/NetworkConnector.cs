@@ -354,7 +354,16 @@ namespace ARDrone.Control.Workers
             options.DontFragment = true;
             byte[] data = Encoding.ASCII.GetBytes("This is a test");
 
-            pingSender.SendAsync(droneIpAddress, pingTimeout, data, options);
+            bool sent = false;
+            while (!sent)
+            {
+                try
+                {
+                    pingSender.SendAsync(droneIpAddress, pingTimeout, data, options);
+                    sent = true;
+                }
+                catch (Exception) { }
+            }
         }
 
         private void ProcessPingResult(PingCompletedEventArgs e)

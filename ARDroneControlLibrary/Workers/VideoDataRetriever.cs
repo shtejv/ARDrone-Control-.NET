@@ -69,13 +69,21 @@ namespace ARDrone.Control.Workers
 
             do
             {
-                if (IsKeepAliveSignalNeeded())
+                try
+                {
+                    if (IsKeepAliveSignalNeeded())
+                        SendMessage(1);
+
+                    byte[] buffer = client.Receive(ref endpoint);
+
+                    if (buffer.Length > 0)
+                        videoUtils.ProcessByteStream(buffer);
+                }
+                catch (SocketException e)
+                {
+                    Console.WriteLine("Socket exception occured: " + e.ErrorCode);
                     SendMessage(1);
-
-                byte[] buffer = client.Receive(ref endpoint);
-
-                if (buffer.Length > 0)
-                    videoUtils.ProcessByteStream(buffer);
+                }
             }
             while (!workerThreadEnded);
         }
