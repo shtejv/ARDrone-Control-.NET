@@ -26,7 +26,42 @@ using ARDrone.Control.Commands;
 
 namespace ARDrone.Control
 {
-    public class DroneControl
+    public interface IDroneControl
+    {
+        void Init(DroneConfig droneConfig);
+        event DroneErrorEventHandler Error;
+        event DroneConnectionStateChangedEventHandler ConnectionStateChanged;
+        event DroneNetworkConnectionStateChangedEventHandler NetworkConnectionStateChanged;
+        Bitmap BitmapImage { get; }
+        ImageSource ImageSourceImage { get; }
+        DroneData NavigationData { get; }
+        InternalDroneConfiguration InternalDroneConfiguration { get; }
+        bool IsConnecting { get; }
+        bool IsConnected { get; }
+        bool IsFlying { get; }
+        bool IsHovering { get; }
+        bool IsEmergency { get; }
+        DroneCameraMode CurrentCameraType { get; }
+        bool CanTakeoff { get; }
+        bool CanLand { get; }
+        bool CanCallEmergency { get; }
+        bool CanCallReset { get; }
+        bool CanSendFlatTrim { get; }
+        bool CanFlyFreely { get; }
+        bool CanEnterHoverMode { get; }
+        bool CanLeaveHoverMode { get; }
+        bool CanSwitchCamera { get; }
+        Size FrontCameraPictureSize { get; }
+        Size BottomCameraPictureSize { get; }
+        double FrontCameraFieldOfViewDegrees { get; }
+        double BottomCameraFieldOfViewDegrees { get; }
+        void ConnectToDrone();
+        void Disconnect();
+        void SendCommand(Command command);
+        bool IsCommandPossible(Command command);
+    }
+
+    public class DroneControl : IDroneControl
     {
         private const float thresholdBetweenSettingCommands = 0.03f;
 
@@ -71,18 +106,8 @@ namespace ARDrone.Control
         public event DroneErrorEventHandler Error;
         public event DroneConnectionStateChangedEventHandler ConnectionStateChanged;
         public event DroneNetworkConnectionStateChangedEventHandler NetworkConnectionStateChanged;
-
-        public DroneControl(DroneConfig droneConfig)
-        {
-            Init(droneConfig);
-        }
-
-        public DroneControl()
-        {
-            Init(new DroneConfig());
-        }
-
-        private void Init(DroneConfig droneConfig)
+        
+        public void Init(DroneConfig droneConfig)
         {
             this.droneConfig = droneConfig;
             droneConfig.Initialize();

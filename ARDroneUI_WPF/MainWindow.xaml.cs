@@ -101,7 +101,8 @@ namespace ARDrone.UI
 
         private void InitializeDroneControl(DroneConfig droneConfig)
         {
-            droneControl = new DroneControl(droneConfig);
+            droneControl = new DroneControl();
+            droneControl.Init(droneConfig);
         }
 
         private bool ShowSplashScreen()

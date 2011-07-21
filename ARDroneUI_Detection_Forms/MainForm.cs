@@ -74,7 +74,8 @@ namespace ARDroneUI_Detection_Forms
             DroneConfig droneConfig = new DroneConfig();
             droneConfig.DefaultCameraMode = DroneCameraMode.BottomCamera;
 
-            droneControl = new DroneControl(droneConfig);
+            droneControl = new DroneControl();
+            droneControl.Init(droneConfig);
             droneControl.Error += droneControl_Error_Async;
             droneControl.ConnectionStateChanged += droneControl_ConnectionStateChanged_Async;
         }
