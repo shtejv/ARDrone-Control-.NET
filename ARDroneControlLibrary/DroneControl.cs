@@ -26,10 +26,43 @@ using ARDrone.Control.Commands;
 
 namespace ARDrone.Control
 {
-    public class DroneControl
+    public interface IDroneControl
     {
-        private const float thresholdBetweenSettingCommands = 0.03f;
+        void Init(DroneConfig droneConfig);
+        event DroneErrorEventHandler Error;
+        event DroneConnectionStateChangedEventHandler ConnectionStateChanged;
+        event DroneNetworkConnectionStateChangedEventHandler NetworkConnectionStateChanged;
+        Bitmap BitmapImage { get; }
+        ImageSource ImageSourceImage { get; }
+        DroneData NavigationData { get; }
+        InternalDroneConfiguration InternalDroneConfiguration { get; }
+        bool IsConnecting { get; }
+        bool IsConnected { get; }
+        bool IsFlying { get; }
+        bool IsHovering { get; }
+        bool IsEmergency { get; }
+        DroneCameraMode CurrentCameraType { get; }
+        bool CanTakeoff { get; }
+        bool CanLand { get; }
+        bool CanCallEmergency { get; }
+        bool CanCallReset { get; }
+        bool CanSendFlatTrim { get; }
+        bool CanFlyFreely { get; }
+        bool CanEnterHoverMode { get; }
+        bool CanLeaveHoverMode { get; }
+        bool CanSwitchCamera { get; }
+        Size FrontCameraPictureSize { get; }
+        Size BottomCameraPictureSize { get; }
+        double FrontCameraFieldOfViewDegrees { get; }
+        double BottomCameraFieldOfViewDegrees { get; }
+        void ConnectToDrone();
+        void Disconnect();
+        void SendCommand(Command command);
+        bool IsCommandPossible(Command command);
+    }
 
+    public class DroneControl : IDroneControl
+    {
         // Workers
 
         private NetworkConnector networkConnector;
@@ -52,10 +85,7 @@ namespace ARDrone.Control
         private bool hovering = false;
         private bool emergency = false;
 
-        private float lastRollValue = 0.0f;
-        private float lastPitchValue = 0.0f;
-        private float lastGazValue = 0.0f;
-        private float lastYawValue = 0.0f;
+        private CheckFlightMoveCommandStrategy checkFlightMoveCommandStrategy;
 
         public bool lastConnectionState;
 
@@ -71,19 +101,10 @@ namespace ARDrone.Control
         public event DroneErrorEventHandler Error;
         public event DroneConnectionStateChangedEventHandler ConnectionStateChanged;
         public event DroneNetworkConnectionStateChangedEventHandler NetworkConnectionStateChanged;
-
-        public DroneControl(DroneConfig droneConfig)
+        
+        public void Init(DroneConfig droneConfig)
         {
-            Init(droneConfig);
-        }
-
-        public DroneControl()
-        {
-            Init(new DroneConfig());
-        }
-
-        private void Init(DroneConfig droneConfig)
-        {
+            checkFlightMoveCommandStrategy = new CheckFlightMoveCommandStrategy();
             this.droneConfig = droneConfig;
             droneConfig.Initialize();
 
@@ -327,31 +348,7 @@ namespace ARDrone.Control
 
         private bool CheckFlightMoveCommand(Command command)
         {
-            if (!(command is FlightMoveCommand))
-                return true;
-
-            FlightMoveCommand moveCommand = (FlightMoveCommand)command;
-
-            if (Math.Abs(moveCommand.Roll - lastRollValue) >= thresholdBetweenSettingCommands ||
-                Math.Abs(moveCommand.Pitch - lastPitchValue) >= thresholdBetweenSettingCommands ||
-                Math.Abs(moveCommand.Yaw - lastYawValue) >= thresholdBetweenSettingCommands ||
-                Math.Abs(moveCommand.Gaz - lastGazValue) >= thresholdBetweenSettingCommands)
-            {
-                lastRollValue = moveCommand.Roll;
-                lastPitchValue = moveCommand.Pitch;
-                lastYawValue = moveCommand.Yaw;
-                lastGazValue = moveCommand.Gaz;
-                return true;
-            }
-            else if (moveCommand.Roll == 0.0f && moveCommand.Pitch == 0.0f &&
-                     moveCommand.Yaw == 0.0f && moveCommand.Gaz == 0.0f)
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
+            return checkFlightMoveCommandStrategy.Check(command);
         }
 
         private void ChangeStatusAccordingToCommand(Command command)
