@@ -43,13 +43,11 @@ namespace ARDrone.Control.Commands
                     prerequisites.Add(CommandStatusPrerequisite.Flying);
                     prerequisites.Add(CommandStatusPrerequisite.NotEmergency);
                     prerequisites.Add(CommandStatusPrerequisite.NotHovering);
-                    outcome.Add(CommandStatusOutcome.SetHovering);
                     break;
                 case DroneHoverMode.StopHovering:
                     prerequisites.Add(CommandStatusPrerequisite.Flying);
                     prerequisites.Add(CommandStatusPrerequisite.NotEmergency);
                     prerequisites.Add(CommandStatusPrerequisite.Hovering);
-                    outcome.Add(CommandStatusOutcome.ClearHovering);
                     break;
             }
         }

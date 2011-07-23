@@ -81,10 +81,6 @@ namespace ARDrone.Control
         private bool connecting = false;
         private bool connectToBothNetworkAndDrone = false;
 
-        private bool flying = false;
-        private bool hovering = false;
-        private bool emergency = false;
-
         private CheckFlightMoveCommandStrategy checkFlightMoveCommandStrategy;
 
         public bool lastConnectionState;
@@ -264,8 +260,6 @@ namespace ARDrone.Control
                 controlInfoRetriever.Connect();
             if (!commandSender.Connected)
                 commandSender.Connect();
-
-            ResetFlightVariables();
         }
 
         public void Disconnect()
@@ -278,15 +272,6 @@ namespace ARDrone.Control
                 navigationDataRetriever.Disconnect();
             if (videoDataRetriever.Connected)
                 videoDataRetriever.Disconnect();
-
-            ResetFlightVariables();
-        }
-
-        private void ResetFlightVariables()
-        {
-            flying = false;
-            hovering = false;
-            emergency = false;
         }
 
         public void SendCommand(Command command)
@@ -296,7 +281,6 @@ namespace ARDrone.Control
             if (IsCommandPossible(command) && CheckFlightMoveCommand(command))
             {
                 commandSender.SendQueuedCommand(command);
-                ChangeStatusAccordingToCommand(command);
             }
         }
 
@@ -350,19 +334,7 @@ namespace ARDrone.Control
         {
             return checkFlightMoveCommandStrategy.Check(command);
         }
-
-        private void ChangeStatusAccordingToCommand(Command command)
-        {
-            if (command.HasOutcome(CommandStatusOutcome.SetFlying)) flying = true;
-            if (command.HasOutcome(CommandStatusOutcome.ClearFlying)) flying = false;
-
-            if (command.HasOutcome(CommandStatusOutcome.SetHovering)) hovering = true;
-            if (command.HasOutcome(CommandStatusOutcome.ClearHovering)) hovering = false;
-
-            if (command.HasOutcome(CommandStatusOutcome.SetEmergency)) emergency = true;
-            if (command.HasOutcome(CommandStatusOutcome.ClearEmergency)) emergency = false;
-        }
-
+        
         public Bitmap BitmapImage
         {
             get { return videoDataRetriever.CurrentBitmap; }
@@ -407,9 +379,10 @@ namespace ARDrone.Control
 
         public bool IsConnecting { get { return connecting; } }
         public bool IsConnected { get { return videoDataRetriever.Connected && navigationDataRetriever.Connected && commandSender.Connected; } }
-        public bool IsFlying { get { return flying; } }
-        public bool IsHovering { get { return hovering; } }
-        public bool IsEmergency { get { return emergency; } }
+        public bool IsFlying { get { return NavigationData.DroneState == DroneState.Flying || NavigationData.DroneState == DroneState.Hovering || NavigationData.DroneState == DroneState.TransGotoFix; } }
+        public bool IsHovering { get { return NavigationData.DroneState == DroneState.Hovering; } }
+        public bool IsEmergency { get { return NavigationData.DroneState == DroneState.Emergency; } }
+
         public DroneCameraMode CurrentCameraType { get { return currentCameraMode; } }
 
         // Current drone capabilities
