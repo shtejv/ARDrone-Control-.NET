@@ -44,6 +44,19 @@ namespace ARDrone.Control.Data
         public Single VZ;
     }
 
+    public enum DroneState
+    {
+        Emergency = 0,
+        Init = 1,
+        Landed = 2,
+        Flying = 3,
+        Hovering = 4,
+        Test = 5,
+        TransTakeoff = 6,
+        TransGotoFix = 7,
+        Landing = 8
+    }
+
     public class DroneData
     {
         public double phi;
@@ -73,6 +86,10 @@ namespace ARDrone.Control.Data
 
         public DroneData(NavigationDataStruct navigationDataStruct)
         {
+            uint major = navigationDataStruct.ControlStatus >> 16;
+            //uint minor = navigationDataStruct.ControlStatus & 0xFFFF;
+            DroneState = (DroneState)major;
+
             phi = navigationDataStruct.Phi / 1000.0;
             psi = navigationDataStruct.Psi / 1000.0;
             theta = navigationDataStruct.Theta / 1000.0;
@@ -84,6 +101,8 @@ namespace ARDrone.Control.Data
             altitude = navigationDataStruct.Altitude;
             batteryLevel = (int)navigationDataStruct.BatteryLevel;
         }
+
+        public DroneState DroneState { get; private set; }
 
         public double Phi
         {

@@ -24,8 +24,6 @@ namespace ARDrone.Control.Commands
         public SwitchCameraCommand(DroneCameraMode videoMode)
             : base()
         {
-            outcome.Add(CommandStatusOutcome.SwitchCamera);
-
             this.cameraMode = videoMode;
         }
 
