@@ -29,28 +29,15 @@ namespace ARDrone.Control.Commands
         NotEmergency
     }
 
-    public enum CommandStatusOutcome
-    {
-        SetFlying,
-        ClearFlying,
-        SetHovering,
-        ClearHovering,
-        SetEmergency,
-        ClearEmergency,
-        SwitchCamera
-    }
-
     public abstract class Command
     {
         protected int sequenceNumber = -1;
 
         protected HashSet<CommandStatusPrerequisite> prerequisites;
-        protected HashSet<CommandStatusOutcome> outcome;
 
         protected Command()
         {
             prerequisites = new HashSet<CommandStatusPrerequisite>();
-            outcome = new HashSet<CommandStatusOutcome>();
 
             prerequisites.Add(CommandStatusPrerequisite.Connected);
         }
@@ -74,11 +61,6 @@ namespace ARDrone.Control.Commands
         public bool NeedsPrerequisite(CommandStatusPrerequisite prerequisiteEntry)
         {
             return prerequisites.Contains(prerequisiteEntry);
-        }
-
-        public bool HasOutcome(CommandStatusOutcome outcomeEntry)
-        {
-            return outcome.Contains(outcomeEntry);
         }
     }
 }

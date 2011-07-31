@@ -44,21 +44,10 @@ namespace ARDrone.Control.Commands
                 case DroneFlightMode.TakeOff:
                     prerequisites.Add(CommandStatusPrerequisite.NotFlying);
                     prerequisites.Add(CommandStatusPrerequisite.NotEmergency);
-                    outcome.Add(CommandStatusOutcome.SetFlying);
                     break;
                 case DroneFlightMode.Land:
                     prerequisites.Add(CommandStatusPrerequisite.Flying);
                     prerequisites.Add(CommandStatusPrerequisite.NotEmergency);
-                    outcome.Add(CommandStatusOutcome.ClearFlying);
-                    outcome.Add(CommandStatusOutcome.ClearHovering);
-                    break;
-                case DroneFlightMode.Emergency:
-                    outcome.Add(CommandStatusOutcome.ClearFlying);
-                    outcome.Add(CommandStatusOutcome.ClearHovering);
-                    outcome.Add(CommandStatusOutcome.SetEmergency);
-                    break;
-                case DroneFlightMode.Reset:
-                    outcome.Add(CommandStatusOutcome.ClearEmergency);
                     break;
             }
         }
