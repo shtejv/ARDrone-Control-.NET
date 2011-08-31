@@ -17,28 +17,14 @@ using ARDrone.Control.Data;
 
 namespace ARDrone.Control.Commands
 {
-    public class SwitchCameraCommand : Command
+    public class SwitchCameraCommand : SetConfigurationCommand
     {
         private DroneCameraMode cameraMode;
 
         public SwitchCameraCommand(DroneCameraMode videoMode)
-            : base()
+            : base("video:video_channel", ((int)videoMode).ToString(), true)
         {
             this.cameraMode = videoMode;
-        }
-
-        public override String CreateCommand(SupportedFirmwareVersion firmwareVersion)
-        {
-            CheckSequenceNumber();
-
-            switch (firmwareVersion)
-            {
-                case SupportedFirmwareVersion.Firmware_151:
-                    return String.Format("AT*CONFIG={0},\"{1}\",\"{2}\"\r", sequenceNumber, "video:video_channel", (int)cameraMode);
-                    
-                default:
-                    return String.Format("AT*ZAP={0},{1}\r", sequenceNumber, (int)cameraMode);
-            }
         }
 
         public DroneCameraMode CameraMode

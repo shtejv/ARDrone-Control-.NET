@@ -11,7 +11,6 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Text;
 using System.Threading;
 
 using ARDrone.Control.Data;
@@ -32,12 +31,14 @@ namespace ARDrone.Control.Workers
 
         private SupportedFirmwareVersion firmwareVersion;
         private DroneCameraMode defaultCameraMode;
+        private readonly DroneConfig droneConfig;
 
-        public CommandSender(NetworkConnector networkConnector, String remoteIpAddress, int port, int timeoutValue, SupportedFirmwareVersion firmwareVersion, DroneCameraMode defaultCameraMode)
+        public CommandSender(NetworkConnector networkConnector, String remoteIpAddress, int port, int timeoutValue, SupportedFirmwareVersion firmwareVersion, DroneCameraMode defaultCameraMode, DroneConfig droneConfig)
             : base(networkConnector, remoteIpAddress, port, timeoutValue)
         {
             this.firmwareVersion = firmwareVersion;
             this.defaultCameraMode = defaultCameraMode;
+            this.droneConfig = droneConfig;
 
             ResetVariables();
         }
@@ -63,8 +64,7 @@ namespace ARDrone.Control.Workers
                 Initialize();
 
             SendQueuedCommand(new SetControlModeCommand(DroneControlMode.LogControlMode));
-            SetDefaultCamera();
-
+            
             do
             {
                 stopwatch.Restart();
@@ -126,6 +126,19 @@ namespace ARDrone.Control.Workers
         private void Initialize()
         {
             SendUnqueuedCommand(new ExitBootstrapModeCommand());
+            SendUnqueuedCommand(new SetupMultiConfigCommand("custom:session_id", droneConfig.SessionId));
+            Thread.Sleep(500);
+            SendUnqueuedCommand(new SetupMultiConfigCommand("custom:profile_id", droneConfig.UserId));
+            Thread.Sleep(500);
+            SendUnqueuedCommand(new SetupMultiConfigCommand("custom:application_id", droneConfig.ApplicationId));
+            Thread.Sleep(500);
+
+            foreach(var setting in droneConfig.InitialSettings)
+            {
+                SendUnqueuedCommand(new SetConfigurationCommand(setting.Key, setting.Value, true));
+                Thread.Sleep(50);
+            }
+            
             Thread.Sleep(commandModeEnableTimeout);
 
             int maxRetryCount = 10;
@@ -133,6 +146,7 @@ namespace ARDrone.Control.Workers
             {
                 SendUnqueuedCommand(new SetControlModeCommand(DroneControlMode.LogControlMode));
                 SendUnqueuedCommand(new SetControlModeCommand(DroneControlMode.IdleMode));
+
                 if (IsCommandModeEnabled())
                 {
                     break;
@@ -150,20 +164,20 @@ namespace ARDrone.Control.Workers
         public void SendQueuedCommand(Command command)
         {
             command.SequenceNumber = GetSequenceNumberForCommand();
-            commandsToSend.Add(command.CreateCommand(firmwareVersion));
+            commandsToSend.Add(command.CreateCommand(firmwareVersion, droneConfig, GetSequenceNumberForCommand));
 
             if (command is SetConfigurationCommand)
             {
                 SetControlModeCommand controlModeCommand = new SetControlModeCommand(DroneControlMode.LogControlMode);
                 controlModeCommand.SequenceNumber = GetSequenceNumberForCommand();
-                commandsToSend.Add(controlModeCommand.CreateCommand(firmwareVersion));
+                commandsToSend.Add(controlModeCommand.CreateCommand(firmwareVersion, droneConfig, GetSequenceNumberForCommand));
             }
         }
 
         private void SendUnqueuedCommand(Command command)
         {
             command.SequenceNumber = GetSequenceNumberForCommand();
-            SendMessage(command.CreateCommand(firmwareVersion));
+            SendMessage(command.CreateCommand(firmwareVersion, droneConfig, GetSequenceNumberForCommand));
         }
 
         private uint GetSequenceNumberForCommand()

@@ -62,6 +62,8 @@ namespace ARDrone.Control.Workers
             ResetVariables();
         }
 
+        private int counter = 0;
+
         protected override void ProcessWorkerThread()
         {
             StartKeepAliveSignal();
@@ -75,7 +77,10 @@ namespace ARDrone.Control.Workers
                 byte[] buffer = client.Receive(ref endpoint);
 
                 if (buffer.Length > 0)
+                {
                     videoUtils.ProcessByteStream(buffer);
+                }
+
             }
             while (!workerThreadEnded);
         }
