@@ -121,7 +121,7 @@ namespace ARDrone.Control
             navigationDataRetriever.ConnectionStateChanged += networkWorker_ConnectionStateChanged;
             navigationDataRetriever.Error += networkWorker_Error;
 
-            commandSender = new CommandSender(networkConnector, droneConfig.DroneIpAddress, droneConfig.CommandPort, droneConfig.TimeoutValue, droneConfig.FirmwareVersion, droneConfig.DefaultCameraMode);
+            commandSender = new CommandSender(networkConnector, droneConfig.DroneIpAddress, droneConfig.CommandPort, droneConfig.TimeoutValue, droneConfig.FirmwareVersion, droneConfig.DefaultCameraMode, droneConfig);
             commandSender.ConnectionStateChanged += networkWorker_ConnectionStateChanged;
             commandSender.Error += networkWorker_Error;
 

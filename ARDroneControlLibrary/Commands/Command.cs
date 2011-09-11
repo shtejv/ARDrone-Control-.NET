@@ -48,7 +48,15 @@ namespace ARDrone.Control.Commands
                 throw new InvalidOperationException("The command must be sequenced before it can be sent");
         }
 
-        public abstract String CreateCommand(SupportedFirmwareVersion firmwareVersion);
+        public virtual string CreateCommand(SupportedFirmwareVersion firmwareVersion, DroneConfig config, Func<uint> additionalSequenceNumber)
+        {
+            return CreateCommand(firmwareVersion);
+        }
+
+        public virtual string CreateCommand(SupportedFirmwareVersion firmwareVersion)
+        {
+            return null;
+        }
 
         public uint SequenceNumber
         {

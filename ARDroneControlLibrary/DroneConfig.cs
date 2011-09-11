@@ -60,8 +60,14 @@ namespace ARDrone.Control
 
             firmwareVersion = SupportedFirmwareVersion.Firmware_133;
 
-            timeoutValue = 500;
+            timeoutValue = int.MaxValue;
             defaultCameraMode = DroneCameraMode.FrontCamera;
+
+            applicationId = ".NET SDK/1.7.4";
+            userId = ".NET SDK USER";
+            sessionId = Guid.NewGuid().ToString();
+
+            initialSettings = new List<DroneSetting>();
         }
 
         private void CopySettingsFrom(DroneConfig droneConfig)
@@ -76,6 +82,12 @@ namespace ARDrone.Control
             this.ControlInfoPort = droneConfig.ControlInfoPort;
 
             this.FirmwareVersion = droneConfig.FirmwareVersion;
+
+            ApplicationId = droneConfig.ApplicationId;
+            UserId = droneConfig.UserId;
+            SessionId = droneConfig.SessionId;
+
+            InitialSettings = droneConfig.InitialSettings;
         }
 
         public void Initialize()
@@ -152,6 +164,34 @@ namespace ARDrone.Control
             set { CheckForDroneConfigState(); defaultCameraMode = value; }
         }
 
+        private string applicationId;
+        public string ApplicationId
+        {
+            get { return applicationId; }
+            set { CheckForDroneConfigState(); applicationId = value; }
+        }
+
+        private string sessionId;
+        public string SessionId
+        {
+            get { return sessionId; }
+            set { CheckForDroneConfigState(); sessionId = value; }
+        }
+
+        private string userId;
+        public string UserId
+        {
+            get { return userId; }
+            set { CheckForDroneConfigState(); userId = value; }
+        }
+
+        private List<DroneSetting> initialSettings;
+        public List<DroneSetting> InitialSettings
+        {
+            get { return initialSettings; }
+            set { CheckForDroneConfigState(); initialSettings = value; }
+        }
+
         public void Load()
         {
             CheckForDroneConfigState();
@@ -171,5 +211,21 @@ namespace ARDrone.Control
         {
             serializationUtils.Serialize(this, serializationFileName);
         }
+    }
+
+    [Serializable()]
+    public class DroneSetting
+    {
+        public DroneSetting()
+        {
+        }
+        public DroneSetting(string key, string value)
+        {
+            Key = key;
+            Value = value;
+        }
+
+        public string Key { get; set; }
+        public string Value { get; set; }
     }
 }

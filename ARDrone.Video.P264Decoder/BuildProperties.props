@@ -1,0 +1,29 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ImportGroup Label="PropertySheets" />
+  <PropertyGroup Label="UserMacros">
+    <ARDroneSdkInclude>$(SolutionDir)\ARDrone.Video.P264Decoder</ARDroneSdkInclude>
+    <VP_SDKInclude>$(SolutionDir)\ARDrone.Video.P264Decoder\VP_SDK\</VP_SDKInclude>
+    <ARDroneWin32>$(SolutionDir)\ARDrone.Video.P264Decoder\VP_SDK\VP_Os\win32</ARDroneWin32>
+  </PropertyGroup>
+  <PropertyGroup />
+  <ItemDefinitionGroup>
+    <ClCompile>
+      <AdditionalIncludeDirectories>$(ARDroneSdkInclude);$(VP_SdkInclude);$(ARDroneWin32);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <BuildMacro Include="ARDroneSdkInclude">
+      <Value>$(ARDroneSdkInclude)</Value>
+      <EnvironmentVariable>true</EnvironmentVariable>
+    </BuildMacro>
+    <BuildMacro Include="VP_SDKInclude">
+      <Value>$(VP_SDKInclude)</Value>
+      <EnvironmentVariable>true</EnvironmentVariable>
+    </BuildMacro>
+    <BuildMacro Include="ARDroneWin32">
+      <Value>$(ARDroneWin32)</Value>
+      <EnvironmentVariable>true</EnvironmentVariable>
+    </BuildMacro>
+  </ItemGroup>
+</Project>

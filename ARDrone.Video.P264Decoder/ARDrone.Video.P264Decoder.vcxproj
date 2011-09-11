@@ -1,0 +1,146 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="VLIB\P263\p263_codec.c" />
+    <ClCompile Include="VLIB\P263\p263_gob_layer.c" />
+    <ClCompile Include="VLIB\P263\p263_huffman.c" />
+    <ClCompile Include="VLIB\P263\p263_mb_layer.c" />
+    <ClCompile Include="VLIB\P263\p263_picture_layer.c" />
+    <ClCompile Include="VLIB\P264\p264.c" />
+    <ClCompile Include="VLIB\P264\p264_codec.c" />
+    <ClCompile Include="VLIB\P264\p264_gob_layer.c" />
+    <ClCompile Include="VLIB\P264\p264_inter_mc.c" />
+    <ClCompile Include="VLIB\P264\p264_intra_pred.c" />
+    <ClCompile Include="VLIB\P264\p264_mb_layer.c" />
+    <ClCompile Include="VLIB\P264\p264_merge.c" />
+    <ClCompile Include="VLIB\P264\p264_picture_layer.c" />
+    <ClCompile Include="VLIB\P264\p264_Qp.c" />
+    <ClCompile Include="VLIB\P264\p264_transform.c" />
+    <ClCompile Include="VLIB\P264\p264_zigzag.c" />
+    <ClCompile Include="VLIB\P264\video_p264.c" />
+    <ClCompile Include="VLIB\Platform\x86\video_utils.c" />
+    <ClCompile Include="VLIB\Stages\vlib_stage_decode.c" />
+    <ClCompile Include="VLIB\UVLC\uvlc.c" />
+    <ClCompile Include="VLIB\UVLC\uvlc_codec.c" />
+    <ClCompile Include="VLIB\UVLC\uvlc_gob_layer.c" />
+    <ClCompile Include="VLIB\UVLC\uvlc_mb_layer.c" />
+    <ClCompile Include="VLIB\UVLC\uvlc_picture_layer.c" />
+    <ClCompile Include="VLIB\video_codec.c" />
+    <ClCompile Include="VLIB\video_controller.c" />
+    <ClCompile Include="VLIB\video_dct.c" />
+    <ClCompile Include="VLIB\video_huffman.c" />
+    <ClCompile Include="VLIB\video_macroblock.c" />
+    <ClCompile Include="VLIB\video_mem32.c" />
+    <ClCompile Include="VLIB\video_packetizer.c" />
+    <ClCompile Include="VLIB\video_picture.c" />
+    <ClCompile Include="VLIB\video_quantizer.c" />
+    <ClCompile Include="VP_SDK\VP_Api\vp_api.c" />
+    <ClCompile Include="VP_SDK\VP_Api\vp_api_supervisor.c" />
+    <ClCompile Include="VP_SDK\VP_Os\vp_os_malloc.c" />
+    <ClCompile Include="VP_SDK\VP_Os\win32\vp_os_signal.c" />
+    <ClCompile Include="VP_SDK\VP_Stages\vp_stages_yuv2rgb.c" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="VLIB\P263\p263_codec.h" />
+    <ClInclude Include="VLIB\P263\p263_huffman.h" />
+    <ClInclude Include="VLIB\P263\p263_layers.h" />
+    <ClInclude Include="VLIB\P264\p264.h" />
+    <ClInclude Include="VLIB\P264\p264_codec.h" />
+    <ClInclude Include="VLIB\P264\p264_common.h" />
+    <ClInclude Include="VLIB\P264\p264_inter_mc.h" />
+    <ClInclude Include="VLIB\P264\p264_intra_pred.h" />
+    <ClInclude Include="VLIB\P264\p264_layers.h" />
+    <ClInclude Include="VLIB\P264\p264_merge.h" />
+    <ClInclude Include="VLIB\P264\p264_Qp.h" />
+    <ClInclude Include="VLIB\P264\p264_transform.h" />
+    <ClInclude Include="VLIB\P264\p264_zigzag.h" />
+    <ClInclude Include="VLIB\P264\video_p264.h" />
+    <ClInclude Include="VLIB\Platform\x86\video_utils.h" />
+    <ClInclude Include="VLIB\UVLC\uvlc.h" />
+    <ClInclude Include="VLIB\UVLC\uvlc_codec.h" />
+    <ClInclude Include="VLIB\video_codec.h" />
+    <ClInclude Include="VLIB\video_controller.h" />
+    <ClInclude Include="VLIB\video_dct.h" />
+    <ClInclude Include="VLIB\video_huffman.h" />
+    <ClInclude Include="VLIB\video_macroblock.h" />
+    <ClInclude Include="VLIB\video_mem32.h" />
+    <ClInclude Include="VLIB\video_packetizer.h" />
+    <ClInclude Include="VLIB\video_picture.h" />
+    <ClInclude Include="VLIB\video_picture_defines.h" />
+    <ClInclude Include="VLIB\video_quantizer.h" />
+    <ClInclude Include="VP_SDK\VP_Os\vp_os_malloc.h" />
+    <ClInclude Include="VP_SDK\VP_Os\win32\vp_os_signal_dep.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="BuildProperties.props" />
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{8332BB3A-B56D-4A78-BAAE-24214E556E48}</ProjectGuid>
+    <RootNamespace>ARDroneVideoP264Decoder</RootNamespace>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="BuildProperties.props" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="BuildProperties.props" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <IncludePath>$(ProjectDir)\VP_SDK\VP_Os\win32;$(IncludePath)</IncludePath>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <AdditionalIncludeDirectories>$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <CompileAs>CompileAsCpp</CompileAs>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <CompileAs>CompileAsCpp</CompileAs>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+  </ItemDefinitionGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

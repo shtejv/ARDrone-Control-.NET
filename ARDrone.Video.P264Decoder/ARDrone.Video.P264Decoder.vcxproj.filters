@@ -1,0 +1,225 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="VLIB\P264\p264_picture_layer.c">
+      <Filter>Header Files</Filter>
+    </ClCompile>
+    <ClCompile Include="VLIB\P264\p264_Qp.c">
+      <Filter>Header Files</Filter>
+    </ClCompile>
+    <ClCompile Include="VLIB\P264\video_p264.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="VLIB\video_controller.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="VLIB\video_codec.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="VLIB\P264\p264_zigzag.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="VLIB\P264\p264_transform.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="VLIB\P264\p264_merge.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="VLIB\P264\p264_mb_layer.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="VLIB\P264\p264_intra_pred.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="VLIB\P264\p264_inter_mc.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="VLIB\P264\p264_gob_layer.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="VLIB\P264\p264_codec.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="VLIB\P264\p264.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="VLIB\Stages\vlib_stage_decode.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="VLIB\video_packetizer.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="VP_SDK\VP_Os\vp_os_malloc.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="VLIB\video_picture.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="VLIB\video_quantizer.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="VLIB\Platform\x86\video_utils.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="VLIB\P263\p263_codec.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="VLIB\P263\p263_gob_layer.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="VLIB\P263\p263_huffman.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="VLIB\P263\p263_mb_layer.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="VLIB\P263\p263_picture_layer.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="VLIB\video_macroblock.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="VLIB\video_huffman.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="VLIB\video_mem32.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="VLIB\video_dct.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="VLIB\UVLC\uvlc_codec.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="VLIB\UVLC\uvlc_gob_layer.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="VLIB\UVLC\uvlc_mb_layer.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="VLIB\UVLC\uvlc.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="VLIB\UVLC\uvlc_picture_layer.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="VP_SDK\VP_Os\win32\vp_os_signal.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="VP_SDK\VP_Api\vp_api.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="VP_SDK\VP_Stages\vp_stages_yuv2rgb.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="VP_SDK\VP_Api\vp_api_supervisor.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="VLIB\P264\p264.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="VLIB\P264\p264_codec.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="VLIB\P264\p264_common.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="VLIB\P264\p264_inter_mc.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="VLIB\P264\p264_intra_pred.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="VLIB\P264\p264_layers.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="VLIB\P264\p264_merge.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="VLIB\P264\p264_Qp.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="VLIB\P264\p264_transform.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="VLIB\P264\p264_zigzag.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="VLIB\P264\video_p264.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="VLIB\video_codec.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="VLIB\video_controller.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="VP_SDK\VP_Os\win32\vp_os_signal_dep.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="VLIB\video_packetizer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="VP_SDK\VP_Os\vp_os_malloc.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="VLIB\video_picture.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="VLIB\video_picture_defines.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="VLIB\video_quantizer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="VLIB\Platform\x86\video_utils.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="VLIB\P263\p263_codec.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="VLIB\P263\p263_huffman.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="VLIB\P263\p263_layers.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="VLIB\video_macroblock.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="VLIB\video_huffman.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="VLIB\video_mem32.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="VLIB\video_dct.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="VLIB\UVLC\uvlc_codec.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="VLIB\UVLC\uvlc.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="BuildProperties.props" />
+  </ItemGroup>
+</Project>

@@ -10,6 +10,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -24,6 +25,14 @@ namespace ARDrone.UI.Bindings
 {
     public class GeneralConfigBinding : GeneralBinding
     {
+        private struct VideoCodecs
+        {
+            public const string P264 = "64";
+            public const string VLIB = "32";
+        }
+
+        private const string videoCodec = "video:video_codec";
+
         private NetworkUtils networkUtils;
 
         private String droneNetworkSSID;
@@ -67,6 +76,8 @@ namespace ARDrone.UI.Bindings
             ControlPortText = droneConfig.ControlInfoPort.ToString();
 
             firmwareVersion = droneConfig.FirmwareVersion;
+
+            UseP264 = droneConfig.InitialSettings.Any(x => x.Key == videoCodec && x.Value == VideoCodecs.P264);
         }
 
         private void TakeOverHudConfigSettings(HudConfig hudConfig)
@@ -94,6 +105,9 @@ namespace ARDrone.UI.Bindings
             droneConfig.ControlInfoPort = Int32.Parse(controlPortText);
 
             droneConfig.FirmwareVersion = firmwareVersion;
+
+            droneConfig.InitialSettings.RemoveAll(x => x.Key == videoCodec);
+            droneConfig.InitialSettings.Add(new DroneSetting(videoCodec, UseP264 ? VideoCodecs.P264 : VideoCodecs.VLIB));
 
             return droneConfig;
         }
@@ -201,6 +215,17 @@ namespace ARDrone.UI.Bindings
         {
             get { return showHudBattery; }
             set { showHudBattery = value; PublishPropertyChange("ShowHudBatteryIndicator"); }
+        }
+
+        private bool useP264;
+        public bool UseP264
+        {
+            get { return useP264; }
+            set 
+            { 
+                useP264 = value;
+                PublishPropertyChange("UseP264");
+            }
         }
 
         protected override void Validate(String propertyName)

@@ -87,7 +87,7 @@ namespace ARDrone.Control.Data
         public DroneData(NavigationDataStruct navigationDataStruct)
         {
             uint major = navigationDataStruct.ControlStatus >> 16;
-            //uint minor = navigationDataStruct.ControlStatus & 0xFFFF;
+            uint minor = navigationDataStruct.ControlStatus & 0xFFFF;
             DroneState = (DroneState)major;
 
             phi = navigationDataStruct.Phi / 1000.0;
