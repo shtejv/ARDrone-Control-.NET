@@ -37,6 +37,7 @@
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Xaml" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -57,6 +58,7 @@
     <Compile Include="Commands\WatchDogCommand.cs" />
     <Compile Include="Data\Firmware.cs" />
     <Compile Include="Data\InternalDroneConfiguration.cs" />
+    <Compile Include="Data\InternalDroneConfigurationState.cs" />
     <Compile Include="Data\NavigationData.cs" />
     <Compile Include="DroneConfig.cs" />
     <Compile Include="DroneControl.cs" />
@@ -70,13 +72,15 @@
     <Compile Include="Network\BackgroundWorker.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Utils\BitmapUtils.cs" />
+    <Compile Include="Utils\ConfigReader.cs" />
+    <Compile Include="Workers\ControlInfoRetriever.cs" />
     <Compile Include="Utils\NetworkUtils.cs" />
+    <Compile Include="Utils\TelnetInterface.cs" />
     <Compile Include="Utils\VideoUtils.cs" />
     <Compile Include="Wifi\WifiInterop.cs" />
     <Compile Include="Wifi\WlanApi.cs" />
     <Compile Include="Workers\NetworkConnector.cs" />
     <Compile Include="Workers\CommandSender.cs" />
-    <Compile Include="Workers\ControlInfoRetriever.cs" />
     <Compile Include="Workers\NavigationDataRetriever.cs" />
     <Compile Include="Workers\NetworkSanityChecker.cs" />
     <Compile Include="Workers\VideoDataRetriever.cs" />

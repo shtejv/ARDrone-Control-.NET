@@ -94,7 +94,7 @@ namespace ARDrone.Control.Network
                 {
                     ProcessWorkerThread();
                 }
-                catch (SocketException e)
+                catch (SocketException)
                 {
                     //if (!IsNormalDisconnectError(e))
                         //throw e;

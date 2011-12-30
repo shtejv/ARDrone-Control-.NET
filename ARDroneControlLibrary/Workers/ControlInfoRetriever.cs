@@ -10,90 +10,67 @@
 
 using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Net;
-using System.Net.Sockets;
+using System.Linq;
 using System.Text;
 
 using ARDrone.Control.Data;
-using ARDrone.Control.Network;
+using ARDrone.Control.Utils;
 
 namespace ARDrone.Control.Workers
 {
-    public class ControlInfoRetriever : TcpWorker
+    public class ControlInfoRetriever
     {
-        private const int byteBufferSize = 4096;
+        private const int defaultDronePort = 23;
+        private const String droneConfigurationCommand = "cat /data/config.ini";
 
-        private InternalDroneConfiguration currentConfiguration;
-        private byte[] currentByteBuffer;
+        private String droneIpAddress;
 
-        private SupportedFirmwareVersion firmwareVersion;
+        private TelnetConnection telnetConnection;
+        private ConfigReader configReader;
 
-        public ControlInfoRetriever(NetworkConnector networkConnector, String remoteIpAddress, int port, int timeoutValue, SupportedFirmwareVersion firmwareVersion)
-            : base(networkConnector, remoteIpAddress, port, timeoutValue)
+        public ControlInfoRetriever(String droneIpAddress)
         {
-            this.firmwareVersion = firmwareVersion;
-
-            ResetVariables();
+            this.droneIpAddress = droneIpAddress;
+            configReader = new ConfigReader();
         }
 
-        protected override void ResetVariables()
+        private InternalDroneConfiguration DetermineDroneConfiguration()
         {
-            currentByteBuffer = new Byte[byteBufferSize];
-            currentConfiguration = new InternalDroneConfiguration();
+            Connect();
+            String configText = GetConfigText();
+
+            List<InternalDroneConfigurationState> configStates = configReader.GetConfigValues(configText);
+            var droneConfig = new InternalDroneConfiguration();
+            droneConfig.DetermineInternalConfiguration(configStates);
+
+
+            return droneConfig;
         }
 
-        protected override void ProcessWorkerThread()
+        private void Connect()
         {
-            ConnectClientAndCreateStream();
-
-            do
-            {
-                String currentMessage = ReadStreamData(stream);
-
-                if (currentMessage != null)
-                    currentConfiguration.DetermineInternalConfiguration(currentMessage);
-            }
-            while (!workerThreadEnded);
+            telnetConnection = new TelnetConnection(droneIpAddress, defaultDronePort);
+            telnetConnection.Read();
         }
 
-        protected override void AfterDisconnect()
+        private String GetConfigText()
         {
-            ResetVariables();
+            telnetConnection.WriteLine(droneConfigurationCommand);
+            String configText = telnetConnection.Read();
+
+            return configText;
         }
 
-        private string ReadStreamData(NetworkStream stream)
+        private void Disconnect()
         {
-            try
-            {
-                String receivedMessage = "";
-                while (stream.DataAvailable)
-                {
-                    int byteCount = stream.Read(currentByteBuffer, 0, byteBufferSize);
-
-                    byte[] message = new byte[byteCount];
-                    Buffer.BlockCopy(currentByteBuffer, 0, message, 0, byteCount);
-
-                    receivedMessage += ASCIIEncoding.ASCII.GetString(message);
-                }
-
-                return receivedMessage != "" ? receivedMessage : null;
-            }
-            catch (ObjectDisposedException)
-            {
-                return null;
-            }
-            catch (IOException)
-            {
-                return null;
-            }
+            telnetConnection.Dispose();
         }
 
-        public InternalDroneConfiguration CurrentConfiguration
+        public InternalDroneConfiguration DroneConfig
         {
             get
             {
-                return currentConfiguration;
+                return DetermineDroneConfiguration();
             }
         }
     }

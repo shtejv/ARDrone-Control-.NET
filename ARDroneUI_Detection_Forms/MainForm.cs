@@ -72,6 +72,7 @@ namespace ARDroneUI_Detection_Forms
         private void InitializeDroneControl()
         {
             DroneConfig droneConfig = new DroneConfig();
+            droneConfig.FirmwareVersion = SupportedFirmwareVersion.Firmware_164_Or_Above;
             droneConfig.DefaultCameraMode = DroneCameraMode.BottomCamera;
 
             droneControl = new DroneControl(droneConfig);

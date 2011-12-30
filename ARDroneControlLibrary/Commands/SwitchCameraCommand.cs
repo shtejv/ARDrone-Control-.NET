@@ -35,7 +35,8 @@ namespace ARDrone.Control.Commands
 
             switch (firmwareVersion)
             {
-                case SupportedFirmwareVersion.Firmware_151:
+                case SupportedFirmwareVersion.Firmware_Between_15x_And_164:
+                case SupportedFirmwareVersion.Firmware_164_Or_Above:
                     return String.Format("AT*CONFIG={0},\"{1}\",\"{2}\"\r", sequenceNumber, "video:video_channel", (int)cameraMode);
                     
                 default:

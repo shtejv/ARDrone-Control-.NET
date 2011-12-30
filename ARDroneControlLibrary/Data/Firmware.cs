@@ -34,8 +34,10 @@ namespace ARDrone.Control.Data
     public enum SupportedFirmwareVersion
     {
         [DisplayStringAttribute("Firmware 1.3.3 or below")]
-        Firmware_133,
-        [DisplayStringAttribute("Firmware 1.5 or above")]
-        Firmware_151
+        Firmware_133_Or_Below,
+        [DisplayStringAttribute("Firmware between 1.5.x and 1.6.4  (exclusive)")]
+        Firmware_Between_15x_And_164,
+        [DisplayStringAttribute("Firmware 1.6.4 or above")]
+        Firmware_164_Or_Above
     }
 }

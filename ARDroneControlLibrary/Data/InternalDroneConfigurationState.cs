@@ -10,29 +10,20 @@
 
 using System;
 using System.Collections.Generic;
-using System.Drawing;
+using System.Linq;
 using System.Text;
-using System.Windows.Media.Imaging;
-using System.IO;
 
-namespace ARDrone.Control.Utils
+namespace ARDrone.Control.Data
 {
-    class BitmapUtils
+    public class InternalDroneConfigurationState
     {
-        public Bitmap BitmapSourceToBitmap(BitmapSource imageSource)
+        public String MainSection { get; set; }
+        public String Key { get; set; }
+        public String Value { get; set; }
+
+        public override String ToString()
         {
-            int width = imageSource.PixelWidth;
-            int height = imageSource.PixelHeight;
-            int stride = width * ((imageSource.Format.BitsPerPixel + 7) / 8);
-
-            byte[] bits = new byte[height * stride];
-
-            MemoryStream strm = new MemoryStream();
-            BitmapEncoder encoder = new BmpBitmapEncoder();
-            encoder.Frames.Add(BitmapFrame.Create(imageSource));
-            encoder.Save(strm);
-
-            return new System.Drawing.Bitmap(strm);
+            return "Main section: " + MainSection + ", sub section: " + Key + ", value: " + Value;
         }
     }
 }

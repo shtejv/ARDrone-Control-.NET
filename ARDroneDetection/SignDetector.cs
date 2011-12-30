@@ -233,9 +233,9 @@ namespace ARDrone.Detection
             Features2DTracker.MatchedImageFeature[] matchedFeatures;
             try
             {
-                return 20;
-                //ImageFeature[] features = surfaceParameters.DetectFeatures(contourImage, null);
-                //matchedFeatures = featureTracker.MatchFeature(features, 2, 20);
+                //return 20;
+                ImageFeature[] features = surfaceParameters.DetectFeatures(contourImage, null);
+                matchedFeatures = featureTracker.MatchFeature(features, 2);
             }
             catch (AccessViolationException)
             {

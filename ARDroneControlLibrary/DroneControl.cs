@@ -23,6 +23,7 @@ using ARDrone.Control.Data;
 using ARDrone.Control.Events;
 using ARDrone.Control.Workers;
 using ARDrone.Control.Commands;
+using ARDrone.Control.Utils;
 
 namespace ARDrone.Control
 {
@@ -60,6 +61,7 @@ namespace ARDrone.Control
         public bool lastConnectionState;
 
         private DroneCameraMode currentCameraMode = DroneCameraMode.FrontCamera;
+        private InternalDroneConfiguration internalDroneConfiguration;
 
         // Informational values
 
@@ -88,6 +90,8 @@ namespace ARDrone.Control
             droneConfig.Initialize();
 
             CreateDroneWorkers();
+
+            internalDroneConfiguration = new InternalDroneConfiguration();
         }
 
         private void CreateDroneWorkers()
@@ -108,14 +112,12 @@ namespace ARDrone.Control
             commandSender.ConnectionStateChanged += networkWorker_ConnectionStateChanged;
             commandSender.Error += networkWorker_Error;
 
-            controlInfoRetriever = new ControlInfoRetriever(networkConnector, droneConfig.DroneIpAddress, droneConfig.ControlInfoPort, 0, droneConfig.FirmwareVersion);
-            controlInfoRetriever.ConnectionStateChanged += networkWorker_ConnectionStateChanged;
-            controlInfoRetriever.Error += networkWorker_Error;
+            controlInfoRetriever = new ControlInfoRetriever(droneConfig.DroneIpAddress);
 
             // Interop between the different threads
             commandSender.DataRetriever = navigationDataRetriever;
 
-            networkSanityChecker = new NetworkSanityChecker(videoDataRetriever, navigationDataRetriever, commandSender, controlInfoRetriever, droneConfig.FirmwareVersion);
+            networkSanityChecker = new NetworkSanityChecker(videoDataRetriever, navigationDataRetriever, commandSender, droneConfig.FirmwareVersion);
             networkSanityChecker.SanityCheckComplete += networkSanityChecker_SanityChecked;
         }
 
@@ -141,11 +143,6 @@ namespace ARDrone.Control
             }
         }
 
-        private void ConnectNetwork()
-        {
-            networkConnector.Connect();
-        }
-
         public void ConnectToDrone()
         {
             if (!connecting && !IsConnected)
@@ -155,6 +152,11 @@ namespace ARDrone.Control
 
                 ConnectDrone();
             }
+        }
+
+        private void ConnectNetwork()
+        {
+            networkConnector.Connect();
         }
 
         private void ConnectDrone()
@@ -195,8 +197,7 @@ namespace ARDrone.Control
 
         private void InvokeConnectionStateChange()
         {
-            if (videoDataRetriever.Connected && navigationDataRetriever.Connected &&
-                commandSender.Connected && controlInfoRetriever.Connected)
+            if (videoDataRetriever.Connected && navigationDataRetriever.Connected && commandSender.Connected)
             {
                 if (lastConnectionState == false)
                 {
@@ -233,14 +234,14 @@ namespace ARDrone.Control
 
         private void ConnectWorkers()
         {
+            internalDroneConfiguration = controlInfoRetriever.DroneConfig;
+
             // The connect sequence is important since the command sender waits for the navigation data retriever
 
             if (!videoDataRetriever.Connected)
                 videoDataRetriever.Connect();
             if (!navigationDataRetriever.Connected)
                 navigationDataRetriever.Connect();
-            if (!controlInfoRetriever.Connected)
-                controlInfoRetriever.Connect();
             if (!commandSender.Connected)
                 commandSender.Connect();
 
@@ -251,8 +252,6 @@ namespace ARDrone.Control
         {
             if (commandSender.Connected)
                 commandSender.Disconnect();
-            if (controlInfoRetriever.Connected)
-                controlInfoRetriever.Disconnect();
             if (navigationDataRetriever.Connected)
                 navigationDataRetriever.Disconnect();
             if (videoDataRetriever.Connected)
@@ -383,7 +382,7 @@ namespace ARDrone.Control
 
         public InternalDroneConfiguration InternalDroneConfiguration
         {
-            get { return controlInfoRetriever.CurrentConfiguration; }
+            get { return internalDroneConfiguration; }
         }
 
         private void networkSanityChecker_SanityChecked(object sender, NetworkSanityCheckEventArgs e)

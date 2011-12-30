@@ -24,7 +24,6 @@ using ARDrone.Control.Events;
 using ARDrone.Control.Network;
 using ARDrone.Control.Utils;
 
-
 namespace ARDrone.Control.Workers
 {
     public class VideoDataRetriever : UdpWorker

@@ -178,7 +178,15 @@ namespace ARDrone.Control.Workers
                 currentState = DroneNetworkConnectionState.ScanningForNewNetworks;
                 UpdateConnectionStatus();
 
-                currentWifiInterface.Scan();
+                try
+                {
+                    currentWifiInterface.Scan();
+                }
+                catch (System.ComponentModel.Win32Exception)
+                {
+                    AddFailureReasonForCurrentInterface("Network error during scan ... Is your network adapter disabled?");
+                    ScanNextNetworkInterface();
+                }
             }
             else
             {
@@ -250,11 +258,15 @@ namespace ARDrone.Control.Workers
 
         private bool IsAlreadyConnectedToDroneNetwork()
         {
-            var connectionAttributes = currentWifiInterface.CurrentConnection.wlanAssociationAttributes;
-            String ssid = ByteArrayToString(connectionAttributes.dot11Ssid.SSID);
+            try
+            {
+                var connectionAttributes = currentWifiInterface.CurrentConnection.wlanAssociationAttributes;
+                String ssid = ByteArrayToString(connectionAttributes.dot11Ssid.SSID);
 
-            if (ssid.StartsWith(droneNetworkIdentifierStart))
-                return true;
+                if (ssid.StartsWith(droneNetworkIdentifierStart))
+                    return true;
+            }
+            catch (Exception) { }
 
             return false; 
         }
@@ -354,15 +366,19 @@ namespace ARDrone.Control.Workers
             options.DontFragment = true;
             byte[] data = Encoding.ASCII.GetBytes("This is a test");
 
-            bool sent = false;
-            while (!sent)
+            //bool sent = false;
+            //while (!sent)
             {
                 try
                 {
                     pingSender.SendAsync(droneIpAddress, pingTimeout, data, options);
-                    sent = true;
+                    //sent = true;
                 }
-                catch (Exception) { }
+                catch (Exception)
+                {
+                    AddFailureReasonForCurrentInterface("Pinging the drone was not succesful");
+                    ScanNextNetworkInterface();
+                }
             }
         }
 

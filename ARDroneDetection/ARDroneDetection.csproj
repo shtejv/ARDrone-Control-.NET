@@ -32,11 +32,11 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Emgu.CV, Version=2.1.0.793, Culture=neutral, PublicKeyToken=7281126722ab4438, processorArchitecture=x86">
+    <Reference Include="Emgu.CV, Version=2.2.1.1150, Culture=neutral, PublicKeyToken=7281126722ab4438, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\GlobalLib\Emgu.CV.dll</HintPath>
     </Reference>
-    <Reference Include="Emgu.Util, Version=2.1.0.793, Culture=neutral, PublicKeyToken=7281126722ab4438, processorArchitecture=x86">
+    <Reference Include="Emgu.Util, Version=2.2.1.1150, Culture=neutral, PublicKeyToken=7281126722ab4438, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\GlobalLib\Emgu.Util.dll</HintPath>
     </Reference>

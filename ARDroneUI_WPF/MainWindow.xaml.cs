@@ -610,7 +610,7 @@ namespace ARDrone.UI
                 if (snapshotFilePath == null) { return; }
             }
 
-            System.Drawing.Bitmap currentImage = (System.Drawing.Bitmap)droneControl.BitmapImage;
+            System.Drawing.Bitmap currentImage = (System.Drawing.Bitmap)droneControl.BitmapImage.Clone();
             snapshotRecorder.SaveSnapshot(currentImage, snapshotFilePath.Replace(".png", "_" + snapshotFileCount.ToString() + ".png"));
             UpdateUISync("Saved image #" +snapshotFileCount.ToString());
             snapshotFileCount++;

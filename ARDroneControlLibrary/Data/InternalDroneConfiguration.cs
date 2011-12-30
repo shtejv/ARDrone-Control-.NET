@@ -30,48 +30,8 @@ namespace ARDrone.Control.Data
             otherConfiguration = new DroneOtherConfiguration();
         }
 
-        private class InternalDroneConfigurationState
+        public void DetermineInternalConfiguration(List<InternalDroneConfigurationState> configStates)
         {
-            public String MainSection {get; set; }
-            public String SubSection {get; set; }
-            public String Value {get; set; }
-
-            public override String ToString()
-            {
-                return "Main section: " + MainSection + ", sub section: " + SubSection + ", value: " + Value;
-            }
-        }
-
-        private List<InternalDroneConfigurationState> GetInternalDroneConfigStates(String configMessage)
-        {
-            String[] configEntries = configMessage.Split('\n');
-
-            List<InternalDroneConfigurationState> configStates = new List<InternalDroneConfigurationState>();
-            foreach (String configEntry in configEntries)
-            {
-                char[] separators = new char[] { ':', '=' };
-                String[] configEntryValues = configEntry.Split(separators, 3);
-
-                if (configEntryValues.Length != 3) {
-                    //Console.WriteLine ("Invalid config entry: " + configEntry);
-                    continue;
-                }
-
-                InternalDroneConfigurationState configState = new InternalDroneConfigurationState();
-                configState.MainSection = configEntryValues[0].ToLower().Trim();
-                configState.SubSection = configEntryValues[1].ToLower().Trim();
-                configState.Value = configEntryValues[2].Trim();
-
-                configStates.Add(configState);
-            }
-
-            return configStates;
-        }
-
-        public void DetermineInternalConfiguration(String configMessage)
-        {
-            List<InternalDroneConfigurationState> configStates = GetInternalDroneConfigStates(configMessage);
-
             foreach (InternalDroneConfigurationState configState in configStates)
             {
                 try
@@ -100,9 +60,36 @@ namespace ARDrone.Control.Data
             }
         }
 
+        private List<InternalDroneConfigurationState> GetInternalDroneConfigStates(String configMessage)
+        {
+            String[] configEntries = configMessage.Split('\n');
+
+            List<InternalDroneConfigurationState> configStates = new List<InternalDroneConfigurationState>();
+            foreach (String configEntry in configEntries)
+            {
+                char[] separators = new char[] { ':', '=' };
+                String[] configEntryValues = configEntry.Split(separators, 3);
+
+                if (configEntryValues.Length != 3)
+                {
+                    //Console.WriteLine ("Invalid config entry: " + configEntry);
+                    continue;
+                }
+
+                InternalDroneConfigurationState configState = new InternalDroneConfigurationState();
+                configState.MainSection = configEntryValues[0].ToLower().Trim();
+                configState.Key = configEntryValues[1].ToLower().Trim();
+                configState.Value = configEntryValues[2].Trim();
+
+                configStates.Add(configState);
+            }
+
+            return configStates;
+        }
+
         private void DetermineGeneralConfiguration(InternalDroneConfigurationState configState)
         {
-            switch (configState.SubSection)
+            switch (configState.Key)
             {
                 case "num_version_mb":
                     generalConfiguration.MainboardVersionInt = configState.Value;
@@ -143,7 +130,7 @@ namespace ARDrone.Control.Data
 
         private void DetermineControlConfiguration(InternalDroneConfigurationState configState)
         {
-            switch (configState.SubSection)
+            switch (configState.Key)
             {
                 case "altitude_max":
                     controlConfiguration.MaxAltitudeInt = Int32.Parse(configState.Value);
@@ -156,7 +143,7 @@ namespace ARDrone.Control.Data
 
         private void DetermineNetworkConfiguration(InternalDroneConfigurationState configState)
         {
-            switch (configState.SubSection)
+            switch (configState.Key)
             {
                 case "ssid_single_player":
                     networkConfiguration.SsidInt = configState.Value;
@@ -181,7 +168,7 @@ namespace ARDrone.Control.Data
 
         private void DetermineOtherConfiguration(InternalDroneConfigurationState configState)
         {
-            switch (configState.SubSection)
+            switch (configState.Key)
             {
                 case "ultrasound_freq":
                     otherConfiguration.UltraSoundFrequencyInt = Int32.Parse(configState.Value);

@@ -27,6 +27,5 @@ namespace ARDrone.Capture
             image.Save(filePath);
             image.Dispose();
         }
-
     }
 }

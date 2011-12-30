@@ -25,7 +25,6 @@ namespace ARDrone.Control.Workers
         private VideoDataRetriever videoDataRetriever;
         private NavigationDataRetriever navigationDataRetriever;
         private CommandSender commandSender;
-        private ControlInfoRetriever controlInfoRetriever;
 
         private SupportedFirmwareVersion firmwareVersion;
 
@@ -34,13 +33,11 @@ namespace ARDrone.Control.Workers
         public NetworkSanityChecker(VideoDataRetriever videoDataRetriever,
                                     NavigationDataRetriever navigationDataRetriever,
                                     CommandSender commandSender,
-                                    ControlInfoRetriever controlInfoRetriever,
                                     SupportedFirmwareVersion firmwareVersion)
         {
             this.videoDataRetriever = videoDataRetriever;
             this.navigationDataRetriever = navigationDataRetriever;
             this.commandSender = commandSender;
-            this.controlInfoRetriever = controlInfoRetriever;
 
             this.firmwareVersion = firmwareVersion;
         }
@@ -62,7 +59,6 @@ namespace ARDrone.Control.Workers
                 CheckConnectionForNavigationDataRetriever();
                 CheckConnectionForVideoDataRetriever();
                 CheckConnectionForCommandSender();
-                CheckConnectionForControlInfoRetriever();
 
                 InvokeSanityCheckOk();
             }
@@ -111,20 +107,6 @@ namespace ARDrone.Control.Workers
             catch (Exception e)
             {
                 throw new SanityCheckException("Error while connecting to command sender data port", e);
-            }
-        }
-
-        private void CheckConnectionForControlInfoRetriever()
-        {
-            try
-            {
-                controlInfoRetriever.CreateSocketAndEndpoint();
-                controlInfoRetriever.ConnectClientAndCreateStream();
-                controlInfoRetriever.DisconnectFromSocket();
-            }
-            catch (Exception e)
-            {
-                throw new SanityCheckException("Error while connecting to control info data port", e);
             }
         }
 
