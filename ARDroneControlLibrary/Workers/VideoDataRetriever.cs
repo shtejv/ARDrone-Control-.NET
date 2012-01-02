@@ -36,13 +36,9 @@ namespace ARDrone.Control.Workers
         private Bitmap currentBitmap;
         private ImageSource currentImage;
 
-        private SupportedFirmwareVersion firmwareVersion;
-
-        public VideoDataRetriever(NetworkConnector networkConnector, String remoteIpAddress, int port, int timeoutValue, SupportedFirmwareVersion firmwareVersion)
+        public VideoDataRetriever(NetworkConnector networkConnector, String remoteIpAddress, int port, int timeoutValue)
             : base(networkConnector, remoteIpAddress, port, timeoutValue)
         {
-            this.firmwareVersion = firmwareVersion;
-
             bitmapUtils = new BitmapUtils();
 
             ResetVariables();

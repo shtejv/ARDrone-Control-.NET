@@ -32,13 +32,7 @@
             </Setter>
             <Setter Property="Margin" Value="0,0,0,12" />
         </Style>
-        <!--
-        <ObjectDataProvider MethodName="GetValues" ObjectType="{x:Type sys:Enum}" x:Key="FirmwareVersions">
-            <ObjectDataProvider.MethodParameters>
-                <x:Type TypeName="drone:SupportedFirmwareVersion"/>
-            </ObjectDataProvider.MethodParameters>
-        </ObjectDataProvider>
-        -->
+
         <local:EnumDisplayer Type="{x:Type drone:SupportedFirmwareVersion}" x:Key="firmwareVersions" />
     </Window.Resources>
 
@@ -59,6 +53,7 @@
                         <ColumnDefinition Width="200" />
                     </Grid.ColumnDefinitions>
                     <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="Auto" />
@@ -107,13 +102,11 @@
                     <TextBox Name="textBoxDroneSettingsControlInfoPort" Grid.Row="6" Grid.Column="1" Width="100" HorizontalAlignment="Left">
                         <Binding Path="ControlPortText" UpdateSourceTrigger="PropertyChanged" />
                     </TextBox>
-<!--
-                    <Label Content="Drone firmware version" Grid.Row="7" Grid.Column="0" />
-                    <ComboBox Name="comboBoxDroneSettingsFirmwareVersion" Grid.Row="7" Grid.Column="1" ItemsSource="{Binding Source={StaticResource FirmwareVersions}}" SelectedValue="{Binding FirmwareVersion}" />
--->
 
-                    <Label Content="Drone firmware version" Grid.Row="7" Grid.Column="0" />
-                    <ComboBox Name="comboBoxDroneSettingsFirmwareVersion" Grid.Row="7" Grid.Column="1" ItemsSource="{Binding Source={StaticResource firmwareVersions},Path=DisplayNames}" SelectedValue="{Binding Path=FirmwareVersion, Converter={StaticResource firmwareVersions}}"  />
+                    <CheckBox Content="Use specific firmware version" Grid.Row="7" Margin="5" IsChecked="{Binding UseSpecificFirmwareVersion}"  Checked="checkBoxUseSpecificFirmwareVersion_Checked" Unchecked="checkBoxUseSpecificFirmwareVersion_Unchecked" Grid.ColumnSpan="2" />
+
+                    <Label Content="Drone firmware version" Grid.Row="8" Grid.Column="0" />
+                    <ComboBox Name="comboBoxDroneSettingsFirmwareVersion" Grid.Row="8" Grid.Column="1" ItemsSource="{Binding Source={StaticResource firmwareVersions},Path=DisplayNames}" SelectedValue="{Binding Path=FirmwareVersion, Converter={StaticResource firmwareVersions}}"  />
 
                 </Grid>
             </GroupBox>

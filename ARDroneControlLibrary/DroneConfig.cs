@@ -22,6 +22,7 @@ namespace ARDrone.Control
     [Serializable()]
     public class DroneConfig
     {
+        public const SupportedFirmwareVersion DefaultSupportedFirmwareVersion = SupportedFirmwareVersion.Firmware_164_Or_Above;
         private const String serializationFileName = "droneConfig.xml";
 
         private SerializationUtils serializationUtils;
@@ -37,6 +38,7 @@ namespace ARDrone.Control
 
         private int timeoutValue;
 
+        private bool useSpecificFirmwareVersion;
         private SupportedFirmwareVersion firmwareVersion;
 
         private DroneCameraMode defaultCameraMode;
@@ -58,7 +60,8 @@ namespace ARDrone.Control
             commandPort = 5556;
             controlInfoPort = 5559;
 
-            firmwareVersion = SupportedFirmwareVersion.Firmware_133_Or_Below;
+            useSpecificFirmwareVersion = false;
+            firmwareVersion = SupportedFirmwareVersion.DefaultSupportedFirmwareVersion;
 
             timeoutValue = 500;
             defaultCameraMode = DroneCameraMode.FrontCamera;
@@ -75,6 +78,7 @@ namespace ARDrone.Control
             this.CommandPort = droneConfig.CommandPort;
             this.ControlInfoPort = droneConfig.ControlInfoPort;
 
+            this.UseSpecificFirmwareVersion = droneConfig.UseSpecificFirmwareVersion;
             this.FirmwareVersion = droneConfig.FirmwareVersion;
         }
 
@@ -138,6 +142,12 @@ namespace ARDrone.Control
         {
             get { return timeoutValue; }
             set { CheckForDroneConfigState(); timeoutValue = value; }
+        }
+
+        public bool UseSpecificFirmwareVersion
+        {
+            get { return useSpecificFirmwareVersion; }
+            set { useSpecificFirmwareVersion = value; }
         }
 
         public SupportedFirmwareVersion FirmwareVersion

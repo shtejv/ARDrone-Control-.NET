@@ -36,13 +36,9 @@ namespace ARDrone.Control.Workers
         private bool initialized = false;
         private bool commandModeEnabled = false;
 
-        private SupportedFirmwareVersion firmwareVersion;
-
-        public NavigationDataRetriever(NetworkConnector networkConnector, String remoteIpAddress, int port, int timeoutValue, SupportedFirmwareVersion firmwareVersion)
+        public NavigationDataRetriever(NetworkConnector networkConnector, String remoteIpAddress, int port, int timeoutValue)
             : base(networkConnector, remoteIpAddress, port, timeoutValue)
         {
-            this.firmwareVersion = firmwareVersion;
-
             ResetVariables();
         }
 

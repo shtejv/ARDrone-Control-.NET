@@ -12,31 +12,19 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using ARDrone.Control.Data.Helpers;
 
 namespace ARDrone.Control.Data
 {
-    [AttributeUsage(AttributeTargets.Field)]
-    public sealed class DisplayStringAttribute : Attribute
-    {
-        private readonly string value;
-
-        public DisplayStringAttribute(string value)
-        {
-            this.value = value;
-        }
-
-        public string Value
-        {
-            get { return value; }
-        }
-    }
-
     public enum SupportedFirmwareVersion
     {
+        [VersionBetweenAttribute(VersionState.Inclusive, DroneFirmwareVersion.MinVersionString, VersionState.Inclusive, "1.3.3")]
         [DisplayStringAttribute("Firmware 1.3.3 or below")]
         Firmware_133_Or_Below,
+        [VersionBetweenAttribute(VersionState.Exclusive, "1.3.3", VersionState.Inclusive, "1.6.4")]
         [DisplayStringAttribute("Firmware between 1.5.x and 1.6.4  (exclusive)")]
         Firmware_Between_15x_And_164,
+        [VersionBetweenAttribute(VersionState.Exclusive, "1.6.4", VersionState.Inclusive, DroneFirmwareVersion.MaxVersionString)]
         [DisplayStringAttribute("Firmware 1.6.4 or above")]
         Firmware_164_Or_Above
     }

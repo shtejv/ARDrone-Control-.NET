@@ -17,6 +17,7 @@ using System.Threading;
 
 using ARDrone.Control.Events;
 using ARDrone.Control.Workers;
+using ARDrone.Control.Data;
 
 namespace ARDrone.Control.Network
 {
@@ -31,6 +32,7 @@ namespace ARDrone.Control.Network
         private String remoteIpAddress;
         private int port;
         private int timeoutValue;
+        private SupportedFirmwareVersion firmwareVersion;
 
         // Event handlers
         public event ErrorEventHandler Error;
@@ -48,6 +50,7 @@ namespace ARDrone.Control.Network
             this.remoteIpAddress = remoteIpAddress;
             this.port = port;
             this.timeoutValue = timeoutValue;
+            this.firmwareVersion = DroneConfig.DefaultSupportedFirmwareVersion;
         }
 
         public void Connect()
@@ -169,6 +172,18 @@ namespace ARDrone.Control.Network
         protected String GetLocalIpAddress()
         {
             return networkConnector.GetOwnIpAddress();
+        }
+
+        public SupportedFirmwareVersion FirmwareVersion
+        {
+            get
+            {
+                return firmwareVersion;
+            }
+            set
+            {
+                firmwareVersion = value;
+            }
         }
 
         protected String RemoteIpAddress

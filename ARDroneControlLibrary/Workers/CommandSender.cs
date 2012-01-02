@@ -30,13 +30,11 @@ namespace ARDrone.Control.Workers
         private uint currentSequenceNumber;
         private List<String> commandsToSend;
 
-        private SupportedFirmwareVersion firmwareVersion;
         private DroneCameraMode defaultCameraMode;
 
-        public CommandSender(NetworkConnector networkConnector, String remoteIpAddress, int port, int timeoutValue, SupportedFirmwareVersion firmwareVersion, DroneCameraMode defaultCameraMode)
+        public CommandSender(NetworkConnector networkConnector, String remoteIpAddress, int port, int timeoutValue, DroneCameraMode defaultCameraMode)
             : base(networkConnector, remoteIpAddress, port, timeoutValue)
         {
-            this.firmwareVersion = firmwareVersion;
             this.defaultCameraMode = defaultCameraMode;
 
             ResetVariables();
@@ -150,20 +148,20 @@ namespace ARDrone.Control.Workers
         public void SendQueuedCommand(Command command)
         {
             command.SequenceNumber = GetSequenceNumberForCommand();
-            commandsToSend.Add(command.CreateCommand(firmwareVersion));
+            commandsToSend.Add(command.CreateCommand(FirmwareVersion));
 
             if (command is SetConfigurationCommand)
             {
                 SetControlModeCommand controlModeCommand = new SetControlModeCommand(DroneControlMode.LogControlMode);
                 controlModeCommand.SequenceNumber = GetSequenceNumberForCommand();
-                commandsToSend.Add(controlModeCommand.CreateCommand(firmwareVersion));
+                commandsToSend.Add(controlModeCommand.CreateCommand(FirmwareVersion));
             }
         }
 
         private void SendUnqueuedCommand(Command command)
         {
             command.SequenceNumber = GetSequenceNumberForCommand();
-            SendMessage(command.CreateCommand(firmwareVersion));
+            SendMessage(command.CreateCommand(FirmwareVersion));
         }
 
         private uint GetSequenceNumberForCommand()

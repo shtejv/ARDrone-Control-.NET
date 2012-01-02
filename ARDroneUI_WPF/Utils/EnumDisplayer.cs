@@ -18,6 +18,7 @@ using System.Windows.Data;
 using System.Windows.Markup;
 using ARDrone.Control.Data;
 using System.Reflection;
+using ARDrone.Control.Data.Helpers;
 
 namespace ARDrone.UI
 {

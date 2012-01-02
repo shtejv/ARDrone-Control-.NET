@@ -96,19 +96,19 @@ namespace ARDrone.Control
 
         private void CreateDroneWorkers()
         {
-            networkConnector = new NetworkConnector(droneConfig.DroneNetworkIdentifierStart, droneConfig.StandardOwnIpAddress, droneConfig.DroneIpAddress, droneConfig.FirmwareVersion);
+            networkConnector = new NetworkConnector(droneConfig.DroneNetworkIdentifierStart, droneConfig.StandardOwnIpAddress, droneConfig.DroneIpAddress);
             networkConnector.ConnectionStateChanged += networkConnector_ConnectionStateChanged;
             networkConnector.Error += networkWorker_Error;
 
-            videoDataRetriever = new VideoDataRetriever(networkConnector, droneConfig.DroneIpAddress, droneConfig.VideoPort, droneConfig.TimeoutValue, droneConfig.FirmwareVersion);
+            videoDataRetriever = new VideoDataRetriever(networkConnector, droneConfig.DroneIpAddress, droneConfig.VideoPort, droneConfig.TimeoutValue);
             videoDataRetriever.ConnectionStateChanged += networkWorker_ConnectionStateChanged;
             videoDataRetriever.Error += networkWorker_Error;
 
-            navigationDataRetriever = new NavigationDataRetriever(networkConnector, droneConfig.DroneIpAddress, droneConfig.NavigationPort, droneConfig.TimeoutValue, droneConfig.FirmwareVersion);
+            navigationDataRetriever = new NavigationDataRetriever(networkConnector, droneConfig.DroneIpAddress, droneConfig.NavigationPort, droneConfig.TimeoutValue);
             navigationDataRetriever.ConnectionStateChanged += networkWorker_ConnectionStateChanged;
             navigationDataRetriever.Error += networkWorker_Error;
 
-            commandSender = new CommandSender(networkConnector, droneConfig.DroneIpAddress, droneConfig.CommandPort, droneConfig.TimeoutValue, droneConfig.FirmwareVersion, droneConfig.DefaultCameraMode);
+            commandSender = new CommandSender(networkConnector, droneConfig.DroneIpAddress, droneConfig.CommandPort, droneConfig.TimeoutValue, droneConfig.DefaultCameraMode);
             commandSender.ConnectionStateChanged += networkWorker_ConnectionStateChanged;
             commandSender.Error += networkWorker_Error;
 
@@ -173,6 +173,8 @@ namespace ARDrone.Control
         {
             if (e.IsSane)
             {
+                DetermineInternalDroneConfiguration();
+                SetFirmwareVersionAccordingToDroneConfiguration();
                 ConnectWorkers();
             }
             else
@@ -232,10 +234,38 @@ namespace ARDrone.Control
                 Error.Invoke(this, new DroneErrorEventArgs(this.GetType(), exception));
         }
 
+        private void DetermineInternalDroneConfiguration()
+        {
+            internalDroneConfiguration = controlInfoRetriever.GetDroneConfiguration();
+        }
+
+        private void SetFirmwareVersionAccordingToDroneConfiguration()
+        {
+            SupportedFirmwareVersion firmwareVersionToUse = GetFirmwareVersionToUse();
+
+            commandSender.FirmwareVersion = firmwareVersionToUse;
+            navigationDataRetriever.FirmwareVersion = firmwareVersionToUse;
+            videoDataRetriever.FirmwareVersion = firmwareVersionToUse;
+        }
+
+        private SupportedFirmwareVersion GetFirmwareVersionToUse()
+        {
+            SupportedFirmwareVersion firmwareVersionToUse;
+            if (droneConfig.UseSpecificFirmwareVersion)
+            {
+                firmwareVersionToUse = droneConfig.FirmwareVersion;
+            }
+            else
+            {
+                DroneFirmwareVersion droneVersion = new DroneFirmwareVersion(internalDroneConfiguration.GeneralConfiguration.SoftwareVersion);
+                firmwareVersionToUse = droneVersion.GetSupportedFirmwareVersion();
+            }
+
+            return firmwareVersionToUse;
+        }
+
         private void ConnectWorkers()
         {
-            internalDroneConfiguration = controlInfoRetriever.DroneConfig;
-
             // The connect sequence is important since the command sender waits for the navigation data retriever
 
             if (!videoDataRetriever.Connected)

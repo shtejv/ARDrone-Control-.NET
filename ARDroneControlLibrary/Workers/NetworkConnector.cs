@@ -62,21 +62,17 @@ namespace ARDrone.Control.Workers
 
         private Dictionary<String, String> failureReasons;
 
-        private SupportedFirmwareVersion firmwareVersion;
-
         // Event handlers
         public event ErrorEventHandler Error;
         public event DroneNetworkConnectionStateChangedEventHandler ConnectionStateChanged;
-
-
-        public NetworkConnector(String droneNetworkIdentifierStart, String standardOwnIpAddress, String droneIpAddress, SupportedFirmwareVersion firmwareVersion)
+        
+        public NetworkConnector(String droneNetworkIdentifierStart, String standardOwnIpAddress, String droneIpAddress)
         {
             Initialize();
 
             this.droneNetworkIdentifierStart = droneNetworkIdentifierStart;
             this.standardOwnIpAddress = standardOwnIpAddress;
             this.droneIpAddress = droneIpAddress;
-            this.firmwareVersion = firmwareVersion;
         }
 
         private void Initialize()

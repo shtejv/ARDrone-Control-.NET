@@ -56,10 +56,13 @@
     <Compile Include="Commands\SetControlModeCommand.cs" />
     <Compile Include="Commands\SwitchCameraCommand.cs" />
     <Compile Include="Commands\WatchDogCommand.cs" />
-    <Compile Include="Data\Firmware.cs" />
+    <Compile Include="Data\DroneFirmwareVersion.cs" />
+    <Compile Include="Data\SupportedFirmwareVersion.cs" />
+    <Compile Include="Data\Helpers\DisplayStringAttribute.cs" />
     <Compile Include="Data\InternalDroneConfiguration.cs" />
     <Compile Include="Data\InternalDroneConfigurationState.cs" />
     <Compile Include="Data\NavigationData.cs" />
+    <Compile Include="Data\Helpers\VersionBetweenAttribute.cs" />
     <Compile Include="DroneConfig.cs" />
     <Compile Include="DroneControl.cs" />
     <Compile Include="Events\DroneEvents.cs" />

@@ -44,6 +44,7 @@ namespace ARDrone.UI
             SetDialogSettings(droneConfig, hudConfig);
 
             UpdateDependentHudCheckBoxes(hudConfig.ShowHud);
+            UpdateFirmwareVersionComboBox(droneConfig.UseSpecificFirmwareVersion);
         }
 
         private void SetDialogSettings(DroneConfig droneConfig, HudConfig hudConfig)
@@ -52,6 +53,11 @@ namespace ARDrone.UI
             configSettings.PropertyChanged += configSettings_PropertyChanged;
 
             this.DataContext = configSettings;
+        }
+
+        private void UpdateFirmwareVersionComboBox(bool useSpecificFirmwareVersion)
+        {
+            comboBoxDroneSettingsFirmwareVersion.IsEnabled = useSpecificFirmwareVersion;
         }
 
         private void UpdateDependentHudCheckBoxes(bool enabled)
@@ -118,6 +124,16 @@ namespace ARDrone.UI
         private void configSettings_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             UpdateSubmitButtonState();
+        }
+
+        private void checkBoxUseSpecificFirmwareVersion_Checked(object sender, RoutedEventArgs e)
+        {
+            UpdateFirmwareVersionComboBox(true);
+        }
+
+        private void checkBoxUseSpecificFirmwareVersion_Unchecked(object sender, RoutedEventArgs e)
+        {
+            UpdateFirmwareVersionComboBox(false);
         }
 
         private void checkBoxHudSettingsShowHud_Checked(object sender, RoutedEventArgs e)

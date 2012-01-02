@@ -35,6 +35,8 @@ namespace ARDrone.UI.Bindings
         private String videoPortText;
         private String controlPortText;
 
+        private bool useSpecificFirmwareVersion;
+        private SupportedFirmwareVersion firmwareVersion;
 
         private bool showHud;
         private bool showHudTarget;
@@ -43,8 +45,6 @@ namespace ARDrone.UI.Bindings
         private bool showHudAltitude;
         private bool showHudSpeed;
         private bool showHudBattery;
-
-        private SupportedFirmwareVersion firmwareVersion;
 
         public GeneralConfigBinding(DroneConfig droneConfig, HudConfig hudConfig)
         {
@@ -66,6 +66,7 @@ namespace ARDrone.UI.Bindings
             NavigationPortText = droneConfig.NavigationPort.ToString();
             ControlPortText = droneConfig.ControlInfoPort.ToString();
 
+            useSpecificFirmwareVersion = droneConfig.UseSpecificFirmwareVersion;
             firmwareVersion = droneConfig.FirmwareVersion;
         }
 
@@ -93,6 +94,7 @@ namespace ARDrone.UI.Bindings
             droneConfig.VideoPort = Int32.Parse(videoPortText);
             droneConfig.ControlInfoPort = Int32.Parse(controlPortText);
 
+            droneConfig.UseSpecificFirmwareVersion = useSpecificFirmwareVersion;
             droneConfig.FirmwareVersion = firmwareVersion;
 
             return droneConfig;
@@ -153,6 +155,12 @@ namespace ARDrone.UI.Bindings
         {
             get { return controlPortText; }
             set { controlPortText = value; PublishPropertyChange("ControlInfoPortText"); }
+        }
+
+        public bool UseSpecificFirmwareVersion
+        {
+            get { return useSpecificFirmwareVersion; }
+            set { useSpecificFirmwareVersion = value; PublishPropertyChange("UseSpecificFirmwareVersion"); }
         }
 
         public SupportedFirmwareVersion FirmwareVersion

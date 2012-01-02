@@ -34,7 +34,7 @@ namespace ARDrone.Control.Workers
             configReader = new ConfigReader();
         }
 
-        private InternalDroneConfiguration DetermineDroneConfiguration()
+        public InternalDroneConfiguration GetDroneConfiguration()
         {
             Connect();
             String configText = GetConfigText();
@@ -64,14 +64,6 @@ namespace ARDrone.Control.Workers
         private void Disconnect()
         {
             telnetConnection.Dispose();
-        }
-
-        public InternalDroneConfiguration DroneConfig
-        {
-            get
-            {
-                return DetermineDroneConfiguration();
-            }
         }
     }
 }
