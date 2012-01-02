@@ -61,7 +61,7 @@ namespace ARDrone.Control
             controlInfoPort = 5559;
 
             useSpecificFirmwareVersion = false;
-            firmwareVersion = SupportedFirmwareVersion.DefaultSupportedFirmwareVersion;
+            firmwareVersion = DroneConfig.DefaultSupportedFirmwareVersion;
 
             timeoutValue = 500;
             defaultCameraMode = DroneCameraMode.FrontCamera;
